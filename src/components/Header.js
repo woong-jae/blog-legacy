@@ -3,24 +3,27 @@ import * as React from 'react'
 import styled, { css } from 'styled-components'
 
 const HeaderContainer = styled.header`
-    width: 100%;
-    padding: 8px 0;
-    ${props => {
-        return css`
-            background: ${props.theme.colors["blackLight"]}
-        `
-    }}
+    max-width: ${props => props.theme.sizes.maxWidth};
+    margin: 0 auto;
+    padding: 0 ${props => props.theme.sideSpace.large};
+    @media screen and (max-width: ${props => props.theme.responsive.large}) {
+        max-width: 760px;
+    }
+    @media screen and (max-width: ${props => props.theme.responsive.small}) {
+        padding: 0 ${props => props.theme.sideSpace.small};
+    }
 `
 
 const HeaderContent = styled.div`
-    margin: 0 auto;
-    width: 80%;
+    margin: 10px auto;
+    width: 95%;
     .logo-link {
         display: block;
         width: fit-content;
     }
     .logo-title {
-        font-weight: bold;
+        font-weight: 600;
+        letter-spacing: 1px;
         font-size: 2rem;
         ${props => {
             return css`

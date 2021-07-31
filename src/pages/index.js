@@ -1,12 +1,39 @@
 import * as React from "react"
-import Layout from "../components/Layout"
+import { graphql } from "gatsby";
 
-const IndexPage = () => {
+import Layout from "../components/Layout"
+import PostPreview from "../components/PostPreview";
+
+const IndexPage = ({ data }) => {
+  const posts = data.allMarkdownRemark.edges;
+
   return (
     <Layout>
-      <h1>Hello, this is main page.</h1>
+      {posts.map(({ node }) => {
+          return <PostPreview key={node.fields.slug} node={node} />;
+        })}
     </Layout>
   )
 }
 
 export default IndexPage
+
+export const pageQuery = graphql`
+  query {
+    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
+      edges {
+        node {
+          fields {
+            slug
+          }
+          frontmatter {
+            date(formatString: "YYYY.MM.DD")
+            title
+            emoji
+            category
+          }
+        }
+      }
+    }
+  }
+`;
