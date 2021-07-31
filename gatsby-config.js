@@ -1,17 +1,22 @@
 module.exports = {
   siteMetadata: {
     siteUrl: "https://www.yourdomain.tld",
-    title: "Blog",
+    title: "햣 블로그",
+    author: "woong-jae",
+    socials: {
+      github: "woong-jae",
+      instagram: "wooong_j"
+    }
   },
   plugins: [
     "gatsby-plugin-styled-components",
     "gatsby-plugin-image",
-    {
-      resolve: "gatsby-plugin-google-analytics",
-      options: {
-        trackingId: "",
-      },
-    },
+    // {
+    //   resolve: "gatsby-plugin-google-analytics",
+    //   options: {
+    //     trackingId: "",
+    //   },
+    // },
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-sitemap",
     "gatsby-transformer-remark",
