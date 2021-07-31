@@ -5,17 +5,16 @@ import styled, { css } from 'styled-components'
 const HeaderContainer = styled.header`
     max-width: ${props => props.theme.sizes.maxWidth};
     margin: 0 auto;
-    padding: 0 ${props => props.theme.sideSpace.large};
+    padding: 20px ${props => props.theme.sideSpace.large} 0;
     @media screen and (max-width: ${props => props.theme.responsive.large}) {
         max-width: 760px;
     }
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
-        padding: 0 ${props => props.theme.sideSpace.small};
+        padding: 10px ${props => props.theme.sideSpace.small} 0;
     }
 `
 
 const HeaderContent = styled.div`
-    margin: 10px auto;
     width: 95%;
     .logo-link {
         display: block;

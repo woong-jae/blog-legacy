@@ -25,8 +25,10 @@ const MainContent = styled.div`
     display: flex;
     min-height: 85vh;
     align-items: flex-start;
+    flex-direction: row-reverse;
     @media screen and (max-width: ${props => props.theme.responsive.large}) {
         display: block;
+        margin-top: 0;
     }
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
         margin-top: 0;
@@ -37,6 +39,7 @@ const MainWrapper = styled.div`
   margin-right: 40px;
   @media screen and (max-width: ${props => props.theme.responsive.large}) {
     width: 100%;
+    margin-top: 70px;
   }
 `;
 
@@ -62,10 +65,10 @@ const Layout = ({ children }) => {
 
             <MainContainer>
                 <MainContent>
+                    <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} />
                     <MainWrapper>
                         <main>{children}</main>
                     </MainWrapper>
-                    <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} />
                 </MainContent>
             </MainContainer>
 

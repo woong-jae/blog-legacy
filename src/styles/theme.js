@@ -12,8 +12,8 @@ const variables = {
       gradient: "linear-gradient(-45deg,#ffa649,#f7645b,#805ed4)"
     },
     sizes: {
-      bioWidth: "250px",
-      maxWidth: "1100px"
+      bioWidth: "280px",
+      maxWidth: "1150px"
     },
     sideSpace: {
       small: "20px",

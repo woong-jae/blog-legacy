@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import avatar from '../images/woong.png'
 
 const BioContainer = styled.div`
-    display: sticky;
+    position: sticky;
     top: 2em;
     width: ${props => props.theme.sizes.bioWidth};
     padding: 1.5em;
@@ -16,7 +16,7 @@ const BioContainer = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     @media screen and (max-width: ${props => props.theme.responsive.large}) {
         position: relative;
-        margin: 2em 0;
+        ${'' /* margin: 2em 0; */}
         width: 100%;
     }
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
