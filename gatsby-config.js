@@ -4,6 +4,7 @@ module.exports = {
     title: "햣 블로그",
     author: "woong-jae",
     socials: {
+      email: "jwchung0828@gmail.com",
       github: "woong-jae",
       instagram: "wooong_j"
     }

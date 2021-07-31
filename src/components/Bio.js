@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { FaGithub, FaInstagram } from 'react-icons/fa';
+import { MdMail } from 'react-icons/md';
 
 import styled from 'styled-components'
 import avatar from '../images/woong.png'
@@ -89,9 +90,12 @@ const Bio = ({ author, socials }) => {
             </BioHeader>
             <BioMain>
                 <BioText>
-                    이것저것 공부하는 발전하는 개발자.<br/>나도 개발 고수가 되고싶다.
+                    이것저것 공부하고 발전하는 개발자.<br/>나도 개발 고수가 되고싶다.
                 </BioText>
                 <BioLinks>
+                    <BioLink href={`mailto:${socials.email}`}>
+                    <MdMail color={'#FFF'} size={32} />
+                    </BioLink>
                     <BioLink href={`https://github.com/${socials.github}`}>
                         <FaGithub color={'#FFF'} size={32} />
                     </BioLink>
