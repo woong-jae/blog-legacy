@@ -92,7 +92,6 @@ const PostDate = styled.time`
 `;
 
 const PostContent = styled.div`
-  ${'' /* ${postSyntaxHighlightStyle} */}
   ${postContentStyle}
   ${postCustomBlockStyle}
 `;
