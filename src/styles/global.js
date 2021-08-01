@@ -31,11 +31,11 @@ const globalStyle = createGlobalStyle`
   }
   body {
     background: ${(props) => props.theme.colors.background};
-    color: #f1f4f7;
+    color: #333;
     line-height: 1.6;
     font-size: 100%;
     font-weight: 400;
-    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",  "Hiragino Sans", Meiryo, sans-serif;
+    ${'' /* font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",  "Hiragino Sans", Meiryo, sans-serif; */}
     -webkit-text-size-adjust: none;
   }
   article, aside, details, figcaption, figure,

@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "gatsby";
 import styled from "styled-components";
 import twemoji from "twemoji";
+import CategoryLabel from "./CategoryLabel";
 
 const PostCardWrapper = styled.div`
   .post-card-link {
@@ -82,6 +83,7 @@ const PostPreview = ({ node }) => {
         <PostCardContent>
           <h3>{title}</h3>
           <time>{node.frontmatter.date}</time>
+          <CategoryLabel slug={node.frontmatter.category} />
         </PostCardContent>
       </Link>
     </PostCardWrapper>
