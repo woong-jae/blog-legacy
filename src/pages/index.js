@@ -3,12 +3,14 @@ import { graphql } from "gatsby";
 
 import Layout from "../components/Layout"
 import PostPreview from "../components/PostPreview";
+import Seo from "../components/Seo";
 
 const IndexPage = ({ data }) => {
   const posts = data.allMarkdownRemark.edges;
 
   return (
     <Layout>
+      <Seo />
       {posts.map(({ node }) => {
           return <PostPreview key={node.fields.slug} node={node} />;
         })}

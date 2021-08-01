@@ -1,7 +1,8 @@
 module.exports = {
   siteMetadata: {
-    siteUrl: "https://www.yourdomain.tld",
+    siteUrl: "https://woong-jae.netlify.app",
     title: "햣 블로그",
+    description: "기술 블로그",
     author: "woong-jae",
     socials: {
       email: "jwchung0828@gmail.com",
@@ -10,6 +11,13 @@ module.exports = {
     }
   },
   plugins: [
+    {
+      resolve: "gatsby-source-filesystem",
+      options: {
+          name: "blog",
+          path: `${__dirname}/content/blog`
+      }
+    },  
     "gatsby-plugin-styled-components",
     "gatsby-plugin-image",
     // {
@@ -23,12 +31,5 @@ module.exports = {
     "gatsby-transformer-remark",
     "gatsby-plugin-sharp",
     "gatsby-transformer-sharp",
-    {
-      resolve: "gatsby-source-filesystem",
-      options: {
-          name: "blog",
-          path: `${__dirname}/content/blog`
-      }
-    },  
   ],
 };
