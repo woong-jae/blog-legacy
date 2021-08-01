@@ -4,7 +4,7 @@ import { useStaticQuery, graphql } from 'gatsby'
 
 import GlobalStyle from "../styles/global";
 import theme from "../styles/theme";
-import Bio from "./bio";
+import Bio from "./Bio";
 import Footer from "./Footer";
 import Header from "./Header"
 
