@@ -89,7 +89,7 @@ module.exports = {
               }
             `,
             output: "/rss.xml",
-            title: "catnose99.com RSS feed",
+            title: "woong-jae RSS feed",
           },
         ],
       },
