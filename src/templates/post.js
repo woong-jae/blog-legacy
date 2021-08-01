@@ -134,7 +134,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
 export default PostTemplate
 
 export const pageQuery = graphql`
-  query BlogPostBySlug($id: String) {
+  query ($id: String) {
     site {
       siteMetadata {
         title
