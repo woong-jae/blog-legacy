@@ -9,7 +9,7 @@ import Seo from "../components/Seo";
 import CategoryLabel from "../components/CategoryLabel";
 
 import postContentStyle from "../styles/postContent";
-import postCustomBlockStyle from "../styles/postCustomBlock";
+// import postCustomBlockStyle from "../styles/postCustomBlock";
 
 import svgPattern from "../images/pattern.svg";
 
@@ -93,7 +93,7 @@ const PostDate = styled.time`
 
 const PostContent = styled.div`
   ${postContentStyle}
-  ${postCustomBlockStyle}
+  ${'' /* ${postCustomBlockStyle} */}
 `;
 
 const PostTemplate = ({ data, pageContext, location }) => {
@@ -134,14 +134,14 @@ const PostTemplate = ({ data, pageContext, location }) => {
 export default PostTemplate
 
 export const pageQuery = graphql`
-  query ($id: String) {
+  query ($slug: String!) {
     site {
       siteMetadata {
         title
         author
       }
     }
-    markdownRemark(id: { eq: $id }) {
+    markdownRemark(fields: { slug: { eq: $slug } }) {
       id
       html
       frontmatter {
