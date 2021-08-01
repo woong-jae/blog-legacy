@@ -78,7 +78,7 @@ const PostPreview = ({ node }) => {
 
   return (
     <PostCardWrapper>
-      <Link to={node.fields.slug} className="post-card-link">
+      <Link to={`${node.frontmatter.category}/${node.frontmatter.title}`} className="post-card-link">
         <PostCardEmoji dangerouslySetInnerHTML={{ __html: emoji }} />
         <PostCardContent>
           <h3>{title}</h3>

@@ -97,43 +97,42 @@ const PostContent = styled.div`
   ${postCustomBlockStyle}
 `;
 
-class BlogPostTemplate extends React.Component {
-  render() {
-    const post = this.props.data.markdownRemark;
-    const siteTitle = this.props.data.site.siteMetadata.title;
-    // const { relatedPosts, slug } = this.props.pageContext;
-    const { title, date, category, emoji } = post.frontmatter;
-    return (
-      <Layout location={this.props.location} title={siteTitle}>
-        <Seo />
-        <Helmet>
-          <link
-            rel="canonical"
-            href={`${this.props.data.site.siteMetadata.siteUrl}${this.props.location.pathname}`}
-          />
-        </Helmet>
-        <Content>
-          <HeroImage
-            dangerouslySetInnerHTML={{
-              __html: twemoji.parse(emoji || "😺", {
-                folder: "svg",
-                ext: ".svg",
-              }),
-            }}
-          />
-          <ContentMain>
-            <PostDate>{date}</PostDate>
-            <PostTitle>{title}</PostTitle>
-            <CategoryLabel slug={category} isLink="true" />
-            <PostContent dangerouslySetInnerHTML={{ __html: post.html }} />
-          </ContentMain>
-        </Content>
-      </Layout>
-    );
-  }
+const PostTemplate = ({ data, pageContext, location }) => {
+  const post = data.markdownRemark
+  const metaData = data.site.siteMetadata
+  const { title: siteTitle, siteUrl } = metaData
+  const { title, date, category, emoji } = post.frontmatter
+
+  return (
+    <Layout location={location} title={siteTitle}>
+      <Seo />
+      <Helmet>
+        <link
+          rel="canonical"
+          href={`${siteUrl}${location.pathname}`}
+        />
+      </Helmet>
+      <Content>
+        <HeroImage
+          dangerouslySetInnerHTML={{
+            __html: twemoji.parse(emoji || "😺", {
+              folder: "svg",
+              ext: ".svg",
+            }),
+          }}
+        />
+        <ContentMain>
+          <PostDate>{date}</PostDate>
+          <PostTitle>{title}</PostTitle>
+          <CategoryLabel slug={category} isLink="true" />
+          <PostContent dangerouslySetInnerHTML={{ __html: post.html }} />
+        </ContentMain>
+      </Content>
+    </Layout>
+  )
 }
 
-export default BlogPostTemplate;
+export default PostTemplate
 
 export const pageQuery = graphql`
   query BlogPostBySlug($slug: String!) {
