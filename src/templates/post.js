@@ -8,7 +8,6 @@ import Layout from "../components/Layout";
 import Seo from "../components/Seo";
 import CategoryLabel from "../components/CategoryLabel";
 
-import postSyntaxHighlightStyle from "../styles/postSyntaxHighlight";
 import postContentStyle from "../styles/postContent";
 import postCustomBlockStyle from "../styles/postCustomBlock";
 
@@ -137,7 +136,7 @@ class BlogPostTemplate extends React.Component {
 export default BlogPostTemplate;
 
 export const pageQuery = graphql`
-  query BlogPostBySlug($slug: String) {
+  query BlogPostBySlug($slug: String!) {
     site {
       siteMetadata {
         title
