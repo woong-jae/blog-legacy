@@ -7,6 +7,8 @@ import avatar from '../images/woong.png'
 
 const BioContainer = styled.div`
     position: sticky;
+    display: flex;
+    flex-direction: column;
     top: 2em;
     width: ${props => props.theme.sizes.bioWidth};
     padding: 1.5em;
@@ -16,8 +18,7 @@ const BioContainer = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     @media screen and (max-width: ${props => props.theme.responsive.large}) {
         position: relative;
-        ${'' /* margin: 2em 0; */}
-        width: 100%;
+        width: auto;
     }
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
         padding: 1.3em 1em;
@@ -31,8 +32,9 @@ const BioHeader = styled.div`
 
 const AvatarImage = styled.img`
   display: block;
-  width: 70px;
-  height: 70px;
+  background-color: ${props => props.theme.colors.whiteSmoke};
+  width: 75px;
+  height: 75px;
   border-radius: 50%;
 `;
 
@@ -49,11 +51,14 @@ const BioMain = styled.div`
 `;
 
 const BioText = styled.p`
+  margin: 0;
+  margin-left: 5px;
   color: #fff;
   font-size: 0.92em;
 `;
 
 const BioLinks = styled.div`
+  margin: 0 auto;
   margin-top: 1.5em;
   display: flex;
   color: #fff;
@@ -64,6 +69,9 @@ const BioLinks = styled.div`
     margin: 0 auto;
     width: 40px;
     height: 33px;
+  }
+  @media screen and (max-width: ${props => props.theme.responsive.large}) {
+    margin: 1.5em 0 0 0;
   }
 `;
 const BioLink = styled.a`

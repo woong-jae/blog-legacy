@@ -6,12 +6,12 @@ import PostPreview from "../components/PostPreview";
 import Seo from "../components/Seo";
 
 const IndexPage = ({ data }) => {
-  const posts = data.allMdx.edges;
+  const posts = data.allMdx.nodes;
 
   return (
     <Layout>
       <Seo />
-      {posts.map(({ node }) => {
+      {posts.map(node => {
           return <PostPreview key={node.slug} node={node} />;
         })}
     </Layout>
@@ -23,15 +23,14 @@ export default IndexPage
 export const query = graphql`
   query {
     allMdx(sort: {fields: frontmatter___date, order: DESC}) {
-      edges {
-        node {
-          slug
-          frontmatter {
-            date(formatString: "YYYY.MM.DD")
-            title
-            emoji
-            category
-          }
+      nodes {
+        id
+        slug
+        frontmatter {
+          date(formatString: "YYYY.MM.DD")
+          title
+          emoji
+          category
         }
       }
     }
