@@ -129,14 +129,14 @@ const PostTemplate = ({ data, pageContext, location }) => {
 export default PostTemplate
 
 export const pageQuery = graphql`
-  query ($slug: String!) {
+  query ($id: String!) {
     site {
       siteMetadata {
         title
         author
       }
     }
-    mdx( slug: { eq: $slug } ) {
+    mdx( id: { eq: $id } ) {
       body
       frontmatter {
         title

@@ -10,7 +10,6 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       allMdx(sort: {fields: frontmatter___date, order: DESC}) {
         nodes {
           id
-          body
           slug
           frontmatter {
             date(formatString: "YYYY.MM.DD")
@@ -31,27 +30,15 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   // Create pages for each markdown file.
   const blogPostTemplate = path.resolve(`src/templates/post.js`)
   result.data.allMdx.nodes.forEach(node => {
-    const path = `${node.frontmatter.category}/${node.slug}`
+    const path = `${node.frontmatter.category}/${node.id}`
     createPage({
       path,
       component: blogPostTemplate,
       // In your blog post template's graphql query, you can use pagePath
       // as a GraphQL variable to query for data from the markdown file.
       context: {
-        slug: node.slug
+        id: node.id
       },
     })
   })
 }
-
-// exports.onCreateNode = ({ node, getNode, actions }) => {
-//   const { createNodeField } = actions
-//   if (node.internal.type === `MarkdownRemark`) {
-//     const slug = createFilePath({ node, getNode, basePath: `pages` })
-//     createNodeField({
-//       node,
-//       name: `slug`,
-//       value: slug,
-//     })
-//   }
-// }
