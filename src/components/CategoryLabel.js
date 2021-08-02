@@ -34,7 +34,7 @@ const CategoryLabel = ({ slug, isLink }) => {
         const categoryColor = categoryObject ? categoryObject.color : "#6d4bf5";
         const content = isLink ? (
           <Link
-            to={`/category/${slug}`}
+            to={`/${slug}`}
             className="category-text"
             style={{
               background: categoryColor

@@ -11,8 +11,8 @@ module.exports = {
     },
     categories: [
       {
-        name: "Etc",
-        slug: "etc",
+        name: "Blog",
+        slug: "blog",
         color: "#0c9ee4",
       },
       {
@@ -23,11 +23,6 @@ module.exports = {
       {
         name: "Algorithm",
         slug: "algorithm",
-        color: "#ffa22b",
-      },
-      {
-        name: "Back",
-        slug: "back",
         color: "#ffa22b",
       },
     ],

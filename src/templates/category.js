@@ -5,7 +5,7 @@ import Layout from "../components/Layout"
 import PostPreview from "../components/PostPreview";
 import Seo from "../components/Seo";
 
-const IndexPage = ({ data }) => {
+const CategoryTemplate = ({ data }) => {
   const posts = data.allMdx.nodes;
 
   return (
@@ -18,11 +18,11 @@ const IndexPage = ({ data }) => {
   )
 }
 
-export default IndexPage
+export default CategoryTemplate
 
 export const query = graphql`
-  query {
-    allMdx(limit: 10, sort: {fields: frontmatter___date, order: DESC}) {
+  query ($category: String!){
+    allMdx(filter: {frontmatter: {category: {eq: $category}}}, sort: {fields: frontmatter___date, order: DESC}) {
       nodes {
         id
         slug

@@ -75,9 +75,9 @@ const ContentMain = styled.div`
 
 const PostTitle = styled.h1`
   margin: 0.1em 0 0.3em;
-  font-size: 1.8em;
+  font-size: 2em;
   @media screen and (max-width: ${(props) => props.theme.responsive.small}) {
-    font-size: 25px;
+    font-size: 1.8em;
   }
   font-weight: 600;
   line-height: 1.5;
