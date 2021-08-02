@@ -46,6 +46,7 @@ const PostCardContent = styled.div`
   width: calc(100% - 90px);
   padding-left: 20px;
   h3 {
+    margin: 0;
     font-size: 1.5em;
     font-weight: 600;
     line-height: 1.4;
@@ -70,7 +71,7 @@ const PostCardContent = styled.div`
 `;
 
 const PostPreview = ({ node }) => {
-  const title = node.frontmatter.title || node.fields.slug;
+  const title = node.frontmatter.title || node.slug;
   const emoji = twemoji.parse(node.frontmatter.emoji || "🐱", {
     folder: "svg",
     ext: ".svg"
@@ -78,7 +79,7 @@ const PostPreview = ({ node }) => {
 
   return (
     <PostCardWrapper>
-      <Link to={`${node.frontmatter.category}/${node.frontmatter.title}`} className="post-card-link">
+      <Link to={`${node.frontmatter.category}/${node.slug}`} className="post-card-link">
         <PostCardEmoji dangerouslySetInnerHTML={{ __html: emoji }} />
         <PostCardContent>
           <h3>{title}</h3>

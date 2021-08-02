@@ -40,8 +40,6 @@ module.exports = {
           path: `${__dirname}/content/blog`
       }
     },  
-    "gatsby-plugin-styled-components",
-    "gatsby-plugin-image",
     {
       resolve: `gatsby-plugin-feed`,
       options: {
@@ -94,6 +92,7 @@ module.exports = {
         ],
       },
     },
+    `gatsby-plugin-mdx`,
     // {
     //   resolve: "gatsby-plugin-google-analytics",
     //   options: {
@@ -102,46 +101,9 @@ module.exports = {
     // },
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-sitemap",
-    {
-      resolve: `gatsby-transformer-remark`,
-      options: {
-        plugins: [
-          `gatsby-remark-code-titles`,
-          {
-            resolve: "gatsby-remark-embed-youtube",
-            options: {
-              width: 650,
-              height: 365,
-            },
-          },
-          {
-            resolve: `gatsby-remark-images`,
-            options: {
-              maxWidth: 700,
-              linkImagesToOriginal: false,
-            },
-          },
-          {
-            resolve: `gatsby-remark-responsive-iframe`,
-            options: {
-              wrapperStyle: `margin-bottom: 1.0725rem`,
-            },
-          },
-          {
-            resolve: `gatsby-remark-prismjs`,
-            options: {
-              classPrefix: "language-",
-              inlineCodeMarker: null,
-              aliases: {},
-              noInlineHighlight: false,
-            },
-          },
-          `gatsby-remark-copy-linked-files`,
-          `gatsby-remark-smartypants`,
-        ],
-      },
-    },
     "gatsby-plugin-sharp",
     "gatsby-transformer-sharp",
+    "gatsby-plugin-styled-components",
+    "gatsby-plugin-image",
   ],
 };

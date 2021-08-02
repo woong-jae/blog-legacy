@@ -7,6 +7,7 @@ const FooterContainer = styled.footer`
 `
 
 const FooterContent = styled.div`
+    color: ${props => props.theme.colors.whiteSmoke};
     margin: 0 auto;
     width: 50%;
     text-align: center;

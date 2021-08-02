@@ -7,21 +7,16 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   const result = await graphql(
     `
     {
-      allMarkdownRemark(
-        sort: { fields: [frontmatter___date], order: DESC }
-        limit: 1000
-      ) {
-        edges {
-          node {
-            fields {
-              slug
-            }
-            frontmatter {
-              title
-              date(formatString: "YYYY.MM.DD")
-              emoji
-              category
-            }
+      allMdx(sort: {fields: frontmatter___date, order: DESC}) {
+        nodes {
+          id
+          body
+          slug
+          frontmatter {
+            date(formatString: "YYYY.MM.DD")
+            title
+            emoji
+            category
           }
         }
       }
@@ -35,28 +30,28 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   }
   // Create pages for each markdown file.
   const blogPostTemplate = path.resolve(`src/templates/post.js`)
-  result.data.allMarkdownRemark.edges.forEach(({ node }) => {
-    const path = `${node.frontmatter.category}/${node.frontmatter.title}`
+  result.data.allMdx.nodes.forEach(node => {
+    const path = `${node.frontmatter.category}/${node.slug}`
     createPage({
       path,
       component: blogPostTemplate,
       // In your blog post template's graphql query, you can use pagePath
       // as a GraphQL variable to query for data from the markdown file.
       context: {
-        slug: node.fields.slug
+        slug: node.slug
       },
     })
   })
 }
 
-exports.onCreateNode = ({ node, getNode, actions }) => {
-  const { createNodeField } = actions
-  if (node.internal.type === `MarkdownRemark`) {
-    const slug = createFilePath({ node, getNode, basePath: `pages` })
-    createNodeField({
-      node,
-      name: `slug`,
-      value: slug,
-    })
-  }
-}
+// exports.onCreateNode = ({ node, getNode, actions }) => {
+//   const { createNodeField } = actions
+//   if (node.internal.type === `MarkdownRemark`) {
+//     const slug = createFilePath({ node, getNode, basePath: `pages` })
+//     createNodeField({
+//       node,
+//       name: `slug`,
+//       value: slug,
+//     })
+//   }
+// }

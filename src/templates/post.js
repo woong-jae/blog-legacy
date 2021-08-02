@@ -3,13 +3,11 @@ import { graphql } from "gatsby";
 import { Helmet } from "react-helmet";
 import twemoji from "twemoji";
 import styled from "styled-components";
+import { MDXRenderer } from "gatsby-plugin-mdx";
 
 import Layout from "../components/Layout";
 import Seo from "../components/Seo";
 import CategoryLabel from "../components/CategoryLabel";
-
-import postContentStyle from "../styles/postContent";
-// import postCustomBlockStyle from "../styles/postCustomBlock";
 
 import svgPattern from "../images/pattern.svg";
 
@@ -49,6 +47,7 @@ const Content = styled.section`
 
 const HeroImage = styled.p`
   position: relative;
+  margin: 0;
   background: ${(props) => props.theme.colors.blackLight};
   text-align: center;
   background-image: url("${svgPattern}");
@@ -91,13 +90,9 @@ const PostDate = styled.time`
   letter-spacing: 0.05em;
 `;
 
-const PostContent = styled.div`
-  ${postContentStyle}
-  ${'' /* ${postCustomBlockStyle} */}
-`;
 
 const PostTemplate = ({ data, pageContext, location }) => {
-  const post = data.markdownRemark
+  const post = data.mdx
   const metaData = data.site.siteMetadata
   const { title: siteTitle, siteUrl } = metaData
   const { title, date, category, emoji } = post.frontmatter
@@ -124,7 +119,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
           <PostDate>{date}</PostDate>
           <PostTitle>{title}</PostTitle>
           <CategoryLabel slug={category} isLink="true" />
-          <PostContent dangerouslySetInnerHTML={{ __html: post.html }} />
+          <MDXRenderer>{post.body}</MDXRenderer>
         </ContentMain>
       </Content>
     </Layout>
@@ -141,9 +136,8 @@ export const pageQuery = graphql`
         author
       }
     }
-    markdownRemark(fields: { slug: { eq: $slug } }) {
-      id
-      html
+    mdx( slug: { eq: $slug } ) {
+      body
       frontmatter {
         title
         date(formatString: "YYYY.MM.DD")
