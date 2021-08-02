@@ -40,7 +40,21 @@ module.exports = {
           path: `${__dirname}/content/blog`
       }
     },  
-    `gatsby-plugin-mdx`,
+    {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        gatsbyRemarkPlugins: [
+          `gatsby-remark-smartypants`,
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 700,
+              linkImagesToOriginal: false,
+            },
+          },
+        ],
+      },
+    },
     // {
     //   resolve: "gatsby-plugin-google-analytics",
     //   options: {

@@ -1,12 +1,14 @@
 import * as React from "react"
 import styled, { ThemeProvider } from "styled-components";
 import { useStaticQuery, graphql } from 'gatsby'
+import { MDXProvider } from "@mdx-js/react"
 
 import GlobalStyle from "../styles/global";
 import theme from "../styles/theme";
 import Bio from "./Bio";
 import Footer from "./Footer";
 import Header from "./Header"
+import CodeBlock from "./CodeBlock";
 
 const MainContainer = styled.div`
     max-width: ${props => props.theme.sizes.maxWidth};
@@ -43,6 +45,10 @@ const MainWrapper = styled.div`
   }
 `;
 
+const components = {
+    code: CodeBlock,
+};
+
 const Layout = ({ children }) => {
     const data = useStaticQuery(graphql`
         query {
@@ -60,22 +66,24 @@ const Layout = ({ children }) => {
     `)
 
     return (
-        <ThemeProvider theme={theme}>
-            <Header title={data.site.siteMetadata.title} />
+        <MDXProvider components={components}>
+            <ThemeProvider theme={theme}>
+                <Header title={data.site.siteMetadata.title} />
 
-            <MainContainer>
-                <MainContent>
-                    <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} />
-                    <MainWrapper>
-                        <main>{children}</main>
-                    </MainWrapper>
-                </MainContent>
-            </MainContainer>
+                <MainContainer>
+                    <MainContent>
+                        <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} />
+                        <MainWrapper>
+                            <main>{children}</main>
+                        </MainWrapper>
+                    </MainContent>
+                </MainContainer>
 
-            <Footer />
+                <Footer />
 
-            <GlobalStyle />
-        </ThemeProvider>
+                <GlobalStyle />
+            </ThemeProvider>
+        </MDXProvider>
     )
 }
 

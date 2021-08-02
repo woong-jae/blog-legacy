@@ -5,7 +5,7 @@ import Layout from "../components/Layout"
 
 const Content = styled.h1`
   text-align: center;
-  
+  color: ${props => props.theme.colors.whiteSmoke}
 `
 // markup
 const NotFoundPage = () => {
