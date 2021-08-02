@@ -150,6 +150,10 @@ const globalStyle = createGlobalStyle`
     font-size: 1em;
   }
 
+  code {
+    box-shadow: inset 0 -10px 0 #D9FCDB; 
+  }
+
   button,
   input,
   optgroup,
