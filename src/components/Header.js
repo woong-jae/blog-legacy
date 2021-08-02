@@ -15,7 +15,7 @@ const HeaderContainer = styled.header`
 `
 
 const HeaderContent = styled.div`
-    width: 95%;
+    padding-left: 20px;
     .logo-link {
         display: block;
         width: fit-content;
@@ -23,7 +23,7 @@ const HeaderContent = styled.div`
     .logo-title {
         font-weight: 600;
         letter-spacing: 1px;
-        font-size: 2rem;
+        font-size: 2.5rem;
         ${props => {
             return css`
                 color: ${props.theme.colors["whiteSmoke"]}
