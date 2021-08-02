@@ -70,7 +70,7 @@ const PostCardContent = styled.div`
 `;
 
 const PostPreview = ({ node }) => {
-  const title = node.frontmatter.title || node.fields.slug;
+  const title = node.frontmatter.title || node.slug;
   const emoji = twemoji.parse(node.frontmatter.emoji || "🐱", {
     folder: "svg",
     ext: ".svg"

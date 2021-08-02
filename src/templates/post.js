@@ -97,7 +97,7 @@ const PostContent = styled.div`
 `;
 
 const PostTemplate = ({ data, pageContext, location }) => {
-  const post = data.markdownRemark
+  const post = data.mdx
   const metaData = data.site.siteMetadata
   const { title: siteTitle, siteUrl } = metaData
   const { title, date, category, emoji } = post.frontmatter
@@ -141,8 +141,7 @@ export const pageQuery = graphql`
         author
       }
     }
-    markdownRemark(fields: { slug: { eq: $slug } }) {
-      id
+    mdx( slug: { eq: $slug } ) {
       html
       frontmatter {
         title
