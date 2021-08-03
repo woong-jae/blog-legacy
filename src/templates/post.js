@@ -8,8 +8,6 @@ import { MDXRenderer } from "gatsby-plugin-mdx";
 import Layout from "../components/Layout";
 import Seo from "../components/Seo";
 import CategoryLabel from "../components/CategoryLabel";
-
-import svgPattern from "../images/pattern.svg";
 import Comment from "../components/Comment";
 
 const Content = styled.section`
@@ -51,9 +49,6 @@ const HeroImage = styled.p`
   margin: 0;
   background: ${(props) => props.theme.colors.blackLight};
   text-align: center;
-  background-image: url("${svgPattern}");
-  background-repeat: repeat;
-  background-size: 400px;
   min-height: 230px;
   display: flex;
   align-items: center;
