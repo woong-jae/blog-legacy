@@ -48,6 +48,7 @@ const PostCardContent = styled.div`
   width: calc(100% - 80px);
   padding-left: 15px;
   h5 {
+    margin: 0;
     font-size: 1.1em;
     font-weight: 600;
     line-height: 1.45;
