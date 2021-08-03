@@ -139,6 +139,7 @@ const globalStyle = createGlobalStyle`
   }
 
   pre {
+    white-space: pre-wrap;
     overflow: auto;
   }
 
@@ -147,7 +148,7 @@ const globalStyle = createGlobalStyle`
   pre,
   samp {
     font-family: monospace, monospace;
-    font-size: 1em;
+    font-size: 0.9em;
   }
 
   code {

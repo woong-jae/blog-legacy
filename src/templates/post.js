@@ -91,7 +91,6 @@ const DividingLine = styled.hr`
   margin: 50px 0px 20px;
 `
 
-
 const PostTemplate = ({ data, pageContext, location }) => {
   const post = data.mdx
   const metaData = data.site.siteMetadata
