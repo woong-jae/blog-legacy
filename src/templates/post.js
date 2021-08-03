@@ -88,7 +88,7 @@ const PostDate = styled.time`
 `;
 
 const DividingLine = styled.hr`
-  margin: 50px 0px 20px;
+  margin: 30px 0px 20px;
 `
 
 const PostTemplate = ({ data, pageContext, location }) => {
@@ -119,6 +119,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
           <PostDate>{date}</PostDate>
           <PostTitle>{title}</PostTitle>
           <CategoryLabel slug={category} isLink="true" />
+          <DividingLine />
           <MDXRenderer>{post.body}</MDXRenderer>
           <DividingLine />
           <PostNavigator pageContext={pageContext} />

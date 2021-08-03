@@ -16,6 +16,7 @@ const globalStyle = createGlobalStyle`
   }
   body {
     background: ${(props) => props.theme.colors.background};
+    font-family: "Noto Sans KR";
     color: #333;
     margin: 0;
   }
@@ -138,26 +139,24 @@ const globalStyle = createGlobalStyle`
     height: 0;
   }
 
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: "Roboto Mono", monospace;
+    font-size: 0.9em;
+  }
+
   pre {
     white-space: pre-wrap;
     overflow: auto;
   }
 
-  code,
-  kbd,
-  pre,
-  samp {
-    font-family: monospace, monospace;
-    font-size: 0.9em;
-  }
-
   code {
-    ${'' /* box-shadow: inset 0 -10px 0 #D9FCDB;  */}
     background-color: #D9FCDB;
     padding: 0.15em 0.4em;
     margin: 0.2em;
     border-radius: 4px;
-    font-family: Menlo, Monaco, "Courier New", monospace;
     font-size: 0.85em;
   }
 

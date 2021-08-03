@@ -93,6 +93,16 @@ module.exports = {
         crossOrigin: `use-credentials`,
       },
     },
+    {
+      resolve: `gatsby-plugin-google-fonts`,
+      options: {
+        fonts: [
+          `Noto+Sans+KR\:100,300,400,500,700,900`,
+          `Roboto+Mono\:100,300,400,500,700,900`
+          ],
+        display: "swap",
+      },
+    },
     // {
     //   resolve: "gatsby-plugin-google-analytics",
     //   options: {
