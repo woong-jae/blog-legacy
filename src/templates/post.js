@@ -9,6 +9,7 @@ import Layout from "../components/Layout";
 import Seo from "../components/Seo";
 import CategoryLabel from "../components/CategoryLabel";
 import Comment from "../components/Comment";
+import PostNavigator from "../components/PostNavigator";
 
 const Content = styled.section`
   position: relative;
@@ -87,7 +88,7 @@ const PostDate = styled.time`
 `;
 
 const DividingLine = styled.hr`
-  margin: 50px 0px;
+  margin: 50px 0px 20px;
 `
 
 
@@ -121,6 +122,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
           <CategoryLabel slug={category} isLink="true" />
           <MDXRenderer>{post.body}</MDXRenderer>
           <DividingLine />
+          <PostNavigator pageContext={pageContext} />
           <Comment />
         </ContentMain>
       </Content>
