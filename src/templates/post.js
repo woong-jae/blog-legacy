@@ -86,6 +86,10 @@ const PostDate = styled.time`
   letter-spacing: 0.05em;
 `;
 
+const DividingLine = styled.hr`
+  margin: 50px 0px;
+`
+
 
 const PostTemplate = ({ data, pageContext, location }) => {
   const post = data.mdx
@@ -116,6 +120,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
           <PostTitle>{title}</PostTitle>
           <CategoryLabel slug={category} isLink="true" />
           <MDXRenderer>{post.body}</MDXRenderer>
+          <DividingLine />
           <Comment />
         </ContentMain>
       </Content>
