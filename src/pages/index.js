@@ -1,5 +1,6 @@
 import * as React from "react"
 import { graphql } from "gatsby";
+import { Helmet } from "react-helmet";
 
 import Layout from "../components/Layout"
 import PostPreview from "../components/PostPreview";
@@ -11,6 +12,9 @@ const IndexPage = ({ data }) => {
   return (
     <Layout>
       <Seo />
+      <Helmet>
+        <link rel="canonical" href="https://woong-jae.netlify.app" />
+      </Helmet>
       {posts.map(node => {
           return <PostPreview key={node.slug} node={node} />;
         })}

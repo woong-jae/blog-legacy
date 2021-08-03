@@ -1,28 +1,31 @@
-import React, { createRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
+
+const COMMENTS_ID = 'comments-container';
 
 const Comment = () => {
-    const commentRef = createRef();
-
     useEffect(() => {
-        const utterances = document.createElement('script');
+        const script = document.createElement('script');
+        script.src = 'https://utteranc.es/client.js';
+        script.setAttribute('repo', 'emgoto/emgoto-comments');
+        script.setAttribute('issue-term', 'pathname');
+        script.setAttribute('theme', 'github-light');
+        script.setAttribute('crossorigin', 'anonymous');
+        script.async = true;
 
-        const utterancesConfig = {
-            src: 'https://utteranc.es/client.js',
-            repo: 'woong-jae/Blog',
-            theme: 'github-light',
-            'issue-term': 'pathname',
-            async: true,
-            crossorigin: 'anonymous',
+        const comments = document.getElementById(COMMENTS_ID);
+        if (comments) comments.appendChild(script);
+
+        // This function will get called when the component unmounts
+        // To make sure we don't end up with multiple instances of the comments component
+        return () => {
+            const comments = document.getElementById(COMMENTS_ID);
+            if (comments) comments.innerHTML = '';
         };
+    }, []);
 
-        Object.entries(utterancesConfig).forEach(([key, value]) => {
-            utterances.setAttribute(key, value);
-        })
-
-        commentRef.current.appendChild(utterances);
-    }, [])
-
-    return <div className="comments" ref={commentRef}></div>;
+    return (
+        <div id={COMMENTS_ID} />
+    );
 }
 
 export default Comment

@@ -136,6 +136,7 @@ export const pageQuery = graphql`
       siteMetadata {
         title
         author
+        siteUrl
       }
     }
     mdx( id: { eq: $id } ) {
