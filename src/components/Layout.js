@@ -57,6 +57,7 @@ const Layout = ({ children }) => {
                     title
                     author
                     socials {
+                        email
                         github
                         instagram
                     }

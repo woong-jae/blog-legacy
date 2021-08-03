@@ -2,14 +2,19 @@ import * as React from 'react'
 import styled from 'styled-components'
 
 const FooterContainer = styled.footer`
-    width: 100%;
-    padding: 30px 0;
+    max-width: ${props => props.theme.sizes.maxWidth};
+    margin: 0 auto;
+    padding: 30px ${props => props.theme.sideSpace.large};
+    @media screen and (max-width: ${props => props.theme.responsive.large}) {
+        max-width: 760px;
+    }
+    @media screen and (max-width: ${props => props.theme.responsive.small}) {
+        padding: 10px ${props => props.theme.sideSpace.small} 0;
+    }
 `
 
 const FooterContent = styled.div`
     color: ${props => props.theme.colors.whiteSmoke};
-    margin: 0 auto;
-    width: 50%;
     text-align: center;
 `
 

@@ -10,6 +10,7 @@ import Seo from "../components/Seo";
 import CategoryLabel from "../components/CategoryLabel";
 
 import svgPattern from "../images/pattern.svg";
+import Comment from "../components/Comment";
 
 const Content = styled.section`
   position: relative;
@@ -120,6 +121,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
           <PostTitle>{title}</PostTitle>
           <CategoryLabel slug={category} isLink="true" />
           <MDXRenderer>{post.body}</MDXRenderer>
+          <Comment />
         </ContentMain>
       </Content>
     </Layout>

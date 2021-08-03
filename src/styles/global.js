@@ -151,7 +151,13 @@ const globalStyle = createGlobalStyle`
   }
 
   code {
-    box-shadow: inset 0 -10px 0 #D9FCDB; 
+    ${'' /* box-shadow: inset 0 -10px 0 #D9FCDB;  */}
+    background-color: #D9FCDB;
+    padding: 0.15em 0.4em;
+    margin: 0.2em;
+    border-radius: 4px;
+    font-family: Menlo, Monaco, "Courier New", monospace;
+    font-size: 0.85em;
   }
 
   button,
