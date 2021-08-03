@@ -1,4 +1,10 @@
 import React, { useEffect } from 'react';
+import styled from 'styled-components';
+
+const CommentContainer = styled.div`
+    background-color: ${props => props.theme.colors.whiteSmoke};
+    padding-bottom: 30px;
+`
 
 const COMMENTS_ID = 'comments-container';
 
@@ -24,7 +30,7 @@ const Comment = () => {
     }, []);
 
     return (
-        <div id={COMMENTS_ID} />
+        <CommentContainer id={COMMENTS_ID} />
     );
 }
 

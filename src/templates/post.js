@@ -121,10 +121,9 @@ const PostTemplate = ({ data, pageContext, location }) => {
           <CategoryLabel slug={category} isLink="true" />
           <DividingLine />
           <MDXRenderer>{post.body}</MDXRenderer>
-          <DividingLine />
-          <PostNavigator pageContext={pageContext} />
-          <Comment />
         </ContentMain>
+        <PostNavigator pageContext={pageContext} />
+        <Comment />
       </Content>
     </Layout>
   )

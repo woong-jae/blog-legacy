@@ -1,58 +1,100 @@
-import * as React from 'react'
-import { Link } from 'gatsby';
+import React from "react";
+import { Link } from "gatsby";
 import styled from "styled-components";
+import twemoji from "twemoji";
 
-const PostNavContainer = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    margin-bottom: 20px;
-`
+const Wrapper = styled.div`
+  background: ${props => props.theme.colors.whiteSmoke};
+  padding: 2em ${props => props.theme.sideSpace.contentLarge};
+  @media screen and (max-width: ${props => props.theme.responsive.small}) {
+    padding: 30px ${props => props.theme.sideSpace.contentSmall};
+  }
+`;
 
-const PostNavItem = styled.div`
-    margin: 5px;
-    .guide-text {
-        margin-bottom: 5px;
+const PostCardWrapper = styled.div`
+  .post-card-link {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1em;
+    padding: 15px;
+    background: #fff;
+    border-radius: 5px;
+    color: ${props => props.theme.colors.blackLight};
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    &:hover {
+      background: #e0ebf1;
     }
-`
-const NavItem = styled.div`
-    width: auto;
-    padding: 10px;
-    border: solid;
-    border-color: ${props => props.theme.colors.silver};
-    border-radius: 4px;
-`
+    @media screen and (max-width: ${props => props.theme.responsive.small}) {
+      padding: 10px;
+    }
+  }
+`;
+const PostCardEmoji = styled.p`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  width: 80px;
+  height: 80px;
+  background: ${props => props.theme.colors.whiteSmoke};
+  border-radius: 4px;
+  font-size: 50px;
+  img {
+    width: 55px;
+    height: 55px;
+  }
+`;
+const PostCardContent = styled.div`
+  width: calc(100% - 80px);
+  padding-left: 15px;
+  h5 {
+    font-size: 1.1em;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+  time {
+    display: block;
+    margin-bottom: 0.1em;
+    letter-spacing: 0.05em;
+    font-size: 0.8em;
+    color: ${props => props.theme.colors.silver};
+  }
+  @media screen and (max-width: ${props => props.theme.responsive.small}) {
+    padding-left: 15px;
+    h5 {
+      font-size: 1em;
+    }
+  }
+`;
 
+const RelatedPostCard = ({ node }) => {
+  const title = node.frontmatter.title || node.slug;
+  const emoji = twemoji.parse(node.frontmatter.emoji || "🐱", {
+    folder: "svg",
+    ext: ".svg"
+  });
+
+  return (
+    <PostCardWrapper>
+      <Link to={`/${node.frontmatter.category}/${node.id}`} className="post-card-link">
+        <PostCardEmoji dangerouslySetInnerHTML={{ __html: emoji }} />
+        <PostCardContent>
+          <h5>{title}</h5>
+          <time>{node.frontmatter.date}</time>
+        </PostCardContent>
+      </Link>
+    </PostCardWrapper>
+  );
+};
 
 const PostNavigator = ({ pageContext }) => {
     const { previous, next } = pageContext;
-    return (
-        <PostNavContainer>
-            <PostNavItem>
-            {previous &&
-                <NavItem>
-                    <div>
-                        <div className="guide-text">이전 글</div>
-                        <Link to={`/${previous.frontmatter.category}/${previous.id}`}>
-                            {`${previous.frontmatter.title}`}
-                        </Link>
-                    </div>
-                </NavItem>
-            }
-            </PostNavItem>
-            <PostNavItem>
-            {next &&
-                <NavItem>
-                    <div>
-                        <div className="guide-text">다음 글</div>
-                        <Link to={`/${next.frontmatter.category}/${next.id}`}>
-                            {`${next.frontmatter.title}`}
-                        </Link>
-                    </div>
-                </NavItem>
-            }
-            </PostNavItem>
-        </PostNavContainer>
-    )
-}
+    let content = [];
 
-export default PostNavigator
+    if (previous) content.push(<RelatedPostCard key={previous.slug} node={previous} />);
+    if (next) content.push(<RelatedPostCard key={next.slug} node={next} />);
+   
+    return <Wrapper>{content}</Wrapper>;
+};
+
+export default PostNavigator;
