@@ -35,6 +35,11 @@ const MainContent = styled.div`
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
         margin-top: 0;
     }
+    .page-bio {
+      @media screen and (max-width: ${props => props.theme.responsive.large}) {
+        display: none;
+      }
+    }
 `
 const MainWrapper = styled.div`
   width: calc(100% - ${props => props.theme.sizes.bioWidth} - 40px);
@@ -49,7 +54,7 @@ const components = {
     code: CodeBlock,
 };
 
-const Layout = ({ children }) => {
+const Layout = ({ children, isPage }) => {
     const data = useStaticQuery(graphql`
         query {
             site {
@@ -73,7 +78,7 @@ const Layout = ({ children }) => {
 
                 <MainContainer>
                     <MainContent>
-                        <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} />
+                        <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} isPage={isPage} />
                         <MainWrapper>
                             <main>{children}</main>
                         </MainWrapper>

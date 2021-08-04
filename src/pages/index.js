@@ -10,7 +10,7 @@ const IndexPage = ({ data }) => {
   const posts = data.allMdx.nodes;
 
   return (
-    <Layout>
+    <Layout isPage={false}>
       <Seo />
       <Helmet>
         <link rel="canonical" href="https://woong-jae.netlify.app" />

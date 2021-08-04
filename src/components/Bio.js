@@ -58,7 +58,6 @@ const BioText = styled.p`
 `;
 
 const BioLinks = styled.div`
-  margin: 0 auto;
   margin-top: 1.5em;
   display: flex;
   color: #fff;
@@ -69,9 +68,6 @@ const BioLinks = styled.div`
     margin: 0 auto;
     width: 40px;
     height: 33px;
-  }
-  @media screen and (max-width: ${props => props.theme.responsive.large}) {
-    margin: 1.5em 0 0 0;
   }
 `;
 const BioLink = styled.a`
@@ -87,9 +83,9 @@ const BioLink = styled.a`
   }
 `;
 
-const Bio = ({ author, socials }) => {
+const Bio = ({ author, socials, isPage }) => {
     return (
-        <BioContainer>
+        <BioContainer className={isPage && "page-bio"}>
             <BioHeader>
                 <AvatarImage src={avatar} alt="avatar" />
                 <BioName>
@@ -102,7 +98,7 @@ const Bio = ({ author, socials }) => {
                 </BioText>
                 <BioLinks>
                     <BioLink href={`mailto:${socials.email}`}>
-                    <MdMail color={'#FFF'} size={32} />
+                      <MdMail color={'#FFF'} size={32} />
                     </BioLink>
                     <BioLink href={`https://github.com/${socials.github}`}>
                         <FaGithub color={'#FFF'} size={32} />

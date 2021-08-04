@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const CommentContainer = styled.div`
     background-color: ${props => props.theme.colors.whiteSmoke};
-    padding-bottom: 30px;
+    padding: 0 40px 30px;
 `
 
 const COMMENTS_ID = 'comments-container';

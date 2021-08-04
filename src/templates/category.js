@@ -9,7 +9,7 @@ const CategoryTemplate = ({ data }) => {
   const posts = data.allMdx.nodes;
 
   return (
-    <Layout>
+    <Layout isPage={false}>
       <Seo />
       {posts.map(node => {
           return <PostPreview key={node.slug} node={node} />;

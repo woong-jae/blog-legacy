@@ -98,7 +98,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
   const { title, date, category, emoji } = post.frontmatter
 
   return (
-    <Layout location={location} title={siteTitle}>
+    <Layout isPage={true}>
       <Seo />
       <Helmet>
         <link

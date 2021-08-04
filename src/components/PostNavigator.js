@@ -92,8 +92,10 @@ const PostNavigator = ({ pageContext }) => {
     const { previous, next } = pageContext;
     let content = [];
 
-    if (previous) content.push(<RelatedPostCard key={previous.slug} node={previous} />);
     if (next) content.push(<RelatedPostCard key={next.slug} node={next} />);
+    if (previous) content.push(<RelatedPostCard key={previous.slug} node={previous} />);
+
+    if (content.length < 1) return null;
    
     return <Wrapper>{content}</Wrapper>;
 };
