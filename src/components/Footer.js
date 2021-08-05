@@ -9,6 +9,7 @@ const FooterContainer = styled.footer`
         max-width: 760px;
     }
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
+        font-size: 0.8rem;
         padding: 10px ${props => props.theme.sideSpace.small} 10px;
     }
 `

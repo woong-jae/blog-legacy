@@ -148,7 +148,6 @@ const globalStyle = createGlobalStyle`
   }
 
   pre {
-    white-space: pre-wrap;
     overflow: auto;
   }
 

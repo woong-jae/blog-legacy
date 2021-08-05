@@ -83,9 +83,9 @@ const BioLink = styled.a`
   }
 `;
 
-const Bio = ({ author, socials, isPage }) => {
+const Bio = ({ author, socials }) => {
     return (
-        <BioContainer className={isPage && "page-bio"}>
+        <BioContainer>
             <BioHeader>
                 <AvatarImage src={avatar} alt="avatar" />
                 <BioName>

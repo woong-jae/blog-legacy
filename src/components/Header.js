@@ -16,19 +16,21 @@ const HeaderContainer = styled.header`
 
 const HeaderContent = styled.div`
     padding-left: 20px;
+    display: flex;
+    justify-content: space-between;
     .logo-link {
         display: block;
         width: fit-content;
     }
     .logo-title {
+        margin: 0;
         font-weight: 600;
         letter-spacing: 1px;
         font-size: 2.5rem;
-        ${props => {
-            return css`
-                color: ${props.theme.colors["whiteSmoke"]}
-            `
-        }}
+        color : ${props => props.theme.colors.whiteSmoke};
+        @media screen and (max-width: ${props => props.theme.responsive.small}) {
+            font-size: 2rem;
+        }
     }
 `
 

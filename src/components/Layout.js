@@ -9,13 +9,15 @@ import Bio from "./Bio";
 import Footer from "./Footer";
 import Header from "./Header"
 import CodeBlock from "./CodeBlock";
+import CategoryLabel from "./CategoryLabel";
 
 const MainContainer = styled.div`
     max-width: ${props => props.theme.sizes.maxWidth};
-    margin: 0 auto;
+    margin: 2em auto 0;
     padding: 0 ${props => props.theme.sideSpace.large};
     @media screen and (max-width: ${props => props.theme.responsive.large}) {
         max-width: 760px;
+        margin-top: 0em;
     }
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
         padding: 0 ${props => props.theme.sideSpace.small};
@@ -23,7 +25,6 @@ const MainContainer = styled.div`
 `
 
 const MainContent = styled.div`
-    margin-top: 2em;
     display: flex;
     min-height: 85vh;
     align-items: flex-start;
@@ -35,20 +36,35 @@ const MainContent = styled.div`
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
         margin-top: 0;
     }
-    .page-bio {
-      @media screen and (max-width: ${props => props.theme.responsive.large}) {
-        display: none;
-      }
+`
+
+const MainWrapper = styled.div`
+    width: calc(100% - ${props => props.theme.sizes.bioWidth} - 40px);
+    margin-right: 40px;
+    @media screen and (max-width: ${props => props.theme.responsive.large}) {
+        width: 100%;
+        margin-top: 70px;
+    }
+`;
+
+const PostWrapper = styled.div`
+    @media screen and (max-width: ${props => props.theme.responsive.large}) {
+        width: 100%;
+        margin-top: 70px;
     }
 `
-const MainWrapper = styled.div`
-  width: calc(100% - ${props => props.theme.sizes.bioWidth} - 40px);
-  margin-right: 40px;
-  @media screen and (max-width: ${props => props.theme.responsive.large}) {
-    width: 100%;
-    margin-top: 70px;
-  }
-`;
+
+const Category = styled.div`
+    color: ${props => props.theme.colors.whiteSmoke};
+    font-size: 1.2rem;
+    font-weight: 500;
+    display: flex;
+    margin-bottom: 20px;
+`
+
+const CategoryWrapper = styled.div`
+    padding: 0 5px;
+`
 
 const components = {
     code: CodeBlock,
@@ -66,6 +82,9 @@ const Layout = ({ children, isPage }) => {
                         github
                         instagram
                     }
+                    categories {
+                        slug
+                    }
                 }
             }
         }
@@ -75,13 +94,28 @@ const Layout = ({ children, isPage }) => {
         <MDXProvider components={components}>
             <ThemeProvider theme={theme}>
                 <Header title={data.site.siteMetadata.title} />
-
                 <MainContainer>
                     <MainContent>
-                        <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} isPage={isPage} />
-                        <MainWrapper>
-                            <main>{children}</main>
-                        </MainWrapper>
+                        {!isPage && <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} />}
+                        {isPage ? 
+                            <PostWrapper>
+                                <main>{children}</main>
+                            </PostWrapper>
+                        :
+                            <MainWrapper>
+                            <Category>
+                                카테고리 :
+                                {data.site.siteMetadata.categories.map(category => {
+                                    return (
+                                        <CategoryWrapper>
+                                            <CategoryLabel slug={category.slug} isLink={true} />
+                                        </CategoryWrapper>
+                                    )
+                                })}
+                            </Category>
+                                <main>{children}</main>
+                            </MainWrapper>
+                        }
                     </MainContent>
                 </MainContainer>
 
