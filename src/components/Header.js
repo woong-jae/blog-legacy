@@ -1,6 +1,6 @@
 import { Link } from 'gatsby'
 import * as React from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 const HeaderContainer = styled.header`
     max-width: ${props => props.theme.sizes.maxWidth};

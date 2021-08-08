@@ -159,6 +159,22 @@ const globalStyle = createGlobalStyle`
     font-size: 0.85em;
   }
 
+  blockquote {
+    background-color: ${props => props.theme.colors.whiteSmoke};
+    border-radius: 10px;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    padding-block-start: 1em;
+    padding-block-end: 1em;
+    padding-inline-start: 40px;
+    padding-inline-end: 40px;
+    p {
+      margin: 0;
+    }
+  }
+
   button,
   input,
   optgroup,

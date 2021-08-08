@@ -48,8 +48,8 @@ const MainWrapper = styled.div`
 `;
 
 const PostWrapper = styled.div`
+    width: 100%;
     @media screen and (max-width: ${props => props.theme.responsive.large}) {
-        width: 100%;
         margin-top: 70px;
     }
 `
