@@ -31,6 +31,9 @@ const HeaderContent = styled.div`
         @media screen and (max-width: ${props => props.theme.responsive.small}) {
             font-size: 2rem;
         }
+        &:hover {
+            color: ${(props) => props.theme.colors.silver};
+        }
     }
 `
 

@@ -9,7 +9,7 @@ import Bio from "./Bio";
 import Footer from "./Footer";
 import Header from "./Header"
 import CodeBlock from "./CodeBlock";
-import CategoryLabel from "./CategoryLabel";
+import CategoryItem from "./CategoryItem";
 
 const MainContainer = styled.div`
     max-width: ${props => props.theme.sizes.maxWidth};
@@ -62,10 +62,6 @@ const Category = styled.div`
     margin-bottom: 20px;
 `
 
-const CategoryWrapper = styled.div`
-    padding: 0 5px;
-`
-
 const components = {
     code: CodeBlock,
 };
@@ -83,6 +79,7 @@ const Layout = ({ children, isPage }) => {
                         instagram
                     }
                     categories {
+                        name
                         slug
                     }
                 }
@@ -104,12 +101,9 @@ const Layout = ({ children, isPage }) => {
                         :
                             <MainWrapper>
                             <Category>
-                                카테고리 :
                                 {data.site.siteMetadata.categories.map(category => {
                                     return (
-                                        <CategoryWrapper>
-                                            <CategoryLabel slug={category.slug} isLink={true} />
-                                        </CategoryWrapper>
+                                        <CategoryItem category={category}/>
                                     )
                                 })}
                             </Category>

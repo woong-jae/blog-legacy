@@ -69,6 +69,12 @@ const BioLinks = styled.div`
     width: 40px;
     height: 33px;
   }
+  a {
+    color: #FFF;
+    &:hover {
+      color: ${(props) => props.theme.colors.silver};
+    }
+  }
 `;
 const BioLink = styled.a`
   width: 33.3%;
@@ -76,11 +82,7 @@ const BioLink = styled.a`
   font-weight: 700;
   font-size: 0.9em;
   line-height: 30px;
-  color: ${(props) => props.theme.colors.gray};
   letter-spacing: 0.5px;
-  &:hover {
-    color: ${(props) => props.theme.colors.highlight};
-  }
 `;
 
 const Bio = ({ author, socials }) => {
@@ -98,13 +100,13 @@ const Bio = ({ author, socials }) => {
                 </BioText>
                 <BioLinks>
                     <BioLink href={`mailto:${socials.email}`}>
-                      <MdMail color={'#FFF'} size={32} />
+                      <MdMail className="bio-icon" size={32} />
                     </BioLink>
                     <BioLink href={`https://github.com/${socials.github}`}>
-                        <FaGithub color={'#FFF'} size={32} />
+                        <FaGithub size={32} />
                     </BioLink>
                     <BioLink href={`https://instagram.com/${socials.instagram}`}>
-                        <FaInstagram color={'#FFF'} size={32} />
+                        <FaInstagram size={32} />
                     </BioLink>
                 </BioLinks>
             </BioMain>
