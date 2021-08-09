@@ -16,7 +16,7 @@ module.exports = {
         color: "#0c9ee4",
       },
       {
-        name: "Front",
+        name: "Frontend",
         slug: "front",
         color: "#f7615f",
       },
