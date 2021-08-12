@@ -94,12 +94,12 @@ const DividingLine = styled.hr`
 const PostTemplate = ({ data, pageContext, location }) => {
   const post = data.mdx
   const metaData = data.site.siteMetadata
-  const { title: siteTitle, siteUrl } = metaData
+  const { siteUrl, description } = metaData
   const { title, date, category, emoji } = post.frontmatter
 
   return (
     <Layout isPage={true}>
-      <Seo />
+      <Seo title={title} description={description || post.excerpt}/>
       <Helmet>
         <link
           rel="canonical"
@@ -135,13 +135,13 @@ export const pageQuery = graphql`
   query ($id: String!) {
     site {
       siteMetadata {
-        title
-        author
         siteUrl
+        description
       }
     }
     mdx( id: { eq: $id } ) {
       body
+      excerpt(pruneLength: 150)
       frontmatter {
         title
         date(formatString: "YYYY.MM.DD")
