@@ -9,7 +9,7 @@ const CategoryContainer = styled.div`
     margin: 0 5px;
     color: ${props => props.theme.colors.whiteSmoke};
     &:hover {
-        transform: rotate(10deg);
+        transform: rotate(5deg);
         background: ${props => props.theme.colors.gradient};
         color: ${props => props.theme.colors.blackLight};
     }
