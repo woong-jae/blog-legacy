@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    siteUrl: "http://woong-jae.com",
+    siteUrl: "https://woong-jae.com",
     title: "햣 블로그",
     description: "woong-jae의 기술 블로그",
     author: "woong-jae",
