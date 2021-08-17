@@ -13,7 +13,7 @@ const variables = {
     },
     sizes: {
       bioWidth: "230px",
-      maxWidth: "950px"
+      maxWidth: "900px"
     },
     sideSpace: {
       small: "20px",

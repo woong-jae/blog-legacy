@@ -88,36 +88,36 @@ const Layout = ({ children, isPage }) => {
     `)
 
     return (
-        <MDXProvider components={components}>
-            <ThemeProvider theme={theme}>
-                <Header title={data.site.siteMetadata.title} />
-                <MainContainer>
-                    <MainContent>
-                        {!isPage && <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} />}
-                        {isPage ? 
-                            <PostWrapper>
+        <ThemeProvider theme={theme}>
+            <Header title={data.site.siteMetadata.title} />
+            <MainContainer>
+                <MainContent>
+                    {!isPage && <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} />}
+                    {isPage ? 
+                        <PostWrapper>
+                            <MDXProvider components={components}>
                                 <main>{children}</main>
-                            </PostWrapper>
-                        :
-                            <MainWrapper>
-                            <Category>
-                                {data.site.siteMetadata.categories.map(category => {
-                                    return (
-                                        <CategoryItem category={category}/>
-                                    )
-                                })}
-                            </Category>
-                                <main>{children}</main>
-                            </MainWrapper>
-                        }
-                    </MainContent>
-                </MainContainer>
+                            </MDXProvider>
+                        </PostWrapper>
+                    :
+                        <MainWrapper>
+                        <Category>
+                            {data.site.siteMetadata.categories.map(category => {
+                                return (
+                                    <CategoryItem category={category}/>
+                                )
+                            })}
+                        </Category>
+                            <main>{children}</main>
+                        </MainWrapper>
+                    }
+                </MainContent>
+            </MainContainer>
 
-                <Footer />
+            <Footer />
 
-                <GlobalStyle />
-            </ThemeProvider>
-        </MDXProvider>
+            <GlobalStyle />
+        </ThemeProvider>
     )
 }
 

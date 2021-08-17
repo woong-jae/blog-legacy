@@ -144,7 +144,7 @@ const globalStyle = createGlobalStyle`
   pre,
   samp {
     font-family: "Roboto Mono", monospace;
-    font-size: 0.9em;
+    font-size: 0.95em;
   }
 
   pre {
@@ -157,6 +157,7 @@ const globalStyle = createGlobalStyle`
     margin: 0.2em;
     border-radius: 4px;
     font-size: 0.85em;
+    font-weight: 500;
   }
 
   blockquote {

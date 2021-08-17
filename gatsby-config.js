@@ -21,9 +21,9 @@ module.exports = {
         color: "#f7615f",
       },
       {
-        name: "Javascript",
+        name: "JavaScript",
         slug: "javascript",
-        color: "rgb(238, 217, 16)",
+        color: "rgb(255, 204, 76)",
       },
     ],
   },
