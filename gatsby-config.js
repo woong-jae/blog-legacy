@@ -81,8 +81,8 @@ module.exports = {
         name: "햣 블로그 by woong-jae",
         short_name: "햣 블로그",
         start_url: "/",
-        background_color: "##25292e",
-        theme_color: "##25292e",
+        background_color: "#25292e",
+        theme_color: "#25292e",
         // Enables "Add to Homescreen" prompt and disables browser UI (including back button)
         // see https://developers.google.com/web/fundamentals/web-app-manifest/#display
         display: "standalone",
