@@ -48,7 +48,7 @@ const PostCardContent = styled.div`
   h3 {
     margin: 0;
     font-size: 1.4em;
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1.4;
   }
   time {
