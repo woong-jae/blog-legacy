@@ -103,12 +103,14 @@ module.exports = {
         display: "swap",
       },
     },
-    // {
-    //   resolve: "gatsby-plugin-google-analytics",
-    //   options: {
-    //     trackingId: "",
-    //   },
-    // },
+    {
+      resolve: 'gatsby-plugin-robots-txt',
+      options: {
+        host: 'https://woong-jae.com',
+        sitemap: 'https://woong-jae.com/sitemap/sitemap-index.xml',
+        policy: [{userAgent: '*', allow: '/'}]
+      }
+    },
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-sitemap",
     "gatsby-plugin-sharp",
