@@ -85,6 +85,10 @@ const globalStyle = createGlobalStyle`
     margin: 0.67em 0;
   }
 
+  ul {
+    padding-left: 23px;
+  }
+
   mark {
     background: #ff0;
     color: #000;
