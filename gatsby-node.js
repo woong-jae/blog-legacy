@@ -52,14 +52,14 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   posts.forEach((node, index) => {
     const previous = index === posts.length - 1 ? null : posts[index + 1]
     const next = index === 0 ? null : posts[index - 1]
-    const path = `${node.frontmatter.category}/${node.id}`
+    const path = `${node.slug}`
     createPage({
       path,
       component: blogPostTemplate,
       // In your blog post template's graphql query, you can use pagePath
       // as a GraphQL variable to query for data from the markdown file.
       context: {
-        id: node.id,
+        slug: node.slug,
         previous,
         next
       },

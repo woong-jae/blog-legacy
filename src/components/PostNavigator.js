@@ -70,14 +70,14 @@ const PostCardContent = styled.div`
 
 const RelatedPostCard = ({ node }) => {
   const title = node.frontmatter.title || node.slug;
-  const emoji = twemoji.parse(node.frontmatter.emoji || "🐱", {
+  const emoji = twemoji.parse(node.frontmatter.emoji || "🙂", {
     folder: "svg",
     ext: ".svg"
   });
 
   return (
     <PostCardWrapper>
-      <Link to={`/${node.frontmatter.category}/${node.id}`} className="post-card-link">
+      <Link to={`/${node.slug}`} className="post-card-link">
         <PostCardEmoji dangerouslySetInnerHTML={{ __html: emoji }} />
         <PostCardContent>
           <h5>{title}</h5>
