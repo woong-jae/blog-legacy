@@ -1,14 +1,12 @@
 import * as React from "react"
 import styled, { ThemeProvider } from "styled-components";
 import { useStaticQuery, graphql } from 'gatsby'
-import { MDXProvider } from "@mdx-js/react"
 
 import GlobalStyle from "../styles/global";
 import theme from "../styles/theme";
 import Bio from "./Bio";
 import Footer from "./Footer";
 import Header from "./Header"
-import CodeBlock from "./CodeBlock";
 import CategoryItem from "./CategoryItem";
 
 const MainContainer = styled.div`
@@ -62,10 +60,6 @@ const Category = styled.div`
     margin-bottom: 20px;
 `
 
-const components = {
-    code: CodeBlock,
-};
-
 const Layout = ({ children, isPage }) => {
     const data = useStaticQuery(graphql`
         query {
@@ -95,9 +89,7 @@ const Layout = ({ children, isPage }) => {
                     {!isPage && <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} />}
                     {isPage ? 
                         <PostWrapper>
-                            <MDXProvider components={components}>
-                                <main>{children}</main>
-                            </MDXProvider>
+                            <main>{children}</main>
                         </PostWrapper>
                     :
                         <MainWrapper>

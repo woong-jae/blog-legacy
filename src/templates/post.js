@@ -4,12 +4,14 @@ import { Helmet } from "react-helmet";
 import twemoji from "twemoji";
 import styled from "styled-components";
 import { MDXRenderer } from "gatsby-plugin-mdx";
+import { MDXProvider } from "@mdx-js/react"
 
 import Layout from "../components/Layout";
 import Seo from "../components/Seo";
 import CategoryLabel from "../components/CategoryLabel";
 import Comment from "../components/Comment";
 import PostNavigator from "../components/PostNavigator";
+import CodeBlock from "../components/CodeBlock";
 
 const Content = styled.section`
   position: relative;
@@ -90,6 +92,9 @@ const PostDate = styled.time`
 const DividingLine = styled.hr`
   margin: 30px 0px 20px;
 `
+const components = { //코드 스타일링
+  code: CodeBlock,
+};
 
 const PostTemplate = ({ data, pageContext, location }) => {
   const post = data.mdx
@@ -120,7 +125,9 @@ const PostTemplate = ({ data, pageContext, location }) => {
           <PostTitle>{title}</PostTitle>
           <CategoryLabel slug={category} isLink="true" />
           <DividingLine />
-          <MDXRenderer>{post.body}</MDXRenderer>
+          <MDXProvider components={components}>
+            <MDXRenderer >{post.body}</MDXRenderer>
+          </MDXProvider>
         </ContentMain>
         <PostNavigator pageContext={pageContext} />
         <Comment />
