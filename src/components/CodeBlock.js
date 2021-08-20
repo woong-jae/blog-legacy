@@ -8,8 +8,9 @@ const CodeBlock = ({children, className}) => {
   return (
     <Highlight {...defaultProps} code={children} language={language} theme={oceanicNext}>
       {({className, style, tokens, getLineProps, getTokenProps}) => (
+        tokens.pop() && // 마지막 줄 공백 제거
         <pre className={className} style={{...style, padding: '20px'}}>
-          {tokens.map((line, i) => (
+          {tokens.map((line, i) => (    
             <div key={i} {...getLineProps({line, key: i})}>
               {line.map((token, key) => (
                 <span key={key} {...getTokenProps({token, key})} />
