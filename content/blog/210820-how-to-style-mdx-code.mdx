@@ -1,0 +1,76 @@
+---
+title: "[Gatsby] mdx 코드에 스타일 입히기"
+date: "2021-08-20"
+emoji: "🎨"
+category: "blog"
+---
+
+## Syntax highlighting - 코드에 스타일 입히기
+마크다운 불러오는 플러그인을 `gatsby-plugin-mdx`로 변경하면서 마크다운이 생얼이 됐다.
+폰트를 적용하니 오히려 스타일 없는게 더 맘에 들어서 생으로 쓰고 있었는데, 코드는 생얼이면 참 못생겨서 참을 수가 없었다. 가독성도 떨어지고.
+그래서 [공식 문서](https://mdxjs.com/guides/syntax-highlighting)를 뒤져보니 `prism-react-renderer`를 추천해서 썼다!
+
+## 그래서 어떻게 하는데?
+
+일단 `prism-react-renderer` 패키지를 받자.
+```bash
+npm install prism-react-renderer
+```
+
+그리고 공식 문서에 있는 `CodeBlock` 컴포넌트를 고대로 가져온다.
+```jsx
+import React from 'react'
+import Highlight, {defaultProps} from 'prism-react-renderer'
+
+export default ({children, className}) => {
+  const language = className.replace(/language-/, '')
+
+  return (
+    <Highlight {...defaultProps} code={children} language={language}>
+      {({className, style, tokens, getLineProps, getTokenProps}) => (
+        <pre className={className} style={{...style, padding: '20px'}}>
+          {tokens.map((line, i) => (
+            <div key={i} {...getLineProps({line, key: i})}>
+              {line.map((token, key) => (
+                <span key={key} {...getTokenProps({token, key})} />
+              ))}
+            </div>
+          ))}
+        </pre>
+      )}
+    </Highlight>
+  )
+}
+```
+
+그리고 스타일을 적용하고 싶은 곳에 `@mdx-js/react`의 `MDXProvider` 컴포넌트에 `components` prop으로 념겨주면 끝이다.
+
+```jsx
+import { MDXProvider } from "@mdx-js/react"
+import CodeBlock from "../components/CodeBlock";
+...
+
+const components = { //코드 스타일링
+  code: CodeBlock,
+};
+
+const PostTemplate = () => {
+    ...
+    <MDXProvider components={components}>
+        //Syntax Highlight 적용될 부분
+    </MDXProvider>
+    ...
+}
+```
+
+추가적으로 `prism-react-renderer`에서 기본적으로 제공하는 테마를 사용하려면, 원하는 테마를 `import`한 후 `CodeBlock`의 `Highlight`에 `theme`이라는 prop으로 넘겨주면 된다.
+
+<br/>
+
+참조: 
+[MDX](https://mdxjs.com/guides/syntax-highlighting)
+
+
+
+
+
