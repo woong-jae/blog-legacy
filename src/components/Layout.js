@@ -7,7 +7,7 @@ import theme from "../styles/theme";
 import Bio from "./Bio";
 import Footer from "./Footer";
 import Header from "./Header"
-import CategoryItem from "./CategoryItem";
+import CategoryBubble from "./CategoryBubble";
 
 const MainContainer = styled.div`
     max-width: ${props => props.theme.sizes.maxWidth};
@@ -93,13 +93,13 @@ const Layout = ({ children, isPage }) => {
                         </PostWrapper>
                     :
                         <MainWrapper>
-                        <Category>
-                            {data.site.siteMetadata.categories.map(category => {
-                                return (
-                                    <CategoryItem category={category}/>
-                                )
-                            })}
-                        </Category>
+                            <Category>
+                                {data.site.siteMetadata.categories.map(category => {
+                                    return (
+                                        <CategoryBubble category={category} />
+                                    )
+                                })}
+                            </Category>
                             <main>{children}</main>
                         </MainWrapper>
                     }

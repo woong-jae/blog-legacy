@@ -12,6 +12,7 @@ import CategoryLabel from "../components/CategoryLabel";
 import Comment from "../components/Comment";
 import PostNavigator from "../components/PostNavigator";
 import CodeBlock from "../components/CodeBlock";
+import postStyle from "../styles/post";
 
 const Content = styled.section`
   position: relative;
@@ -66,6 +67,7 @@ const HeroImage = styled.p`
 `;
 
 const ContentMain = styled.div`
+  ${postStyle}
   padding: 1.8em ${(props) => props.theme.sideSpace.contentLarge};
   @media screen and (max-width: ${(props) => props.theme.responsive.small}) {
     padding: 30px ${(props) => props.theme.sideSpace.contentSmall};
