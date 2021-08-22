@@ -33,9 +33,8 @@ const BioHeader = styled.div`
 const AvatarImage = styled.img`
   display: block;
   background-color: ${props => props.theme.colors.whiteSmoke};
-  width: 75px;
-  height: 75px;
-  border-radius: 50%;
+  width: 80px;
+  border-radius: 10px;
 `;
 
 const BioName = styled.div`
@@ -96,7 +95,7 @@ const Bio = ({ author, socials }) => {
             </BioHeader>
             <BioMain>
                 <BioText>
-                    나도 개발 고수가 된다.<br/>이것저것 공부하고 발전하는 개발자.
+                  이것 저것 공부하고 발전하는 대학생.
                 </BioText>
                 <BioLinks>
                     <BioLink href={`mailto:${socials.email}`}>

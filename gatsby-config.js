@@ -13,12 +13,12 @@ module.exports = {
       {
         name: "Blog",
         slug: "blog",
-        color: "#0c9ee4",
+        color: "#93B5C6",
       },
       {
         name: "Frontend",
         slug: "front",
-        color: "#f7615f",
+        color: "#595260",
       },
       {
         name: "JavaScript",
@@ -86,7 +86,7 @@ module.exports = {
         // Enables "Add to Homescreen" prompt and disables browser UI (including back button)
         // see https://developers.google.com/web/fundamentals/web-app-manifest/#display
         display: "standalone",
-        icon: "src/images/woong.png", // This path is relative to the root of the site.
+        icon: "src/images/favicon.png", // This path is relative to the root of the site.
         // An optional attribute which provides support for CORS check.
         // If you do not provide a crossOrigin option, it will skip CORS for manifest.
         // Any invalid keyword or empty string defaults to `anonymous`

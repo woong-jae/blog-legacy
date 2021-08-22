@@ -13,11 +13,10 @@ const postStyle = css`
 
     code {
         background-color: #D9FCDB;
-        padding: 0.15em 0.4em;
-        margin: 0.2em;
+        padding: 0.1em 0.4em;
+        margin: 0.1em;
         border-radius: 4px;
-        font-size: 0.85em;
-        font-weight: 500;
+        font-size: 0.9em;
     }
 
     blockquote {
