@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 
-import throttleOnRendering from "../utils/throttleOnRendering";
-
 const defaultOptions = {
     root: null,
     rootMargin: '1px',
@@ -11,19 +9,11 @@ const defaultOptions = {
 export default function useInfiniteScroll(onIntersect, option = defaultOptions) {
     const [ref, setRef] = useState(null);
 	// intersecting이 있을 때 target 엔트리와 observer를 넘겨주자.
-    // const checkIntersect = throttleOnRendering((entries, observer) => {
-    //     entries?.forEach(entry => {
-    //         if (entry.isIntersecting) {
-    //             console.log("detected");
-    //             onIntersect(entry, observer);
-    //         }
-    //     })
-    // });
     const checkIntersect = useCallback(([entry], observer) => {
         if (entry.isIntersecting) {
           onIntersect(entry, observer);
         }
-      }, []);
+    }, []);
 	// ref나 option이 바뀔 경우 observer를 새로 등록한다.
     useEffect(() => {
         let observer;

@@ -12,7 +12,8 @@
     "start": "gatsby develop",
     "build": "gatsby build",
     "serve": "gatsby serve",
-    "clean": "gatsby clean"
+    "clean": "gatsby clean",
+    "rmdev": "rm -rf node_modules/ .cache/ public/ && npm i && gatsby develop"
   },
   "dependencies": {
     "@mdx-js/mdx": "^1.6.22",
