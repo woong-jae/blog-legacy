@@ -96,7 +96,7 @@ const Layout = ({ children, isPage }) => {
                             <Category>
                                 {data.site.siteMetadata.categories.map(category => {
                                     return (
-                                        <CategoryBubble category={category} />
+                                        <CategoryBubble category={category} key={category.slug}/>
                                     )
                                 })}
                             </Category>
