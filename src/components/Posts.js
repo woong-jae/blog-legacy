@@ -5,7 +5,7 @@ import useInfiniteScroll from "../hooks/useInfiniteScroll";
 import throttleOnRendering from "../utils/throttleOnRendering";
 
 const Posts = ({ posts }) => {
-    const [count, setCount] = useState(5);
+    const [count, setCount] = useState(10);
     const [ref, setRef] = useInfiniteScroll(throttleOnRendering((entry, observer) => {
         // observer.unobserve(entry.target);
         loadMorePosts();

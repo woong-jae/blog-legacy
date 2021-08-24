@@ -34,6 +34,7 @@ const AvatarImage = styled.img`
   display: block;
   background-color: ${props => props.theme.colors.whiteSmoke};
   width: 80px;
+  height: 80px;
   border-radius: 10px;
 `;
 
