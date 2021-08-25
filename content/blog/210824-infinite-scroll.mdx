@@ -29,7 +29,8 @@ category: "blog"
 3. 추가적인 요소를 불러온다
 4. 2~3 계속 반복
 
-Observer를 컴포넌트에서 바로 달아주는 것도 가능하지만, custom Hook으로 만들어주는게 더 이쁠 것 같다. 구현할 `useInfiniteScroll.js` Hook은 `콜백 함수`와 `option`을 인자로 받아서 `IntersectionObserver`를 초기화 해준다.
+흐름대로라면 제일 먼저 해야할 것은 타겟 요소에 observer를 달아주는 것이다.
+Observer를 컴포넌트에서 바로 달아주는 것도 가능하지만, custom hook으로 만들어주는게 더 이쁠 것 같다. 구현할 `useInfiniteScroll.js` hook은 `콜백 함수`와 `option`을 인자로 받아서 `IntersectionObserver`를 초기화 해준다.
 ```js
 import { useState, useEffect, useCallback } from "react";
 
