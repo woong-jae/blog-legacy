@@ -7,7 +7,7 @@ const Wrapper = styled.div`
     padding: 0.3em 1em;
     display: inline-block;
     display: inline;
-    padding: 2px 6px;
+    padding: 2px 5px 3px;
     line-height: 1.2;
     font-size: 12px;
     border-radius: 2px;

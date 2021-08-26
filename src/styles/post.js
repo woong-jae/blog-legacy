@@ -2,7 +2,7 @@ import { css } from "styled-components";
 
 const postStyle = css`
     h2 {
-        font-size: 2rem;
+        font-size: 1.8rem;
         margin-bottom: 16px;
     }
     h3 {
