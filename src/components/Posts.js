@@ -13,9 +13,7 @@ const Posts = ({ posts }) => {
 
     function loadMorePosts() {
         setCount(v => {
-            if (v + 1 <= posts.length) {
-                return v + 1;
-            }
+            if (v + 1 <= posts.length) return v + 1;
             else return v;
         });
     }

@@ -18,13 +18,18 @@ module.exports = {
       {
         name: "Frontend",
         slug: "front",
-        color: "#595260",
+        color: "#C8C6C6",
       },
       {
         name: "JavaScript",
         slug: "javascript",
         color: "rgb(255, 204, 76)",
       },
+      {
+        name: "React",
+        slug: "react",
+        color: "rgb(96, 218, 251)"
+      }
     ],
   },
   plugins: [

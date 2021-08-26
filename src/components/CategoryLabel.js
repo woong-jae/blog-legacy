@@ -7,12 +7,12 @@ const Wrapper = styled.div`
     padding: 0.3em 1em;
     display: inline-block;
     display: inline;
-    padding: 3px 6px;
+    padding: 2px 6px;
     line-height: 1.2;
     font-size: 12px;
     border-radius: 2px;
     font-weight: 600;
-    color: #fff;
+    color: #25292e;
     @media screen and (max-width: ${props => props.theme.responsive.large}) {
       font-size: 11px;
       padding: 2.5px 6px;

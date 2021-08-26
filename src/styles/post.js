@@ -1,6 +1,15 @@
 import { css } from "styled-components";
 
 const postStyle = css`
+    h2 {
+        font-size: 2rem;
+        margin-bottom: 16px;
+    }
+    h3 {
+        font-size: 1.5rem;
+        margin-bottom: 16px;
+    }
+
     ul, ol {
         padding-left: 27px;
     }
@@ -33,6 +42,10 @@ const postStyle = css`
         p {
             margin: 0;
         }
+    }
+
+    pre {
+        margin: 8px 0;
     }
 `
 
