@@ -1,3 +1,4 @@
+import { Link } from 'gatsby'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -41,7 +42,9 @@ const Header = ({ title }) => {
     return (
         <HeaderContainer>
             <HeaderContent>
-                <h1 className="logo-title">{title}</h1>
+                <Link to="/" className="logo-link">
+                    <h1 className="logo-title">{title}</h1>
+                </Link>
             </HeaderContent>
         </HeaderContainer>
     )
