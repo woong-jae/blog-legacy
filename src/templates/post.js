@@ -14,6 +14,12 @@ import PostNavigator from "../components/PostNavigator";
 import CodeBlock from "../components/CodeBlock";
 import postStyle from "../styles/post";
 
+const PostWrapper = styled.div`
+    width: 100%;
+    @media screen and (max-width: ${props => props.theme.responsive.large}) {
+        margin-top: 70px;
+    }
+`
 const Content = styled.section`
   position: relative;
   background: #fff;
@@ -105,7 +111,7 @@ const PostTemplate = ({ data, pageContext, location }) => {
   const { title, date, category, emoji } = post.frontmatter
 
   return (
-    <Layout isPage={true}>
+    <Layout>
       <Seo title={title} description={description || post.excerpt}/>
       <Helmet>
         <link
@@ -113,6 +119,9 @@ const PostTemplate = ({ data, pageContext, location }) => {
           href={`${siteUrl}${location.pathname}`}
         />
       </Helmet>
+      <PostWrapper>
+                            
+      </PostWrapper>
       <Content>
         <HeroImage
           dangerouslySetInnerHTML={{

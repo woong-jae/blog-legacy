@@ -7,13 +7,6 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   const result = await graphql(
     `
     {
-      site {
-        siteMetadata {
-          categories {
-            slug
-          }
-        }
-      }
       allMdx(sort: {fields: frontmatter___date, order: DESC}) {
         nodes {
           id
@@ -34,17 +27,6 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     reporter.panicOnBuild(`Error while running GraphQL query.`)
     return
   }
-
-  const categoryTemplate = path.resolve('src/templates/category.js')
-  result.data.site.siteMetadata.categories.forEach(category => {
-    createPage({
-      path: category.slug,
-      component: categoryTemplate,
-      context: {
-        category: category.slug
-      }
-    })
-  })
 
   // Create pages for each markdown file.
   const blogPostTemplate = path.resolve(`src/templates/post.js`)

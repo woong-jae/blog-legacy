@@ -1,5 +1,4 @@
-import { Link } from 'gatsby'
-import * as React from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 const HeaderContainer = styled.header`
@@ -27,6 +26,7 @@ const HeaderContent = styled.div`
         font-weight: 600;
         letter-spacing: 1px;
         font-size: 2.5rem;
+        user-select: none;
         color : ${props => props.theme.colors.whiteSmoke};
         @media screen and (max-width: ${props => props.theme.responsive.small}) {
             font-size: 2rem;
@@ -41,9 +41,7 @@ const Header = ({ title }) => {
     return (
         <HeaderContainer>
             <HeaderContent>
-                <Link to='/' className="logo-link">
-                    <h1 className="logo-title">{title}</h1>
-                </Link>
+                <h1 className="logo-title">{title}</h1>
             </HeaderContent>
         </HeaderContainer>
     )
