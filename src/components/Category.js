@@ -66,7 +66,7 @@ const Category = ({ category, categories, changeCategory }) => {
     return (
         <CategoryWrapper>
             {categories.map(item => {
-                if (category === item.slug) return <SelectedBubble category={item} />
+                if (category === item.slug) return <SelectedBubble key={item.slug} category={item} />
                 return <Bubble category={item} key={item.slug} changeCategory={changeCategory} />
             })}
         </CategoryWrapper>

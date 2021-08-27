@@ -53,10 +53,10 @@ const IndexPage = ({ data }) => {
   }
 
   return (
-    <Layout isPage={false}>
+    <Layout>
       <Seo title="Home"/>
       <Helmet>
-        <link rel="canonical" href="https://woong-jae.com" />
+        <link rel="canonical" href={data.site.siteMetadata.siteUrl} />
       </Helmet>
       <MainContent>
         <Bio author={data.site.siteMetadata.author} socials={data.site.siteMetadata.socials} />
@@ -77,6 +77,7 @@ export const query = graphql`
     site {
       siteMetadata {
         title
+        siteUrl
         author
         socials {
           email
