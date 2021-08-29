@@ -38,13 +38,17 @@ const HeaderContent = styled.div`
     }
 `
 
-const Header = ({ title }) => {
+const Header = ({ title, isMain }) => {
     return (
         <HeaderContainer>
             <HeaderContent>
+                {isMain ?
+                <h1 className="logo-title">{title}</h1>
+                :
                 <Link to="/" className="logo-link">
                     <h1 className="logo-title">{title}</h1>
                 </Link>
+                }
             </HeaderContent>
         </HeaderContainer>
     )

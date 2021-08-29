@@ -30,15 +30,15 @@ const postStyle = css`
 
     blockquote {
         background-color: ${props => props.theme.colors.whiteSmoke};
-        border-radius: 10px;
+        border-left: solid ${props => props.theme.colors.silver};
         margin-block-start: 0;
         margin-block-end: 0;
         margin-inline-start: 0;
         margin-inline-end: 0;
         padding-block-start: 1em;
         padding-block-end: 1em;
-        padding-inline-start: 40px;
-        padding-inline-end: 40px;
+        padding-inline-start: 30px;
+        padding-inline-end: 30px;
         p {
             margin: 0;
         }

@@ -53,7 +53,7 @@ const IndexPage = ({ data }) => {
   }
 
   return (
-    <Layout>
+    <Layout isMain={true}>
       <Seo title="Home"/>
       <Helmet>
         <link rel="canonical" href={data.site.siteMetadata.siteUrl} />

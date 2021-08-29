@@ -20,7 +20,7 @@ const MainContainer = styled.div`
     }
 `
 
-const Layout = ({ children }) => {
+const Layout = ({ children, isMain }) => {
     const data = useStaticQuery(graphql`
         query {
             site {
@@ -33,7 +33,7 @@ const Layout = ({ children }) => {
 
     return (
         <ThemeProvider theme={theme}>
-            <Header title={data.site.siteMetadata.title} />
+            <Header title={data.site.siteMetadata.title} isMain={isMain}/>
 
             <MainContainer>
                 <main>{children}</main>

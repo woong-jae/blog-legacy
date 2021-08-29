@@ -19,6 +19,7 @@ const ActiveBubble = styled.div`
     font-size: 0.7em;
     text-align: center;
     user-select: none;
+    cursor: pointer;
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
         font-size: 0.6em;
     }

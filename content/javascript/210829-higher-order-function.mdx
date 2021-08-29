@@ -1,0 +1,65 @@
+---
+title: "[JS] 고차함수(Higher-Order Function)"
+date: "2021-08-29"
+emoji: "🛠"
+category: "javascript"
+---
+## 고차함수?
+고차함수는 **다른 함수를 전달인자로 받거나 함수실행의 결과를 함수로 반환**하는 함수다.
+
+고차함수는 값뿐만 아니라 **동작(action)을 추상화**할 수 있게 한다. 
+
+> 추상화(Abstraction)은 문제의 세부사항을 숨기고 더 높은 수준에서 문제를 다룰 수 있도록 하는 방법이다.
+
+예를 들어, 다음과 같이 새로운 함수를 생성하는 함수를 만들 수 있다.
+```js
+function greaterThan(n) {
+    return m => m > n;
+}
+let greaterThan10 = greaterThan(10);
+console.log(greaterThan10(11));
+// -> True
+```
+`greaterThan` 함수에 비교할 수만 넘겨주면 크기를 비교해주는 함수를 반환해준다. 
+
+내부에서 어떻게 크기 비교를 하는지는 사용하는 사람의 입장에서는 알 필요가 없다.
+그냥 **"10보다 큰 수인지 판별해주는 함수가 필요해! 그러니까 `greaterThan`에 10을 넘겨주면 10보다 큰 수인지 알 수 있는 함수를 줄거야"** 정도만 판단하면 된다. 이것이 추상화다.
+
+고차함수를 이용해 다른 함수를 변경하는 함수를 만들 수 있다.
+```js
+function noisy(f) {
+    return (...args) => {
+        console.log("calling with", args);
+        let result = f(...args);
+        console.log("called with", args, ", returned", result);
+        return result
+    }
+}
+noisy(Math.min)(3, 2, 1);
+// -> calling with [3, 2, 1]
+// -> called with [3, 2, 1], returned 1
+```
+
+새로운 제어 흐름을 만드는 함수를 작성할 수도 있다.
+```js
+function unless(test, than) {
+    if (!test) than();
+}
+```
+
+배열에 내장된 `forEach` 메서드도 'for/of' 문을 제공하는 고차 함수다.
+
+## 추상화, 꼭 필요할까?
+아래 두 코드를 보자
+```js
+// 1
+let total = 0, count = 1;
+while (count <= 10) {
+    total += count;
+    count += 1;
+}
+
+//2
+sum(range(1, 10));
+```
+두 코드는 똑같은 동작을 한다. 하지만, 딱 봐도 두 번째 코드가 뭘 할려는지 알기 쉽다.
