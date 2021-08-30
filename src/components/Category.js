@@ -2,18 +2,25 @@ import React from "react"
 import styled from "styled-components"
 
 const CategoryWrapper = styled.div`
+    position: sticky;
+    top: 0;
+    background-color: ${props => props.theme.colors.blackLight};
     color: ${props => props.theme.colors.whiteSmoke};
+    margin-bottom: 1em;
+    padding: 5px 10px;
+    border-radius: 5px;
     font-size: 1.2rem;
     font-weight: 500;
-    display: flex;
-    margin-bottom: 20px;
+    overflow-x: auto;
+    white-space: nowrap;
 `;
 
 const ActiveBubble = styled.div`
     background-color: ${props => props.theme.colors.blackLight};
+    display: inline-block;
     border-radius: 30px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-    margin: 0 5px;
+    margin: 5px;
     padding: 5px 12px;
     color: ${props => props.theme.colors.whiteSmoke};
     font-size: 0.7em;
@@ -32,6 +39,7 @@ const ActiveBubble = styled.div`
 
 const DisabledBubble = styled.div`
     border-radius: 30px;
+    display: inline-block;
     margin: 0 5px;
     padding: 5px 12px;
     transform: rotate(5deg);

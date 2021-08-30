@@ -7,9 +7,9 @@ import avatar from '../images/woong.png'
 
 const BioContainer = styled.div`
     position: sticky;
+    top: 0;
     display: flex;
     flex-direction: column;
-    top: 2em;
     width: ${props => props.theme.sizes.bioWidth};
     padding: 1.5em;
     font-size: 15.5px;
