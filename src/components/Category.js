@@ -4,11 +4,12 @@ import styled from "styled-components"
 const CategoryWrapper = styled.div`
     position: sticky;
     top: 0;
-    background-color: ${props => props.theme.colors.blackLight};
+    background-color: ${props => props.theme.colors.base};
     color: ${props => props.theme.colors.whiteSmoke};
     margin-bottom: 1em;
     padding: 5px 10px;
-    border-radius: 5px;
+    border: solid 2px ${props => props.theme.colors.blackLight};
+    border-radius: 3px;
     font-size: 1.2rem;
     font-weight: 500;
     overflow-x: auto;
@@ -22,6 +23,7 @@ const ActiveBubble = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     margin: 5px;
     padding: 5px 12px;
+    ${'' /* border: solid 1px ${props => props.theme.colors.whiteSmoke}; */}
     color: ${props => props.theme.colors.whiteSmoke};
     font-size: 0.7em;
     text-align: center;

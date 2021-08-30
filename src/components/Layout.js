@@ -13,7 +13,7 @@ const MainContainer = styled.div`
     padding: 0 ${props => props.theme.sideSpace.large};
     @media screen and (max-width: ${props => props.theme.responsive.large}) {
         max-width: 760px;
-        margin-top: 0em;
+        margin-top: 1em;
     }
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
         padding: 0 ${props => props.theme.sideSpace.small};

@@ -31,7 +31,7 @@ const MainWrapper = styled.div`
     margin-right: 40px;
     @media screen and (max-width: ${props => props.theme.responsive.large}) {
         width: 100%;
-        margin-top: 70px;
+        margin-top: 2em;
     }
 `;
 
