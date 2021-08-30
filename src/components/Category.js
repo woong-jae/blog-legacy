@@ -7,8 +7,9 @@ const CategoryWrapper = styled.div`
     background-color: ${props => props.theme.colors.base};
     color: ${props => props.theme.colors.whiteSmoke};
     margin-bottom: 1em;
-    padding: 5px 10px;
-    border: solid 2px ${props => props.theme.colors.blackLight};
+    padding: 7px 13px;
+    border: solid ${props => props.theme.colors.blackLight};
+    border-width: 1px 6px;
     border-radius: 3px;
     font-size: 1.2rem;
     font-weight: 500;
