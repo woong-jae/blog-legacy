@@ -1,0 +1,109 @@
+---
+title: "[JS] 객체지향 프로그래밍(Object-Oriented Programming) - 1" 
+date: "2021-08-31"
+emoji: "📦"
+category: "javascript"
+---
+## 캡슐화(Encapsulation)
+객체 지향의 핵심은 프로그램을 작은 조각으로 나누는 것이다. 각 조각들은 자신의 상태를 자체적으로 관리한다. 
+
+이 조각들을 객체를 사용해서 모델링한다. 객체들은 **interface**를 통해 서로 상호작용한다. 각 인터페이스는 특정 속성과 메서드로 구성된다.
+인터페이스의 일부분인 속성을 **'public'**이라고 하고, 외부에서 접근하지 못하는 나머지 속성을 **'private'**이라고 한다. 
+Interface를 제공함으로써 안의 세부 구현을 숨길 수 있게 된다.
+
+**이렇게 인터페이스와 구현을 분리하는 방법을 '캡슐화'라고 한다.**
+
+자바스크립트에서는 public과 private 속성을 구분하는 방법을 제공하지 않는다. 하지만, documentation이나 주석으로 사용 가능한 인터페이스를 제공하거나 `_`를 이름 시작 부분에 붙여 private 속성임을 알려주는 방법을 사용할 수는 있다.
+
+## 메서드
+함수가 메서드로 호출되면 함수 body의 `this` 바인딩은 자동적으로 **호출한 객체를 가리킨다**.
+```js
+function speak(line) {
+    console.log(`The ${this.type} rabbit says '${line}'`);
+}
+let whiteRabbit = { type: "white", speak };
+whiteRabbit.speak("Give me carrot");
+// -> The white rabbit says 'Give me carrot'
+```
+명시적으로 `this` 매개변수를 전달할 수도 있다. 함수의 `call` 메서드는 첫 번째 인수로 `this`의 값을 받고 나머지 인수를 일반 파라미터로 받는다.
+```js
+speak.call(whiteRabbit, "Brup!");
+// -> The white rabbit says 'Burp!'
+```
+모든 **함수는 자신만의 `this`를 가진다**. 따라서 `function` 키워드로 정의한 함수 안에서 주변 범위의 `this`를 참조할 수 없다.
+
+근데 **arrow function**은 좀 다르다. 요놈은 **자신만의 `this`를 가지지 않는 대신, 주변 범위의 `this`를 참조할 수 있다**. 아래 예를 보자.
+```js
+function normalize() {
+    console.log(this.coords.map(n => n / this.length));
+}
+normalize.call({coords: [0, 2, 3]}, length: 5);
+// -> [0, 0.4, 0.6]
+```
+`normalize` 함수 안의 `map`에서 `function` 키워드를 사용히면 코드가 동작하지 않는다.
+
+## 프로토타입(Prototypes)
+```js
+let empty = {};
+console.log(empty.toString);
+// -> function toString()...{}
+```
+`empty` 객체에 아무 속성을 주지 않았지만 `toString`이란 속성이 이미 존재한다. 왜냐하면 객체는 'prototype'을 가지기 때문이다.
+
+**Prototype은 속성을 대체하는 용도로 사용되는 또 다른 객체**다.
+즉, 객체가 가지고 있지 않은 속성을 요청하면 객체의 프로토타입, 프로토타입의 프로토타입, 이런 식으로 쭉 그 속성을 검색하게 된다.
+
+그럼 `empty`의 프로토타입은 뭘까? 거의 모든 객체의 조상인 `Object.prototype`이다.
+
+```js
+console.log(Object.getPrototypeOf({}) == Object.prototype);
+// -> true
+```
+
+대부분의 객체는 프로토타입으로 `Object.prototype`을 직접 갖는 대신, 다양한 기본 속성이 제공되는 별도의 객체를 갖는다.
+함수는 `Function.prototype`, 배열은 `Array.prototype`에서 파생된다.
+
+`Object.create`를 사용해서 특정 프로토타입으로 객체를 만들 수 있다.
+```js
+let protoRabbit = {
+    speak(line) {
+        console.log(`The ${this.type} rabbit says '${line}'`);
+    }
+}
+let whiteRabbit = Object.create(protoRabbit);
+whiteRabbit.type = "white";
+```
+`protoRabbit`은 다른 모든 토끼들의 공통되는 속성을 가지고 있는 역할을 한다. `whiteRabbit`같은 개별 토끼들은 자신에게 해당하는 속성만 가지고 있고 프로토타입에서 공유 속성을 가지고 온다.
+
+## 클래스(Classes)
+자바스크립트의 프로토타입 체계는 'Class'라는 객체 지향의 개념을 비공식적으로 적용한 것으로 볼 수 있다.
+
+**클래스는 객체 타입이 어떤 속성과 메서드를 가지고 있는지 정의**한다. 그리고 **만들어진 객체를 클래스의 'instance'**라고 한다.
+프로토타입은 클래스의 모든 인스턴스에서 동일해야 할 속성을 정의하는데 사용한다.
+
+클래스의 인스턴스를 생성할 때, 만들어진 객체가 적절한 프로토타입에서 파생되고 필요한 모든 속성을 가지고 있도록 해야한다. 이것을 해주는 것이 **'constructor'** 함수의 역할이다.
+```js
+function makeRabbit(type) {
+    let rabbit = Object.create(protoRabbit);
+    rabbit.type = type;
+    return rabbit;
+}
+```
+
+자바스크립트에서 constructor를 더 쉽게 정의할 수 있는 방법을 제공한다. 함수 호출 부분 앞에 `new` 키워드를 사용하면 그 함수는 constructor로 작용한다.
+
+```js
+function Rabbit(type) {
+    this.type = type;
+}
+Rabbit.prototype.speak = function (line) {
+    console.log(`The ${this.type} rabbit says '${line}'`);
+}
+let wierdRabbit = new Rabbit("weird");
+```
+일반적으로 constructor의 이름을 대문자로 시작해서 다른 함수들과 구분한다.
+
+위 예시에서 `Rabbit` constructor의 프로토타입은 무엇일까? `Function.prototype`이다. Constructor는 근본적으로 함수이기 때문이다. 
+`wierdRabbit`의 프로토타입이 `Rabbit.prototype`이다. Constructor의 **'prototype' 속성 안에 인스턴스의 프로토타입**이 있다.
+
+참조: Eloquent JavaScript
