@@ -14,6 +14,10 @@ const postStyle = css`
         padding-left: 27px;
     }
     
+    p {
+        line-height: 1.7em;
+    }
+
     img {
         display: block;
         margin: 0 auto;
