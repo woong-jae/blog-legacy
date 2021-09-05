@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { FaGithub, FaInstagram } from 'react-icons/fa';
 import { MdMail } from 'react-icons/md';
+import { StaticImage } from "gatsby-plugin-image";
 
-import styled from 'styled-components'
-import avatar from '../images/woong.png'
+import styled from 'styled-components';
 
 const BioContainer = styled.div`
     position: sticky;
@@ -28,14 +28,6 @@ const BioContainer = styled.div`
 const BioHeader = styled.div`
   display: flex;
   align-items: center;
-`;
-
-const AvatarImage = styled.img`
-  display: block;
-  background-color: ${props => props.theme.colors.whiteSmoke};
-  width: 80px;
-  height: 80px;
-  border-radius: 10px;
 `;
 
 const BioName = styled.div`
@@ -89,7 +81,12 @@ const Bio = ({ author, socials }) => {
     return (
         <BioContainer>
             <BioHeader>
-                <AvatarImage src={avatar} alt="avatar" />
+              <StaticImage 
+                src="../images/woong.png" 
+                alt="avatar" 
+                placeholder="blurred" 
+                style={{width: '80px', height: '80px', borderRadius: '10px'}}
+                />
                 <BioName>
                     {author}
                 </BioName>

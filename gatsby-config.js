@@ -38,6 +38,12 @@ module.exports = {
     ],
   },
   plugins: [
+    "gatsby-plugin-react-helmet",
+    "gatsby-plugin-sitemap",
+    "gatsby-plugin-sharp",
+    "gatsby-transformer-sharp",
+    "gatsby-plugin-styled-components",
+    "gatsby-plugin-image",
     {
       resolve: `gatsby-plugin-google-gtag`,
       options: {
@@ -128,11 +134,5 @@ module.exports = {
         policy: [{userAgent: '*', allow: '/'}]
       }
     },
-    "gatsby-plugin-react-helmet",
-    "gatsby-plugin-sitemap",
-    "gatsby-plugin-sharp",
-    "gatsby-transformer-sharp",
-    "gatsby-plugin-styled-components",
-    "gatsby-plugin-image",
   ],
 };
