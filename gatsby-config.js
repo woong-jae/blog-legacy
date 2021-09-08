@@ -34,6 +34,11 @@ module.exports = {
         name: "React",
         slug: "react",
         color: "rgb(96, 218, 251)"
+      },
+      {
+        name: "Algorithm",
+        slug: "algorithm",
+        color: "#E7EAB5"
       }
     ],
   },
@@ -74,13 +79,6 @@ module.exports = {
       options: {
           name: "content",
           path: `${__dirname}/content/`
-      }
-    },
-    {
-      resolve: "gatsby-source-filesystem",
-      options: {
-          name: "images",
-          path: `${__dirname}/src/images/`
       }
     },
     {
