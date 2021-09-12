@@ -16,9 +16,9 @@ module.exports = {
         color: "#fff",
       },
       {
-        name: "Blog",
-        slug: "blog",
-        color: "#93B5C6",
+        name: "Gatsby",
+        slug: "gatsby",
+        color: "#BFA2DB",
       },
       {
         name: "Frontend",
@@ -38,7 +38,12 @@ module.exports = {
       {
         name: "Algorithm",
         slug: "algorithm",
-        color: "#E7EAB5"
+        color: "#F6AE99"
+      }, 
+      {
+        name: "etc",
+        slug: "etc",
+        color: "#93B5C6"
       }
     ],
   },

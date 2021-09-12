@@ -25,6 +25,7 @@ const postStyle = css`
     }
 
     code {
+        color: #557571;
         background-color: #D9FCDB;
         padding: 0.1em 0.4em;
         margin: 0.1em;
