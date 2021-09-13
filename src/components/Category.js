@@ -15,6 +15,11 @@ const CategoryWrapper = styled.div`
     font-weight: 500;
     overflow-x: auto;
     white-space: nowrap;
+    &::-webkit-scrollbar {
+        display: none !important; 
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 `;
 
 const ActiveBubble = styled.div`
