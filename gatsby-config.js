@@ -41,8 +41,8 @@ module.exports = {
         color: "#F6AE99"
       }, 
       {
-        name: "etc",
-        slug: "etc",
+        name: "Database",
+        slug: "db",
         color: "#93B5C6"
       }
     ],
