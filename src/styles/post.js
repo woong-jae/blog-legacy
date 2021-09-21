@@ -51,6 +51,7 @@ const postStyle = css`
 
     pre {
         margin: 8px 0;
+        font-size: 0.9rem;
     }
 `
 
