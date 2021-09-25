@@ -1,0 +1,70 @@
+---
+title: "[Gatsby] MDX 수식 적용"
+date: "2021-09-26"
+emoji: "📐"
+category: "gatsby"
+---
+## Gatsby, MDX에 수식 적용하기
+[mdx 공식문서](https://mdxjs.com/guides/math-blocks/)를 보면 "Math blocks", 즉, 수식을 적용하는 방법이 기술되어 있다.
+
+한 번 같이 따라 적용해보자.
+
+### remark-math 적용
+공신 문서에서 'remark-math'와 'rehype-katex'를 통해 수식을 적용할 수 있다고 한다.
+
+remark-hype가 **마크다운에서 수식을 뽑아내면**, rehype-katex가 **스타일을 입혀주는 방식**으로 동작한다.
+
+그렇다면 우리의 첫 단계는 remark-hype 플러그인을 설치하는 것이다. 여기서 주의점이 있는데, 설치할 때 **remark-math version 3**을 받아야 한다.
+왜냐하면 gatsby-plugin-mdx 내부에서는 remark *version 10*을 사용하는데, remark-math는 remark *version 13*을 요구하기 때문이다.
+```js
+npm i remark-math@3.0.1
+```
+설치를 완료했다면 `gatsby-config.js`에 적용시켜주면 된다.
+```js
+module.exports = {
+  // ...
+  plugins: [
+    {
+      resolve: "gatsby-plugin-mdx",
+      options: {
+        remarkPlugins: [require("remark-math")],
+      },
+    },
+    // ...
+  ],
+};
+```
+### rehype-katex 적용
+이 녀석도 버전에 주의해야 한다. 
+
+현재 글을 작성한 시간 기준 버전이 6.0.1인데, require로 불러올 수가 없다. 따라서, require로 플러그인을 적용하기 위해서는 이전 버전인 5.0.0을 사용해야 한다.
+```js
+npm i rehype-katex@5.0.0
+```
+설치 했다면 적용해주자.
+```js
+module.exports = {
+  // ...
+  plugins: [
+    {
+      resolve: "gatsby-plugin-mdx",
+      options: {
+        remarkPlugins: [require("remark-math")],
+        rehypePlugins: [require("rehype-katex")],
+      },
+    },
+    // ...
+  ],
+};
+```
+셜치 완료했다면 template 파일, 컴포넌트, `gatsby-browser.js` 등 적용을 원하는 곳에 아래 코드롤 작성해서 KaTex CSS 파일을 import하면 된다.
+
+이 블로그의 경우 template에 적용했다.
+```js
+import "katex/dist/katex.min.css";
+```
+
+여기까지 헀다면 아름다운 수식을 볼 수 있다!
+
+참조:  
+<https://nickymeuleman.netlify.app/blog/math-gatsby-mdx>
