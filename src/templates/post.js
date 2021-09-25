@@ -14,6 +14,8 @@ import PostNavigator from "../components/PostNavigator";
 import CodeBlock from "../components/CodeBlock";
 import postStyle from "../styles/post";
 
+import "katex/dist/katex.min.css";
+
 const PostWrapper = styled.div`
     width: 100%;
     @media screen and (max-width: ${props => props.theme.responsive.large}) {
