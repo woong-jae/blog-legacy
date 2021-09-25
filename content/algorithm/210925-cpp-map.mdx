@@ -1,0 +1,73 @@
+---
+title: "[cpp] map"
+date: "2021-09-26"
+emoji: "🔑"
+category: "algorithm"
+---
+## map?
+'map'은 **key와 value가 쌍**으로 저장되는 컨테이너다. key와 value는 `pair` 객체로 저장된다.
+key는 고유한 값이기 때문에 중복되면 안된다.
+
+C++의 map 내부 구현은 **레드-블랙 트리(자가 균형 이진 탐색 트리)**로 구현되어 검색, 삽입, 삭제의 시간복잡도가 $O(log_n)$이다.
+
+map은 삽입이 되면서 key를 기준으로 정렬된다. default로 오름차순 정렬된다.
+
+## 사용법
+`<map>` 헤더파일을 포함해서 사용하면 된다.
+
+아래 코드는 기본 생성 방법이다.
+```cpp
+#include <map>
+
+using namespace std;
+
+int main() {
+    map<int, int> m;
+}
+```
+`map <key type, value type> name`으로 선언한다.
+
+map에 자료를 저장할 때는 pair 객체를 사용한다.
+```cpp
+m.insert(make_pair(10, 20));
+```
+
+### 데이터 찾기
+map에서 데이터를 찾을 때 iterator를 사용한다.  
+데이터를 끝까지 찾지 못하면 iterator는 `map.end()`를 반환한다.
+```cpp
+if (m.find("미래") != m.end()) { 
+    cout << "found" << '\n'; 
+} else { 
+    cout << "not found" << '\n'; 
+}
+```
+### 반복문 사용하기
+iterator를 활용해서 begin()부터 end()까지 찾을 수 있다.
+```cpp
+// 인덱스 기반
+for (auto iter = m.begin() ; iter != m.end(); iter++) { 
+    cout << iter->first << " " << iter->second << '\n'; 
+}
+// 범위 기반
+for (auto iter : m) { 
+    cout << iter.first << " " << iter.second << '\n'; 
+}
+```
+### 요소 삭제
+- 특정 위치 요소 삭제
+```cpp
+m.erase(m.begin() + 4);
+```
+- key값으로 요소 삭제
+```cpp
+m.erase("2학기");
+```
+- 모든 요소 삭제
+```cpp
+m.clear();
+```
+
+참조:  
+<https://life-with-coding.tistory.com/305>  
+<https://blockdmask.tistory.com/87>
