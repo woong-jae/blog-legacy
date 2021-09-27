@@ -16,7 +16,7 @@ remark-hype가 **마크다운에서 수식을 뽑아내면**, rehype-katex가 **
 
 그렇다면 우리의 첫 단계는 remark-hype 플러그인을 설치하는 것이다. 여기서 주의점이 있는데, 설치할 때 **remark-math version 3**을 받아야 한다.
 왜냐하면 gatsby-plugin-mdx 내부에서는 remark *version 10*을 사용하는데, remark-math는 remark *version 13*을 요구하기 때문이다.
-```js
+```bash
 npm i remark-math@3.0.1
 ```
 설치를 완료했다면 `gatsby-config.js`에 적용시켜주면 된다.
@@ -38,7 +38,7 @@ module.exports = {
 이 녀석도 버전에 주의해야 한다. 
 
 현재 글을 작성한 시간 기준 버전이 6.0.1인데, require로 불러올 수가 없다. 따라서, require로 플러그인을 적용하기 위해서는 이전 버전인 5.0.0을 사용해야 한다.
-```js
+```bash
 npm i rehype-katex@5.0.0
 ```
 설치 했다면 적용해주자.
@@ -64,7 +64,9 @@ module.exports = {
 import "katex/dist/katex.min.css";
 ```
 
-여기까지 헀다면 아름다운 수식을 볼 수 있다!
+여기까지 했다면 아름다운 수식을 볼 수 있다!
+
+Tex 문법은 [여기](https://namu.wiki/w/%EB%82%98%EB%AC%B4%EC%9C%84%ED%82%A4:%EB%AC%B8%EB%B2%95%20%EB%8F%84%EC%9B%80%EB%A7%90/%EC%8B%AC%ED%99%94/TeX)에서 확인해서 골라쓰자.
 
 참조:  
 <https://nickymeuleman.netlify.app/blog/math-gatsby-mdx>
