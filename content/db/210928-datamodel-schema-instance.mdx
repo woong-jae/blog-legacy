@@ -1,0 +1,83 @@
+---
+title: "DB의 Data Models, Schemas, Instances"
+date: "2021-09-28"
+emoji: "🗄"
+category: "db"
+---
+## Data Model?
+
+데이터 모델은 현실 세계의 정보들을 컴퓨터에 표현하기 위해서 단순화, 추상화 하여 체계적으로 표현한 개념적 모형이다. 데이터의 구조, 연산, 제약조건등을 기술하기 위한 도구라고 볼 수 있다.
+
+### 종류
+
+- **Conceptual(High-level, semantic)**:
+
+    데이터를 현실 세계와 가깝게 인식할 수 있게 해주는 추상적 개념(entity, attribute, relationship 등)을 제공한다.
+
+- **Physical data models(Low-level, internal)**:
+
+    데이터가 실제로 컴퓨터의 저장매체(HDD, RAM, SDD 등)에 어떻게 저장되는지에 대한 개념을 제공한다.
+
+- **Implementation(Logical)**:
+
+    위에서 소개한 양극단 데이터 모델의 중간 개념을 제공한다. 논리적 데이터 모델은 개념적 모델링 과정에서 얻은 개념적 구조를 물리적 구조에 맞도록 변환하는 과정이다.
+
+- **Self-describing**:
+
+    데이터에 대한 설명과 실제 데이터 값을 합쳐놓은 모델이다. MongoDB와 같은 noSQL 시스템에서 볼 수 있다.
+
+<br/>
+
+## Schema?
+
+DB에 대한 설명이다. 'Intension' 혹은 'meta-data'라고도 부른다.
+
+데이터베이스의 구조, 데이터의 타입, 제약 조건 등의 정보를 가지고 있어 DB에 대해 설명할 수 있다. DBMS의 catalog에 저장되어있다.
+
+Schema construct: 스키마의 구성요소
+
+### Three-Schema Architecture
+
+DBMS 스키마를 3가지 레벨로 나눌 수 있다.
+
+![db3계층](https://static.javatpoint.com/dbms/images/dbms-three-schema-architecture.png)
+
+- **Internal(physical) Schema**
+
+    물리적인 저장소 구조와 접근 경로를 설명한다.
+
+- **Conceptual(logical) Schema**
+
+    데이터베이스의 구조와 제약 조건을 설명한다.
+
+- **External(view level) Schema**
+
+    다양한 유저 뷰를 설명한다. 사용자나 응용프로그래머가 각 개인의 입장에서 필요로 하는 데이터베이스의 논리적 구조를 정의한 것이다.
+    각 external schema는 유저가 관심있는 데이터베이스의 특정 부분만 설명하고 나머지 부분은 숨긴다.
+
+스키마 레벨간 매핑을 통해 '요청'과 '데이터'를 변환한다. 유저가 external view를 통해 데이터를 요청하면, 그 요청은 conceptual schema를 거치고 internal schema를 거쳐서 실제 데이터에 접근하게 된다.
+
+스키마 레벨을 나누게 되면 스키마가 'tightly coupled' 되는 것을 방지할 수 있어 확장성을 높일 수 있다.
+
+> Conceptual/Internal스키마를 적시할 때 DDL(Data Definition Language)를 사용한다.
+
+### Data Independence
+
+- **Logical data independence**: 
+
+    External schema를 건드리지 않고 conceptual schema를 변경할 수 있다.
+
+- **Physical data independence**: 
+
+    Conceptual schema를 건드리지 않고 internal schema를 변경할 수 있다.
+
+DBMS에서 data independence를 지원하면, 하위 레벨의 스키마가 변경됐을 때 상위 레벨의 스키마와의 매핑만 변경되면 된다.
+상위 스키마 자체는 변경되는 것이 없다.
+
+<br/>
+
+## Instance?
+
+어느 한 시점에 데이터베이스의 상태, 즉, 저장되어 있는 실제 정보를 뜻한다. 
+
+'Database state' 혹은 'snapshot'이라고도 부른다.

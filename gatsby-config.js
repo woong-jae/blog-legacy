@@ -38,12 +38,12 @@ module.exports = {
       {
         name: "Algorithm",
         slug: "algorithm",
-        color: "#F6AE99"
+        color: "#F5FDB0"
       }, 
       {
         name: "Database",
         slug: "db",
-        color: "#93B5C6"
+        color: "#C2B8A3"
       }
     ],
   },

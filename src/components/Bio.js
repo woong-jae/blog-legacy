@@ -34,7 +34,7 @@ const BioName = styled.div`
   margin-left: 10px;
   font-weight: 600;
   letter-spacing: 1px;
-  font-size: 1.3em;
+  font-size: 1.1em;
   color: #fff;
 `;
 
