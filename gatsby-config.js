@@ -44,6 +44,11 @@ module.exports = {
         name: "Database",
         slug: "db",
         color: "#C2B8A3"
+      },
+      {
+        name: "Machine Learning",
+        slug: "ml",
+        color: "#B8DFD8"
       }
     ],
   },
