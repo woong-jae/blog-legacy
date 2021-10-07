@@ -21,9 +21,9 @@ module.exports = {
         color: "#BFA2DB",
       },
       {
-        name: "Frontend",
-        slug: "front",
-        color: "#C8C6C6",
+        name: "Web",
+        slug: "web",
+        color: "#FFF5EB",
       },
       {
         name: "JavaScript",

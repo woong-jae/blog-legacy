@@ -1,0 +1,95 @@
+---
+title: "Entity-Relationship(ER) 모델"
+date: "2021-10-06"
+emoji: "🤼‍♀️"
+category: "db"
+---
+> ER 모델은 'Conceptual Model'에 해당한다.
+
+## Entity(엔티티)
+구체적인 객체 혹은 물체를 나타낸다.
+
+물리적으로 존재하는 것들(학생, 차, 집 등)이나 개념적을 존재하는 것들(회사, 직업 등)을 예로 들 수 있다.
+
+### Entity type and Entity sets
+
+- Entity type(intension)
+    
+    같은 속성을 가지는 entity의 모음이다. 자바의 Class같은 것이라고 생각하면 된다.
+
+- Entity set(extension)
+    
+    실제로 데이터베이스에 저장된 entity들을 뜻한다.
+    
+
+### Weak Entity
+
+자기 자신을 위한 키 attribute를 가지지 않는 entity이다. 따라서, 자기 자체로는 존재가 불가능하고 다른 entity와 관계로 인해 식별될 수 있다. 이때 관계를 갖는 entity를 부모, 자신을 자식으로 볼 수 있다. 이 관계를 'Identifying Relationship'이라고 한다.
+
+Weak entity type의 entity는 **자신의 partial key**와 **부모 entity**에 의해 식별된다.
+
+<br />
+
+## Attribute(속성)
+
+Entity를 설명하는 특성을 나타낸다. Attribute는 각각 값과 타입을 가진다.
+
+학생을 예로 들면, 속성으로 이름, 나이, 성별 등이 있겠다.
+
+- Simple: Atomic한 값(원자값)
+- Composite: 속성이 여러 구성요소들로 이루어져 있을 수 있다. Ex) Name(First, Last)
+- Multi-valued: 한 속성에 대해 다중 값을 가질 수 있다.
+
+### Key Attributes
+
+각 entity가 고유한 값을 가지는 속성이다. 키 속성으로 각 entity를 식별할 수 있다. 대한민국 국민의 키 속성은 주민등록번호라고 할 수 있겠다.
+
+<br />
+
+## Relationship
+
+Relationship은 특정한 의미를 가진 둘 이상의 별개의 entity의 연관을 나타낸다.
+
+Ex) EMPLOYEE 홍길동 'works on' the SpaceX PROJECT
+
+- **Relationship type R** (관계 유형)  
+
+    관계의 스키마에 대한 설명. 관계의 이름, 참여하는 entity 타입, 제약조건등을 나타낸다.  ex) WORKS_ON
+    
+    "관계의 degree": 관계에 참여하는 entity의 타입 수
+    
+- **Relationship set R** (관계 집합) among n entity types E_1, E_2, ..., E_n  
+
+    실제 DB에 있는 관계 인스턴스들의 집합
+    
+
+Relationship도 속성을 가질 수 있다. 보통 M:N 관계에서 사용된다. 1:N 관계에서는 N에 해당하는 entity에 속성을 합칠 수 있다.
+
+### Role Name (역할 이름)
+
+어떤 관계에 참여하고 있는 entity에게 이 관계에서의 역할에 따라 이름을 부여하는 것이다. 보통은 'entity type name = role name'이다. 하지만 entity가 하나 이상의 역할로 관계에 참여한다면 이름을 붙일 필요가 있다. 
+
+예를 들어, 종업원은 주 역할인 '종업원'과 부 역할인 '매니저'를 가질 수 있다.
+
+### Recursive Relationship
+
+같은 entity 타입에 있는 entity와 관계가 있는 것. 관계의 참여자는 같은 entity type이지만 다른 역할을 한다.
+
+<br />
+
+## Structual Constraints on Binary Relationship Types(이진 관계 유형의 구조적 제약 조건)
+
+1. **Cardinality ratio**
+    
+    관계에 참여할 수 있는 entity의 최대 수를 제한한다.
+    - 1 : 1
+    - 1 : N
+    - N : M
+2. **Participation constraint**
+    
+    어떤 entity가 존재하려면, 또 다른 엔티티와 어떤 관계 타입에 관계되어야 하는지 조건을 붙이는 것이다.
+    - Total participation: ER 다이어그램에서 두 줄로 나타낸다.
+    - Partial participation: ER 다이어그램에서 직선으로 나타낸다.
+
+## Notation
+![er notation](https://i2.wp.com/tutorialwing.com/wp-content/uploads/2018/11/tutorialwing-dbms-er-diagram-components.png?resize=467%2C723&ssl=1)
