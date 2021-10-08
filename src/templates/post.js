@@ -76,7 +76,7 @@ const HeroImage = styled.p`
 
 const ContentMain = styled.div`
   ${postStyle}
-  padding: 1.8em ${(props) => props.theme.sideSpace.contentLarge};
+  padding: 1.8em ${(props) => props.theme.sideSpace.contentLarge} 2.3em;
   @media screen and (max-width: ${(props) => props.theme.responsive.small}) {
     padding: 30px ${(props) => props.theme.sideSpace.contentSmall};
   }

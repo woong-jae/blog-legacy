@@ -53,6 +53,16 @@ const postStyle = css`
         margin: 8px 0;
         font-size: 0.9rem;
     }
+
+    table {
+        margin: 0 auto;
+        border: 1px solid #444444;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #444444;
+        padding: 5px 10px;
+    }
 `
 
 export default postStyle;
