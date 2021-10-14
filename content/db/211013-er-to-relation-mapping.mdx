@@ -1,0 +1,66 @@
+---
+title: "ER-to-Relational Mapping"
+date: "2021-10-13"
+emoji: "🖇"
+category: "db"
+---
+## Goals
+- 모든 정보를 보존한다.
+
+- 제약 조건을 가능한 만큼 지킨다.  
+
+> 관계 모델에서 모든 제약조건이 지켜질 수는 없다. 나머지는 application level에서 적용할 수 있다.
+
+- NULL 값을 최소화한다: 가능한 구체적으로 해서 logical-to-physical 스키마 매핑을 돕는다.
+
+## Mapping Algorithm
+\***Steps**\*
+1. Mapping of Regular Entity types
+
+2. Mapping of Weak Entity types
+
+3. Mapping of Binary 1:1 Relation types
+
+4. Mapping of Binary 1:N
+
+5. Mapping of Binary M:N
+
+6. Mapping of Multivalued attributes
+
+7. Mapping of N-ary Relation types
+
+### Step 1: Regular Entity Types
+ER 스키마의 각 strong entity type $E$에 대해서 relation $R$을 생성한다.
+
+$E$의 key attribute 중 하나를 $R$의 기본 키(앞으로 PK)로 정한다. 물론 여러 key의 모음도 PK로 설정할 수 있다.
+
+### Step 2: Weak Entity Types
+각 weak entity type $W$와 owner entity type $E$에 대해서 relation $R$을 생성하고, $W$의 모든 attribute를 추가한다. 
+
+그 다음 owner entity types의 PK를 $R$의 외래 키(앞으로 FK)로 추가해준다. $R$의 PK는 owner의 PK와 $W$의 partial ket의 짝이다.
+
+### Step 3: Binary 1:1 Relation Types
+각 1:1 관계 $R$에 대해서, $R$에 참여하는 relation $S$와 $T$를 찾는다. 그 다음 아래 중 선택하면 된다.
+- \***Foreign key approach**\*  
+    Relation 하나, 여기서는 $S$를 골라서 $T$의 PK를 $S$의 FK로 넣는다. 이떄 $S$는 $R$에 대해서 total participation인 것을 고르는 것이 좋다.
+
+- \***Merged relation**\*  
+    두 relation과 relationship을 하나로 합친다. 두 relation이 total일 때 적합하다.
+
+- \***Cross-reference**\*  
+    새로운 relation $U$를 만들어서$S$와 $T$의 PK를 교차 참조한다. $U$의 PK는 $S$와 $T$의 PK중 하나로 하면 된다. $U$의 다른 FK는 unique key가 된다.
+
+### Step 4: Binary 1:N Relation Types
+각 1:N 관계 $R$에 대해서, $R$의 N-side에 속하는 S를 찾는다. S에 다른 쪽에 해당하는 $T$의 PK를 FK로 넣고, 1:N 관계의 attribute를 넣어주면 된다.
+
+### Step 5: Binary M:N Relation Types
+각 M:N 관계 $R$에 대해서 새로운 relation $U$를 만든다. 
+
+$U$에 참여하는 entity type들의 PK를 $U$의 FK로 넣는다. FK의 모듬이 $U$의 PK가 된다. 그리고 $U$에 M:N 관계의 atribute를 추가하면 된다.
+
+### Step 6: Multivalued Attribute
+각 multivalued attribute $A$에 대해 새 relation $U$를 생성하고, $A$의 attibute와 $U$를 소유하는 entity type의 PK를 FK로 넣는다. $U$의 PK는 $\{A, FK\}$가 된다.
+
+### Step 7: N-ary Relation
+새로운 relation $U$를 만들어서 관계에 참여하는 relation들의 PK를 FK로 두고 N-ary 관계의 attribute를 추가한다.
+

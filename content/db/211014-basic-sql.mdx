@@ -1,0 +1,140 @@
+---
+title: "Basic SQL"
+date: "2021-10-14"
+emoji: "🖨"
+category: "db"
+---
+## SQL의 스키마와 카탈로그 개념(DDL)
+### SQL Schema(=database)
+같은 데이터베이스에 속하는 테이블이나 다른 구조들을 묶기 위한 개념이다. Schema name에 의해 구분된다.
+
+스키마의 소유자를 나타내는 authorization identifier와 스키마의 각 요소에 대한 descriptor를 포함한다.
+
+`CREATE TABLE`로 스키마를 생성할 수 있다.
+```sql
+CREATE SCHEMA COMPANY AUTHORIZATION 'Joshua';
+```
+스키마는 권한이 있는 유저만이 작성할 수 있다.
+
+### Catalog
+스키마의 모음이다. 
+
+`INFORMATION_SCHEMA`라는 특별한 스키마를 항상 가지고 있다. `INFORMATION_SCHEMA`는 catalog안의 모든 스키마에 대한 정보를 제공한다.
+
+같은 catalog에 속한 스키마는 type/domain 정의와 같은 특정 요소를 공유할 수 있다.
+
+## CREATE TABLE
+새로운 relation $R$을 정의한다. $R$에 이름을 주고 attribute, types(domains), 그리고 초기 제약조건(`NOT NULL`, `UNIQUE` 등)들을 명시한다.
+
+Key, entity 무결성, referential 무결성 제약조건들은 attribute 선언 이후 기술한다. 제약조건들은 테이블 생성 후에도 `ALTER TABLE`을 통해 수정할 수 있다.
+
+- **Base tables**  
+    Table과 table의 행들이 DBMS에 실제로 존재한다.
+
+- **Virtual relations**  
+    DBMS에 실제로 존재할 수도, 안할 수도 있다. `CREATE VIEW`를 통해 생성할 수 있다.  
+    View에 해당하는 튜플들은 구체화(materialized)되어 있지 않은 이상 참조될 때 계산된다. 
+
+    \***장점**\*
+    - Space 낭비를 줄일 수 있다
+    - 권한을 제한할 수 있다
+    - 계산하기 빨라 테이블이 필요 없을 때 유용하다
+
+## SQL의 attribute 데이터 타입과 도메인
+- **Numeric**: `INT`, `SMALLINT`, in oracle `NUMBER`
+    - Floating point: `FLOAT`, `REAL`, `DOUBLE PRECISION`  
+    - Formated number: `DECIMAL(i, j)`  
+        $i$: the precision, 총 자릿수를 나타낸다  
+        $j$: the scale, 소숫점 아래 자릿수를 나타낸다
+    
+- **Character-strings**:
+    - 고정 길이: `CHAR(n)`, `CHARACTER(n)`. n보다 짧으면 우측으로 공백이 채워진다.
+    - 가변 길이: `VARCHAR(n)`, `CLOB(Character Large Object)`: 큰 text 값들을 저장할 수 있다.
+
+- **Boolean**
+
+- **Date**: 'yy-mm-dd'형식으로 날짜를 표현한다. 오라클에서는 `to_date()`로 사용한다.
+
+- **Time**: 'HH:MM:SS'
+
+- **Timestamp**: 'Date + Time + decimal fractions of seconds' 예) '2021-10-14 15:25:14.658302'
+
+- **Interval**: Date, Time, Timestamp의 증가, 감소에 사용할 수 있는 상대적인 값을 생성할 수 있다.
+
+- **Domain**: 도메인을 정의할 수 있다. 사용했을 때 얻을 수 있는 장점으로 1)도메인의 데이터 타입을 쉽게 변경할 수 있고 2)스키마의 가독성이 높아진다.
+```sql
+CREATE DOMAIN SSN_TYPE AS CHAR(9);
+```
+- **Type**: 객체를 저장할 수 있다.
+
+## SQL에서 제약조건 지정하기
+- **Attribute에 대한 제약조건**: `DEFAULT`, `NOT NULL`, `CHECK`(domain 제약조건)
+
+- **Key 제약조건**:  
+    - `PRIMARY KEY`
+    - `UNIQUE`: Candidate key를 지정할 수 있다.  
+    - `FOREIGN KEY`: `SET NULL`, `CASCADE` 같은 참조 트리거 액션 절을 추가할 수 있다. 이를 통해 일관성을 보장할 수 있다. Default는 reject다.
+
+## 기본 검색 쿼리
+```sql
+SELECT  <attribute list>
+FROM    <relation list>
+[WHERE  <condition>]
+-- for aggregates
+[GROUP BY   <attribute list>]
+[HAVING     <condition>]
+[ORDER BY   <attribute list> [DESC]];
+```
+**`SELECT`(projection)**: **SQL에서는 튜플의 중복이 허용**되지만 realtion calculus/algebra에서는 중복이 허용되지 않는다.
+
+**`WHERE`(selection)**: Conditional(boolean) 표현으로 어느 튜플을 가져올지 정한다. 여러 relation이 있으면 'join' condition을 포함한다.
+    `WHERE`절 생략시 가능한 모든 튜플들의 조합을 만든다.
+
+> SQL 질의는 데이터를 '어떻게' 찾아오라고 하지 않고 '무슨 데이터'를 원하는지 기술한다. 즉, **비절차적이고 선언적**이다.
+
+## 테이블을 조합으로 다루기
+SQL에서 중복된 튜플을 제거하지 않는 이유는 다음과 같다.
+- 중복 제거는 비용이 많이 드는 연산이다.
+- 유저가 중복된 결과를 보고싶을 수도 있다.
+- Aggregate 함수들(`AVG`, `SUM` 등)을 사용할 때 중복 제거를 원하지 않을 때가 많다.
+
+중복 제거를 원한다면 `SELECT`에서 `DISTINCT`를 사용하면 된다.
+
+### Set operations
+- `UNION`: 합집합
+- `EXCEPT`(in oracle `MINUS`): 차집합
+- `INTERSECT`: 교집합
+```sql
+-- 성이 'Smith'인 직원이 참여하는 프로젝트 중, 
+-- 그 직원이 일하는 사람이거나 매니저인 모든 프로젝트의 번호를 가져온다.
+(
+    SELECT DISTINCT Pnumber
+    FROM    PROJECT, WORKS_ON, EMPLOYEE
+    WHERE   Pnumber = Pno AND Essn = Ssn AND Lname = 'Smith'
+)
+UNION
+(
+    SELECT DISTINCT Pnumber
+    FROM    PROJECT, DEPARTMENT, EMPLOYEE
+    WHERE   Dnum = Dnumber AND Mgr_ssn = Ssn AND Lname = 'Smith'
+);
+```
+
+Set operation을 사용하기 위해서는 두 테이블이 **'type-compatible'** 해야한다.
+> **Type-compatible**: 두 relation이 1)같은 attribute들을 가지고 2)attribute들의 순서가 같아야 한다.
+
+## SQL이 제공하는 추가 기능
+- Substring Pattern Matching  
+    `LIKE`
+    - '%': 임의의 수의 0개 이상의 문자를 대체한다.
+    - '_': 단일 문자를 대체한다.
+```sql
+-- 직원들중 60년생의 이름과 생일 가져오기
+SELECT  Fname, Lname, Bdate 
+FROM    employee 
+[WHERE   to_char(Bdate, 'yyyy-mm-dd') LIKE '196_-__-__'];
+[WHERE   to_char(Bdate, 'yyyy-mm-dd') LIKE '196%']; 
+```
+- Arithmatic operations
+
+- Ordering: `DESC`(내림차순), by default `ASC`(오름차순)
