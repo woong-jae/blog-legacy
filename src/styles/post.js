@@ -2,11 +2,17 @@ import { css } from "styled-components";
 
 const postStyle = css`
     h2 {
+        padding-left: 8px;
+        border-left: solid;
         font-size: 1.8rem;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
     }
     h3 {
         font-size: 1.5rem;
+        margin-bottom: 16px;
+    }
+    h4 {
+        font-size: 1.1rem;
         margin-bottom: 16px;
     }
 

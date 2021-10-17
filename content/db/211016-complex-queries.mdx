@@ -1,0 +1,201 @@
+---
+title: "Complex Queries"
+date: "2021-10-16"
+emoji: "😵‍💫"
+category: "db"
+---
+## 더 복잡한 검색 쿼리
+### Three valued logic
+SQL은 어떤 표현에 대한 결과로 세 가지 값, `TRUE`, `FALSE`, `UNKNOWN`(=`NULL`), 을 가질 수 있다.
+> `NULL`=`NULL`은 평가될 수 없다. 대신 `IS` 연산자로 `NULL`인지 아닌지 확인할 수 있다. Not `NULL`은 `IS NOT`으로 확인 가능하다.
+
+### Nested queries(중첩 질의)
+`SELECT`-`FROM`-`WHERE` 절을 가진 subquery(inner query)를 다른 쿼리의 `WHERE` 절(outer query)에서 사용할 수 있다.
+```sql
+-- 성이 'Smith'인 직원이 관리하는 부서에서 진행하는 프로젝트 Pnumber 가져오기
+SELECT DISTINCT Pnumber
+FROM PROJECT
+WHERE Pnumber IN (
+    SELECT Pnumber
+    FROM PROJECT, DEPARTMENT, EMPLOYEE
+    WHERE Dnum = Dnumber AND Mgr_ssn = Ssn AND Lname = 'Smith'
+);
+```
+
+#### Set/Multiset 비교 연산자 `IN`
+값 $v$가 집합 $V$ 안에 있으면 `TRUE`를 결과로 가진다.`IN` 말고 다른 비교 연산자도 사용가능하다.
+```sql
+-- Department 5에 일하는 직원 전체보다 급여가 큰 직원의 이름을 가져오기
+SELECT Lname, Fname
+FROM EMPLOYEE
+WHERE Salary > ALL (
+    SELECT Salary
+    FROM EMPLOYEE
+    WHERE Dno = 5
+);
+```
+
+#### (NOT)EXISTS
+상호 연관된 중첩 질의의 결과가 존재하는지 아닌지(true or false) 판별한다.
+```sql
+-- 직원 중 부양가족이 있는 직원의 이름을 가져오기
+SELECT Fname, Lname
+FROM EMPLOYEE
+WHERE EXISTS (
+    SELECT *
+    FROM DEPENDENT
+    WHERE Ssn = Essn
+);
+```
+> `NOT EXISTS`는 "for all"을 표현하기 위해 사용할 수 있다(2중 부정).
+
+**값들의 명시적인 집합**도 사용할 수 있다.
+```sql
+-- Pnumber 1 ,2, 3에서 일하는 모든 직원의 Essn 가져오기
+SELECT DISTINCT Essn
+FROM WORKS_ON
+WHERE Pno IN (1, 2 3);
+```
+### Joined tables
+`FROM` 절에서 join 연산을 할 수 있다.
+```sql
+SELECT Fname, Lname, Address
+FROM (EMPLOYEE JOIN DEPARTMENT ON Dno = Dnumber)
+WHERE Dname = 'Research';
+```
+사용할 수 있는 `JOIN`의 타입:
+- **NATURAL JOIN**: 동일한 이름을 가진 attribute에 대해 join을 한다.
+
+- **INNER JOIN**: default type이다. 매칭하는 튜플이 다른 relation에 존재하면 그 튜플을 결과에 포함한다.
+
+- **LEFT(RIGHT) OUTER JOIN**: 왼쪽(오른쪽) 테이블의 모든 튜플이 결과에 나온다. 즉, 오른쪽(왼쪽) 튜플과 매칭되는 값이 없는 튜플도 결과에 나온다.
+
+- **FULL OUTER JOIN**: LEFT + RIGHT OUTER JOIN
+
+### Aggregate functions(집계 연산)
+어떤 그룹에 속하는 튜플들의 **정보를 요약해서 하나의 튜플로** 보기 위해 사용한다.
+
+연산자: `COUNT`, `SUM`, `AVG`, `MAX`, `MIN`
+
+```sql
+SELECT SUM(Salary), MAX(Salary), MIN(Salary), AVG(Salary)
+FROM EMPLOYEE;
+```
+
+> `COUNT`에서 **NULL 값은 카운트하지 않는다**. 하지만 **튜플을 센다면, 어떤 튜플의 attribute가 NULL 값을 가져도 카운트** 된다.
+
+집계 연산은 `SELECT` 절이나 `HAVING` 절에서 사용할 수 있다. `HAVING`은 그룹을 선택하는 컨디션을 작성할 수 있는 절이다.
+
+### Grouping
+`GROUP BY` 절을 사용해서 relation을 튜들들의 부분집합으로 나눌 수 있다. 
+
+Grouping attribute를 기준으로 같은 값을 가진 tuple끼리 묶는다. Grouping attribute는 `GROUP BY`절에 명시하고 **`SELECT`절에 무조건 나타나야 한다**.
+```sql
+-- 부서별 직원의 수와 평균 급여를 가져오기
+SELECT Dno, COUNT(*), AVG(Salary)
+FROM EMPLOYEE
+GROUP BY Dno;
+```
+
+### in-line view
+`WITH`절을 사용해서 특정 쿼리에서 사용가능한 가상이 테이블을 정의한다.
+```sql
+-- 2명 이상이 일하는 부서 중 급여가 40000 이상인 직원의 수를 가져오기
+WITH SOMEDEPTS AS (
+    SELECT Dno
+    FROM EMPLOYEE
+    GROUP BY Dno
+    HAVING COUNT (*) >= 2
+)
+SELECT e.Dno, COUNT(*)
+FROM EMPLOYEE e, SOMEDEPTS b
+WHERE Salary > 40000 AND e.Dno = b.Dno
+GROUP BY e.Dno;
+```
+
+### CASE
+값이 특정 condition에 따라 달라질 수 있을 때 사용한다. SQL 쿼리 중 값을 기대하는 어느 부분에서도 사용할 수 있다.
+```sql
+UPDATE EMPLOYEE
+SET Salary = CASE   WHEN Dno = 5 THEN Salary + 2000
+                    WHEN Dno = 4 THEN Salary + 1500
+                    WHEN Dno = 1 THEN Salary + 3000
+```
+
+### Recursive query
+같은 타입의 relation에서 튜플 간의 관계(계층구조 등)를 파악할 때 유용하게 사용할 수 있다.
+```sql
+-- 계층구조 탐색
+SELECT Super_ssn
+FROM EMPLOYEE
+START WITH Ssn = '123456789'
+CONNECT BY PRIOR Super_ssn = Ssn;
+```
+
+## Views in SQL
+SQL에서 view는 다른 테이블로부터 파생된 테이블이다. **실제 물리적으로 적재되지 않은 가상 테이블**이다. View는 실제로 참조하게 되는 순간 실제화/구체화된다.
+
+View는 자주 참조되는 테이블을 명시하기 위한 방법으로 생각할 수 있다. 자주 사용되는 joined table의 캐쉬처럼 사용할 수 있다.
+
+`CREATE VIEW`를 통해 view의 이름과 attribute, 정의를 명시한다.
+```sql
+CREATE VIEW WORKS_ON1 AS
+SELECT Fname, Lname, Pname, Hours
+FROM EMPLOYEE, PROJECT, WORKS_ON
+WHERE Ssn = Essn AND Pno = Pnumber;
+```
+### View의 장점
+- **쿼리를 단순화** 할 수 있다.
+
+- **보안 및 권한** 부여 메커니즘을 제공한다.
+
+- 값비싼 **join cost를 아낄 수 있다**.
+
+### View 구현의 접근
+#### Query modification  
+필요할 때만 만들어낸다. View가 참조될 때마다 새로 연산을 수행하는 방식이다.
+
+이 방식은 복잡한 쿼리들로 이루어진 view의 경우 참조할 때마다 연산을 수행해야하기 때문에 비효율적이다.
+
+#### View materialization
+View가 처음 참조될 때 임시 테이블을 물리적으로 만든다. 이 테이블에 대해 쿼리가 계속 이루어지면 남아있다가 일정기간동안 사용되지 않으면 삭제된다.
+
+이 방식에서는 테이블을 자동으로 update하기 위한 효율적인 방법이 필요하다.
+
+- **Incremental** update: 변화에 영향받은 tuple DBMS가 판별해서 갱신한다.
+
+- **Immediate** update: View의 base table이 변경되면 갱신한다.
+
+- **Lazy** update: View가 참조될 때 갱신한다.
+
+- **Periodic** update: 일정 주기로 갱신한다.
+
+일반적인 경우 view 테이블을 `INSERT`/`DELETE`/`UPDATE`로 직접 변경하는 것은 불가능하다. 
+왜냐하면 view에는 많은 table이 참여하고 있기 떄문에 명령어가 중의적인 의미를 가질 수도 있기 때문이다.
+
+## Schema change statements in SQL
+- `DROP`  
+    스키마 요소(tables, domains, constraints)들을 삭제할 때 사용한다.  
+    Option: `CASCADE`, `RESTRICT`
+
+- `ALTER TABLE`  
+    attribute 추가/제거/재정의, 테이블 제약조건 추가/삭제, default 값 변경 등에 사용할 수 있다.
+
+## Assertion and Triggers
+CREATE ASSERTION: 일반 제약조건을 명시할 수 있다. 오라클에서는 지원되지 않는다.
+
+### Trigger
+특정 이벤트가 발생하고 condition이 만족되었을 때 취할 행동을 명시할 수 있다.
+
+Events, Condition, Action(ECA)로 정의된다.
+```sql
+CREATE OR REPLACE
+TRIGGER SALARY_VIOLATION
+BEFORE  INSERT OR UPDATE OF Salary ON EMPLOYEE
+FOR EACH ROW
+        WHEN (NEW.SALARY > 100000)
+        BEGIN
+          INFORM_SALARY_VIOLATION(:NEW.SALARY, :OLD.Salary); -- Stored procedure
+        END;
+/
+```

@@ -23,7 +23,7 @@ CREATE SCHEMA COMPANY AUTHORIZATION 'Joshua';
 
 같은 catalog에 속한 스키마는 type/domain 정의와 같은 특정 요소를 공유할 수 있다.
 
-## CREATE TABLE
+### CREATE TABLE
 새로운 relation $R$을 정의한다. $R$에 이름을 주고 attribute, types(domains), 그리고 초기 제약조건(`NOT NULL`, `UNIQUE` 등)들을 명시한다.
 
 Key, entity 무결성, referential 무결성 제약조건들은 attribute 선언 이후 기술한다. 제약조건들은 테이블 생성 후에도 `ALTER TABLE`을 통해 수정할 수 있다.
@@ -40,7 +40,7 @@ Key, entity 무결성, referential 무결성 제약조건들은 attribute 선언
     - 권한을 제한할 수 있다
     - 계산하기 빨라 테이블이 필요 없을 때 유용하다
 
-## SQL의 attribute 데이터 타입과 도메인
+### SQL의 attribute 데이터 타입과 도메인
 - **Numeric**: `INT`, `SMALLINT`, in oracle `NUMBER`
     - Floating point: `FLOAT`, `REAL`, `DOUBLE PRECISION`  
     - Formated number: `DECIMAL(i, j)`  
@@ -67,13 +67,21 @@ CREATE DOMAIN SSN_TYPE AS CHAR(9);
 ```
 - **Type**: 객체를 저장할 수 있다.
 
-## SQL에서 제약조건 지정하기
+### SQL에서 제약조건 지정하기
 - **Attribute에 대한 제약조건**: `DEFAULT`, `NOT NULL`, `CHECK`(domain 제약조건)
+```sql
+Age INT NOT NULL CHECK (Age >= 15 and Age < 65)
+```
 
 - **Key 제약조건**:  
     - `PRIMARY KEY`
     - `UNIQUE`: Candidate key를 지정할 수 있다.  
     - `FOREIGN KEY`: `SET NULL`, `CASCADE` 같은 참조 트리거 액션 절을 추가할 수 있다. 이를 통해 일관성을 보장할 수 있다. Default는 reject다.
+```sql
+FOREIGN KEY (TimelineRno) REFERENCES ROOM(RoomNumber) ON DELETE CASCADE
+```
+
+<br/>
 
 ## 기본 검색 쿼리
 ```sql
