@@ -1,0 +1,204 @@
+---
+title: "Relational Algebra & Calculus(관계 대수, 관계 논리)"
+date: "2021-10-18"
+emoji: "😵‍💫"
+category: "db"
+---
+## Relational Algebra(관계 대수란)?
+관계 모델에서 사용되는 기본 연산의 집합이다. 유저가 쿼리 요청을 기술할 수 있게 해준다.
+
+관계 대수의 연산 결과는 새로운 집합, 즉, 새로운 relation이다. 관계 대수는 연산의 대상이 relation이고 연산 결과도 relation이므로 관계 대수는 relation에서만 적용되는 **'폐쇄 특성'(closed)**을 가진다.
+
+***관계 대수의 중요성:*** 
+- 관계 모델에 대한 연산을 **정형화**했다.
+- **쿼리 최적화(query optimization)**의 기초가 된다.
+- RDBMS를 위한 SQL에 관계 대수의 개념들이 반영되어 있다.
+
+관계 대수 연산을 크게 두 그룹으로 나눌 수 있다.  
+- 집합 이론에 따른 **집합 연산**: Union, Intersection, Set difference, Cross(cartesian) product
+- **관계형 DB를 위한 연산**:
+    - Unary operations: Select, Project, Rename
+    - Binary operations: Join, Division
+
+### Unary relational operations
+#### SELECT
+$\sigma$(sigma)로 표기한다.
+$$
+\sigma_{<selection\ condition>}(R)
+$$
+Selection condition에 따라 relation에서 튜플들의 부분집합을 선택한다. 
+
+Selection condition은 여러 **'<attribute name\> <comparison op\> <constant value\>'** 절로 이루어진다.
+
+***속성:***
+- $R$에 대한 SELECT 연산은 $R$과 동일한 스키마를 가지는 relation $S$를 가진다.
+- 교환법칙(commutative)이 성립한다.
+- 튜플의 수는 다음과 같다. $\mid\sigma_c(R)\mid \le {\mid}R\mid$, 하지만 attribute의 수는 같다.
+- Unary operator다.
+
+#### PROJECT
+$\pi$(pi)로 표기한다. 테이블에서 원하는 열만 추출하는 연산이다.
+$$
+\pi_{<attribute\ list>}(R)
+$$
+SELECT를 'horizontal partition'이라고 하면, PROJECT는 'vertical partition'이다.
+
+$\pi$는 **중복되는 튜플들을 제거**한다. 관계 모델에서 $\pi$의 결과는 집합이기 때문이다.
+
+***속성:***
+- $\pi_{<attribute\ list>}(R)\le {\mid}R\mid$
+- 교환법칙이 성립하지 않는다.
+
+> 연산들을 연속해서 적용하기
+> - in-line expression: 연산들을 중첩해서 하나의 관계 대수 연산으로 작성한다.
+> $$
+> \pi_{Fname, Lname, Salary}(\sigma_{Dno=5}(EMPLOYEE))
+> $$
+> - assignment operation: 중간 단계 relation에 이름을 줘서 연속되는 연산들을 명시적으로 보여준다.
+> $$
+> DEP5\_EMPS\larr \sigma_{Dno=5}(EMPLOYEE)\\
+> RESULT\larr \pi_{Fname, Lname, Salary}(DEP5\_EMPS)
+> $$
+
+#### RENAME
+$\rho$로 표기한다. Relation의 이름이나 attribute의 이름을 변경하는데 사용한다.
+$$
+\rho_{S(B_1,...,B_n)}(R)
+$$
+→ 해석: Relation의 이름을 S로 변경하고 attribute의 이름을 각각 $B_1,...,B_n$으로 변경한다.
+
+### Set operations
+#### UNION
+$\cup$로 표기한다. **합집합** 연산을 한다. 집합이기 때문에 당연히 중복되는 튜플은 제거된다.
+
+연산에 참여하는 **두 relation은 `type-compatible` 해야한다**. 즉, 같은 degree $n$을 가지고, $dom(A_i)=dom(B_i), 1{\le}i{\le}n$을 만족해야한다.
+
+Type-compatibility는 이제 곧 다룰 INTERSECTION(교집합)과 SET DIFFERENCE(차집합)에서도 만족되어야 한다.
+
+#### INTERSECTION
+$\cap$로 표기한다. **교집합** 연산을 한다.
+
+연산에 참여하는 두 relation에 공통으로 포함되는 튜플들을 가지는 새 relation을 결과로 가진다.
+
+#### SET DIFFERENCE(MINUS)
+$-$로 표기한다. 차집합 연산이다.
+
+***세 집합 연산의 속성:***
+- 합집합과 교집합 연산은 교환법칙이 성립한다.
+- 합집합과 교집합 연산은 'associative'하다. 즉, 연산의 순서가 상관없다.
+- **차집합 연산은 교환법칙이 성립하지 않는다.**
+
+#### CARTESIAN(CROSS) PRODUCT
+$R(R_1,...,A_n)\times S(B_1,...,B_m)$으로 표기한다. 두 relation의 튜플들로 만들 수 있는 모든 조합을 만든다.
+이때, $R$과 $S$는 type-compatible하지 않아도 된다.
+
+결과 relation $Q(A_1, ..., A_n, B_1, ..., B_m)$을 가진다.($Q:{\mid}R\mid\times{\mid}S\mid$)
+
+> Cartesian product는 join 연산의 중간단계로 사용된다.
+
+### Binary relation operations
+#### JOIN
+$\Join$(join)으로 표기한다. 두 relation의 관련있는 튜플들 합쳐 하나의 긴 튜플로 만든다.
+
+Relation간의 관계를 처리할 수 있게 해준다는 관점에서 매우 중요하다.
+$$
+R\Join_{<join\ condition>}S
+$$
+***속성:***  
+결과: $Q(A_1, ..., A_n, B_1, ..., B_m)$
+- 결과의 degree $Q:n+m$
+- 결과의 튜플들은 다음 조건, $r[A_i]=s[B_j]$, 을 만족한다.
+- $Q\le({\mid}R\mid\times{\mid}S\mid)$
+- 일반화된 JOIN 연산을 **'theta-join'**이라고 한다.
+> **Theta join**, $R\underset{\theta}\Join S$
+>
+> $\theta$에는 어떤 boolean 표현이라도 올 수 있다.
+
+#### EQUIJOIN
+Join condition에 비교 연산 $=$만 사용한 조인이다. EQUIJOIN의 결과에서 각 튜플에는 같은 값을 가지는 attribute 쌍이 하나 이상 존재한다.
+
+#### NATURAL JOIN
+$*$로 표기한다. EQUIJOIN에서 동일한 attribute가 2개 있는 상황을 방지하기 위해 생겼다. Join attribute를 하나로 합친다.
+
+양 relation에서 두 join attribute가 같은 이름을 가져야 연산을 수행할 수 있다.
+
+> \***Join Selectivity(조인 선택도)**\*
+>
+> (Join 결과의 예상 사이즈)/(최대 크기, ${\mid}R\mid\times{\mid}S\mid$)로 정의된다. 퍼센트로 표기한다.
+>
+> 조인 선택도의 값이 낮을 수록 결과의 크기도 작다는 뜻이다. 조인 선택도 값이 낮은 것부터 실행해서 중간 연산을 줄여 쿼리를 최적화 할 수 있다.
+
+<br/>
+
+> Inner join과 n-way join의 구현
+> - **Inner joins**: 매칭되는 것만 합치는 연산이다. Cross product와 selection의 조합으로 정의할 수 있다.
+> - **n-way joins**: 3개 이상의 테이블이 조인되는 연산이다. 연속된 조인의 연산으로 정의할 수 있다.
+
+#### DIVISION
+$\div$로 표기한다.
+$$
+R(Z)\div S(X), (X\sube Z)
+$$
+Relation $S$의 모든 값에 매칭되는 튜플들만 relation $R$에서 선택한다.
+
+결과 $T(Y)$의 튜플 $t$의 값은 $S$의 모든 튜플과 함께 $R$에 나타나야 한다.
+
+$\div$는 $\pi, \times, -$로 나타낼 수 있다.
+1. $T1\larr \pi_Y(R)$
+2. $T2\larr \pi_Y((S\times T1)-R)$
+3. $T1-T2$
+
+SQL에서는 `NOT EXISTS`로 구현됐다('all' condition 표현할 때 유용).
+
+### Complete set of Relational Operations
+Complete Set = $\{\sigma, \pi, \cup, \rho, \times\}$
+
+다른 relation 연산들을 complete set에 있는 연산들의 조합으로 나타낼 수 있기 때문에 'complete'라고 한다.
+
+$$
+R\cap S\equiv(R\cup S)-((R-S)\cup (S-R)) \\
+R\Join_{<condition\ >}S\equiv \sigma_{<condition\ >}(R\times S) \\
+R*S\equiv \pi(\sigma_{<condition\ >}(\rho(R)\times \rho(S)))
+$$
+
+## Relational Calculus(관계 논리란)?
+관계형 쿼리를 기술할 수 있는 high-level의 선언적 언어를 제공한다.
+
+관계 논리 표현문에는 **연산의 순서를 기술하지 않는다**. "어떻게 정보를 가져올 것인가"가 아닌 **"무엇을"** 가져올지만 기술한다.
+
+> 비절차적(non-procedural), 선언적(declaritive) 언어
+
+관계 논리는 두 가지 버전이 있다.
+- **Tuple relational calculus**: 행을 기반을 해석한다. RDBMS의 SQL이 기초를 둔다.
+- **Domain relational calculus**: 열(domain of attributes)을 기반으로 해석한다.
+
+관계 대수와 관계 논리는 쿼리 언어로써 동등한 표현력을 가진다.
+
+> 어떤 관계형 언어 $L$에 대해서, **관계 논리로 표현할 수 있는 모든 쿼리를 $L$로 표현**할 수 있으면 **'relationally complete'**하다고 한다.
+
+***관계 대수의 중요성:***
+- 견고한 수학적 논리를 가지기 때문에 일반화가 쉽다.
+- RDBMS의 SQL이 튜플 관계 대수에 기초를 둔다.
+
+### Tuple relational calculus
+#### 간단한 쿼리 형태
+$$
+\{t\mid COND(t)\}
+$$
+: Condition을 만족하는 튜플 $t$를 결과에 포함한다.
+
+ex) $\{t.Fname, t.Lname\mid EMPLOYEE(t) AND Salary>30000\}$
+
+#### 일반화된 쿼리 형태
+$$
+\{t_1\cdot A_i, t_2\cdot A_k, ..., t_n\cdot A_m\mid COND(t_1, ..., t_n, t_{n+1}, ..., t_m)\}
+$$
+Condition(formula)은 'predicate calculus atoms'로 이루어진다.
+- $R(t)$: relation $R$의 튜플 변수 $t$
+- $(t_i\cdot A)\ op\ (t_j\cdot B)$: 
+    - $t_1, t_2$: 튜플 변수
+    - $A, B$: 각 $t_i, t_j$가 속하는 relation의 attribute 범위
+- logical operators: AND, OR, NOT
+
+> - **모든 atom은 formula**이다.
+> - $F_1$과 $F_2$가 formula이면, 둘 간의 모든 논리 연산의 결과도 formula이다.
