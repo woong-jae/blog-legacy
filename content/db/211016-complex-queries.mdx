@@ -98,7 +98,7 @@ GROUP BY Dno;
 ```
 
 ### in-line view
-`WITH`절을 사용해서 특정 쿼리에서 사용가능한 가상이 테이블을 정의한다.
+`WITH`절을 사용해서 특정 쿼리에서 사용 가능한 가상의 테이블을 정의한다.
 ```sql
 -- 2명 이상이 일하는 부서 중 급여가 40000 이상인 직원의 수를 가져오기
 WITH SOMEDEPTS AS (
@@ -135,7 +135,7 @@ CONNECT BY PRIOR Super_ssn = Ssn;
 ## Views in SQL
 SQL에서 view는 다른 테이블로부터 파생된 테이블이다. **실제 물리적으로 적재되지 않은 가상 테이블**이다. View는 실제로 참조하게 되는 순간 실제화/구체화된다.
 
-View는 자주 참조되는 테이블을 명시하기 위한 방법으로 생각할 수 있다. 자주 사용되는 joined table의 캐쉬처럼 사용할 수 있다.
+View는 자주 참조되는 테이블을 명시하기 위한 방법으로 생각할 수 있다. 또한, 자주 사용되는 joined table의 캐쉬처럼 사용할 수 있다.
 
 `CREATE VIEW`를 통해 view의 이름과 attribute, 정의를 명시한다.
 ```sql
@@ -151,7 +151,7 @@ WHERE Ssn = Essn AND Pno = Pnumber;
 
 - 값비싼 **join cost를 아낄 수 있다**.
 
-### View 구현의 접근
+### View 구현의 여러 방법
 #### Query modification  
 필요할 때만 만들어낸다. View가 참조될 때마다 새로 연산을 수행하는 방식이다.
 
@@ -162,7 +162,7 @@ View가 처음 참조될 때 임시 테이블을 물리적으로 만든다. 이 
 
 이 방식에서는 테이블을 자동으로 update하기 위한 효율적인 방법이 필요하다.
 
-- **Incremental** update: 변화에 영향받은 tuple DBMS가 판별해서 갱신한다.
+- **Incremental** update: 변화에 영향받은 tuple만 DBMS가 판별해서 갱신한다.
 
 - **Immediate** update: View의 base table이 변경되면 갱신한다.
 
@@ -171,7 +171,7 @@ View가 처음 참조될 때 임시 테이블을 물리적으로 만든다. 이 
 - **Periodic** update: 일정 주기로 갱신한다.
 
 일반적인 경우 view 테이블을 `INSERT`/`DELETE`/`UPDATE`로 직접 변경하는 것은 불가능하다. 
-왜냐하면 view에는 많은 table이 참여하고 있기 떄문에 명령어가 중의적인 의미를 가질 수도 있기 때문이다.
+왜냐하면 view에는 많은 table이 참여하고 있기 때문에 명령어가 중의적인 의미를 가질 수도 있기 때문이다.
 
 ## Schema change statements in SQL
 - `DROP`  
@@ -185,17 +185,17 @@ View가 처음 참조될 때 임시 테이블을 물리적으로 만든다. 이 
 CREATE ASSERTION: 일반 제약조건을 명시할 수 있다. 오라클에서는 지원되지 않는다.
 
 ### Trigger
-특정 이벤트가 발생하고 condition이 만족되었을 때 취할 행동을 명시할 수 있다.
+특정 이벤트가 발생하고 condition이 만족됐을 때 취할 행동을 명시할 수 있다.
 
-Events, Condition, Action(ECA)로 정의된다.
+**Events, Condition, Action(ECA)**로 정의된다.
 ```sql
 CREATE OR REPLACE
 TRIGGER SALARY_VIOLATION
-BEFORE  INSERT OR UPDATE OF Salary ON EMPLOYEE
+BEFORE  INSERT OR UPDATE OF Salary ON EMPLOYEE -- Event
 FOR EACH ROW
-        WHEN (NEW.SALARY > 100000)
-        BEGIN
-          INFORM_SALARY_VIOLATION(:NEW.SALARY, :OLD.Salary); -- Stored procedure
+        WHEN (NEW.SALARY > 100000) -- Condition
+        BEGIN -- Action
+          INFORM_SALARY_VIOLATION(:NEW.SALARY, :OLD.Salary); -- Stored procedure 
         END;
 /
 ```

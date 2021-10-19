@@ -1,7 +1,7 @@
 ---
-title: "Relational Algebra & Calculus(관계 대수, 관계 논리)"
+title: "Relational Algebra & Calculus"
 date: "2021-10-18"
-emoji: "😵‍💫"
+emoji: "🗃"
 category: "db"
 ---
 ## Relational Algebra(관계 대수란)?
@@ -126,7 +126,9 @@ $*$로 표기한다. EQUIJOIN에서 동일한 attribute가 2개 있는 상황을
 >
 > (Join 결과의 예상 사이즈)/(최대 크기, ${\mid}R\mid\times{\mid}S\mid$)로 정의된다. 퍼센트로 표기한다.
 >
-> 조인 선택도의 값이 낮을 수록 결과의 크기도 작다는 뜻이다. 조인 선택도 값이 낮은 것부터 실행해서 중간 연산을 줄여 쿼리를 최적화 할 수 있다.
+> 조인 선택도의 값이 낮을 수록 결과의 크기도 작아진다. 
+> 
+> 조인 선택도 값이 낮은 것부터 실행해서 **중간 연산을 줄여 쿼리를 최적화** 할 수 있다.
 
 <br/>
 
@@ -151,7 +153,7 @@ $\div$는 $\pi, \times, -$로 나타낼 수 있다.
 SQL에서는 `NOT EXISTS`로 구현됐다('all' condition 표현할 때 유용).
 
 ### Complete set of Relational Operations
-Complete Set = $\{\sigma, \pi, \cup, \rho, \times\}$
+Complete Set = $\{\sigma, \pi, \rho, \cup, \times, -\}$
 
 다른 relation 연산들을 complete set에 있는 연산들의 조합으로 나타낼 수 있기 때문에 'complete'라고 한다.
 

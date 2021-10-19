@@ -8,11 +8,11 @@ category: "db"
 
 ## Concepts
 
-이 모델에서 'Relation'은 **집합에 바탕을 둔 수학적 개념**이다. 관계 모델에서 DB는 relation들의 집합이다. Table과 같은 역할을 한다. 
+이 모델에서 'Relation'은 **집합에 바탕을 둔 수학적 개념**으로 정의한다. 관계 모델에서 DB는 relation들의 집합이다. Relation은 table과 같은 역할을 한다. 
 
-Relation은 보통 여러 행(row)들을 가지고 있다. 각 행에 있는 데이터들은 현실 세계의 entity나 relationship에 상응한다. 각 행을 'tuple(튜플)'이라고 하고, 열(column)을 'attribute'라고 한다.
+Relation은 보통 여러 행(row)들을 가지고 있다. 각 행에 있는 데이터들은 현실 세계의 entity나 relationship에 상응한다. 각 행을 'tuple'(튜플)이라고 하고, 열(column)을 'attribute'라고 한다.
 
-Relation의 key는 튜플을 식별할 수 있는 고유한 값이다. 시스템에서 독립적으로 할당된 연속적인 숫자나 열의 ID를 키로 사용할 수도 있는데, 이 키를 'surrogate key(대체 키)'라고 한다.
+Relation의 **key는 튜플을 식별할 수 있는 고유한 값**이다. 시스템에서 독립적으로 할당된 연속적인 숫자나 열의 ID를 키로 사용할 수도 있는데, 이 키를 'surrogate key'(대체 키)라고 한다.
 
 <br/>
 
@@ -20,7 +20,7 @@ Relation의 key는 튜플을 식별할 수 있는 고유한 값이다. 시스템
 
 ### Schema
 
-Relation의 스키마는 다음과 같이 나타낼 수 있다. Relation을 설명하기 위해 사용된다.
+스키마는 Relation을 정의하기 위해 사용된다. 스키마는 다음과 같이 나타낼 수 있다.
 
 $$
 R(A_1, A_2, ..., A_n)
@@ -34,23 +34,30 @@ Degree of relation $R$: R이 가진 attribute의 수
 
 ### Tuple
 
-튜플은 값들이 정렬된 집합이다. 꺾쇠 내부 '<...>'에 표현한다. 튜플의 각 값은 적절한 도메인으로부터 나와야 한다. Relation은 튜플들의 집합이고, 튜플은 어트리뷰트의 집합이다.
+튜플은 값들의 정렬된 집합이다. 꺾쇠 내부 '<...>'에 표현한다. 튜플의 각 값은 적절한 도메인으로부터 나와야 한다. 
 
-튜플은 Key를 가지고 있기 때문에 'self-describing'하다.
+Relation은 튜플들의 집합이고, 튜플은 어트리뷰트의 집합이다.
 
-> 어떤 Relation에서 tuple, 즉, 집합의 순서는 상관없지만 **어트리뷰트의 순서는 무조건 지켜져야 한다**.
+> Relation에서 tuple의 순서는 상관없지만 **어트리뷰트의 순서는 무조건 지켜져야 한다**.
 
-> 또한, 튜플의 값은 atomic하다고 간주한다. 'Composite' 값은 여러개의 어트리뷰트로, 'Multi-valued' 값은 분리된 relation으로 관리해야 한다.
+> 또한, 튜플의 값은 atomic하다고 간주한다. 그렇기 때문에 'Composite' 값은 여러 개의 어트리뷰트로, 'Multi-valued' 값은 분리된 relation으로 관리해야 한다.
 
 ### Domain
 
-도메인은 atomic한 값의 집합이다. 논리적 정의(이름)을 가지고 데이터 타입과 포멧을 가진다. 어트리뷰트의 이름이 관계에서 도메인의 역할을 하게되고, 도메인은 더 구체화된다. 도메인을 쉽게 말하자면 어트리뷰트가 가질 수 있는 모든 값이다.
+도메인은 atomic한 값의 집합이다. 논리적 정의(이름)을 가지고 데이터 타입과 포멧을 가진다. 
+
+도메인을 쉽게 말하자면 **어트리뷰트가 가질 수 있는 모든 값**이다.
+
+어트리뷰트의 이름이 관계에서 도메인의 역할을 하게 되면서 도메인은 더 구체화된다.
 
 예) "한국의 휴대폰 번호"는 11 digit을 가지고 `(01X)-dddd-dddd`의 형식을 가져야 한다.
 
 ### State
 
-Relation의 state는 relation의 어트리뷰트가 가지는 도메인의 카테시안 곱(cartesian product)의 부분집합이다. 즉, 어트리뷰트들로 만들 수 있는 모든 가능한 조합들 중 부분집합, Relation에 있는 튜플들을 뜻한다. $r(R)$은 relation R의 state를 뜻한다. 
+Relation의 state는 relation의 어트리뷰트들이 가지는 도메인의 카테시안 곱(cartesian product)의 부분집합이다.
+어트리뷰트들로 만들 수 있는 모든 가능한 조합들 중 부분집합, 즉, 실제로 적제된 튜플들을 뜻한다.
+
+$r(R)$은 relation $R$의 state를 나타낸다. 
 
 State는 아래와 같이 나타낼 수 있다.
 $$
@@ -62,6 +69,8 @@ $$
 $t_i$는 n-tuple을 의미한다. $t_i=<v_1, v_2, ..., v_n>$이고, 각 어트리뷰트 $v_j$는 $dom(A_j)$의 원소다.
 
 <br/>
+<hr/>
+<br/>
 
 | Informal Terms | Formal Terms |
 | --- | --- |
@@ -71,3 +80,5 @@ $t_i$는 n-tuple을 의미한다. $t_i=<v_1, v_2, ..., v_n>$이고, 각 어트�
 | Row | Tuple |
 | Table definition | Schema |
 | Loaded Table | State |
+
+<br/>

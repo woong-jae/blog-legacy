@@ -35,9 +35,9 @@ ER 스키마의 각 strong entity type $E$에 대해서 relation $R$을 생성�
 $E$의 key attribute 중 하나를 $R$의 기본 키(앞으로 PK)로 정한다. 물론 여러 key의 모음도 PK로 설정할 수 있다.
 
 ### Step 2: Weak Entity Types
-각 weak entity type $W$와 owner entity type $E$에 대해서 relation $R$을 생성하고, $W$의 모든 attribute를 추가한다. 
+각 weak entity type $W$와 owner entity type $E$에 대해서, relation $R$을 생성하고 $W$의 모든 attribute를 추가한다. 
 
-그 다음 owner entity types의 PK를 $R$의 외래 키(앞으로 FK)로 추가해준다. $R$의 PK는 owner의 PK와 $W$의 partial ket의 짝이다.
+그 다음 owner entity type의 PK를 $R$의 외래 키(FK)로 추가해준다. $R$의 PK는 owner의 PK와 $W$의 partial key의 짝이다.
 
 ### Step 3: Binary 1:1 Relation Types
 각 1:1 관계 $R$에 대해서, $R$에 참여하는 relation $S$와 $T$를 찾는다. 그 다음 아래 중 선택하면 된다.
@@ -56,7 +56,7 @@ $E$의 key attribute 중 하나를 $R$의 기본 키(앞으로 PK)로 정한다.
 ### Step 5: Binary M:N Relation Types
 각 M:N 관계 $R$에 대해서 새로운 relation $U$를 만든다. 
 
-$U$에 참여하는 entity type들의 PK를 $U$의 FK로 넣는다. FK의 모듬이 $U$의 PK가 된다. 그리고 $U$에 M:N 관계의 atribute를 추가하면 된다.
+$U$에 참여하는 entity type들의 PK를 $U$의 FK로 넣는다. FK의 모음이 $U$의 PK가 된다. 그리고 $U$에 M:N 관계의 atribute를 추가하면 된다.
 
 ### Step 6: Multivalued Attribute
 각 multivalued attribute $A$에 대해 새 relation $U$를 생성하고, $A$의 attibute와 $U$를 소유하는 entity type의 PK를 FK로 넣는다. $U$의 PK는 $\{A, FK\}$가 된다.
