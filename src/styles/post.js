@@ -1,6 +1,10 @@
 import { css } from "styled-components";
 
 const postStyle = css`
+    .math {
+        overflow: auto;
+    }
+
     h2 {
         padding-left: 8px;
         border-left: solid;
