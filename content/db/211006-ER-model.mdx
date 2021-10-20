@@ -28,7 +28,7 @@ ER 모델은 데이터를 entity, relationship 그리고 attribute로 나타낸�
 
 - Entity set(extension)
     
-    실제로 데이터베이스에 저장된 entity들을 뜻한다.
+    실제로 데이터베이스에 저장된 같은 type을 가지는 entity들의 모음을 뜻한다.
 
 <br />
 
@@ -48,7 +48,7 @@ Entity를 설명하는 특성을 나타낸다. Attribute는 각각 값과 타입
 
 ### Key Attributes
 
-각 entity가 고유한 값을 가지는 속성이다. 키 속성으로 각 entity를 식별할 수 있다. 대한민국 국민의 키 속성은 주민등록번호라고 할 수 있겠다.
+각 entity가 고유한 값을 가지는 속성이다. 키 속성으로 각 entity를 유일하게 식별할 수 있다. 대한민국 국민의 키 속성은 주민등록번호라고 할 수 있겠다.
 
 > ### Weak Entity
 >
@@ -98,7 +98,7 @@ $1:N$ 관계에서는 $N$에 해당하는 entity에 relationship의 속성을 �
 
 1. **Cardinality ratio**
 
-    관계에 참여할 수 있는 entity의 최대 수를 명시한다.
+    관계에 참여할 수 있는 relation instance의 최대 수를 명시한다.
     - $1 : 1$
     - $1 : N$
     - $N : M$
