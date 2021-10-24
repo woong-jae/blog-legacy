@@ -1,0 +1,73 @@
+---
+title: "Support Vector Machine(SVM)"
+date: "2021-10-24"
+emoji: "🚊"
+category: "ml"
+---
+## SVM Classifier
+SVM classifier는 두 개의 그룹을 분류할 때, **두 그룹간 margin이 최대가 되게 하는 hyperplane**을 찾는 것이 목표다.
+
+Margin을 최대로 해서 **일반화 능력을 향상**했다. 그렇기 때문에 DT에 비해 비교적 결정 경계가 쉽게 흔들리지 않는다.
+
+### 가정
+샘플들이 **linearly seperable** 가능하다고 가정했을 때, 결정 직선이 두 부류를 완벽히 분류하면서 분할 띠의 중앙에 위치하도록 정한다.
+이때 분할 띠 경계에 걸쳐있는 샘플을 support vector라고 한다.
+
+이진 선형 분류기 $d(x)$는 다음과 같이 나타낼 수 있다.
+$$
+d(x)=w_1x_1+...+w_dx_d+b=w^Tx+b=0
+$$
+
+- $w$: normal othogonal vector to the hyperplane.
+- $b$: hyperplane의 위치
+
+$d(x)$가 0보다 큰 것과 작은 것, 두 공간으로 나눌 수 있다.
+
+SVM의 목표는 **margin이 가장 큰 hyperplane의 방항 $w$를 찾는 것**이다.
+
+이 분류를 **'hard margin classification'**이라고 한다.
+$$
+h=\frac {|d(x)|} {{\|w\|}_2}
+$$
+![SVM 분류기](https://t1.daumcdn.net/cfile/tistory/998AC23F5EF0903C0A)
+
+### 문제점
+Hard margin classification에는 문제점이있다.
+1. 데이터가 linearly seperable 할 때만 사용가능하다.
+2. Outlier에 민감하다.
+
+이 단점들을 개선하기 위해 margin을 최대한 크게하되, **margin violation에 제한**을 두는 방법을 쓰는 유연한 모델을 사용할 수 있다.
+
+이 모델을 **'soft margin classification'**이라고 한다.
+
+### Nonlinear SVM classification
+선형 분리가 되지않는 데이터셋의 경우 feature를 더 추가해서 선형 분리가 되게 만들면 된다. 즉, 차원을 높여서 linear하게 풀 수 있게 할 수 있다.
+
+## SVM regression
+SVM regression은 특정 margin 안에 인스턴스가 최대한 많이 들어오게 하는 것이 목표다. 
+
+![SVM 회귀](https://mblogthumb-phinf.pstatic.net/MjAxOTA4MzFfOTkg/MDAxNTY3MjYyNTExMjY2.ugpwMb1qvuKxoV4xikPDlaSoQQTo1Il7RYuB3dCEdMIg.MssbWEzRgbEqXaUf-ViWLVpfej0HAOAlr29ggcIvIuIg.PNG.slykid/svm_regression_plot.png?type=w800)
+
+## Kernel trick
+아까 nonlinear data는 차원을 높여서 linear하게 풀 수 있게 한다고 했다. 이 작업을 공간 변환이라고 한다.
+
+공간 변환은 원래 특징 공간을 목적 달성에 더 유리한 새로운 공간으로 변환하는 작업이다. 
+원래 특징 공간 $L$을 새로운 특징공간 $H$로 변환하여 선형에 가까운 데이터 분포를 만들지만, $H$는 매우 높은 차원이라 실제 변환은 불가능하다.
+
+따라서 **커널 트릭**이 필요하다. **커널 트릭을 사용하여 실제 변환하지 않고도 마치 변환을 하고 계산한 듯한 변환 효과**를 얻을 수 있다.
+
+원래 특징 벡터 $X$($d$)치원을 변환후 벡터의 차원은 $q$차원이다. (일반적으로 $q\gg d$)
+$$
+\Phi(X)=\Phi((x_1,x_2, ...,x_d)^T)=(\phi_1(x), ..., \phi_q(x))^T
+$$
+$\Phi(x)$: 변환함수
+
+커널 트릭을 사용하면 공간 변환과 $H$ 공간에서의 내적 연산을 원래 특징 공간 $L$에서 커널함수 계산으로 대치할 수 있다. 즉, 연산의 절약이 가능하다.
+
+하지만 $H$ 공간에서의 연산이 내적으로 표현할 수 있어야 한다.
+
+### 커널 함수들
+- Linear: $K(a,b)=a^Tb$
+- Polynomial: $K(a,b)=(ya^Tb+r)^d$
+- Gaussian RBF: $K(a,b)=\exp(-y\|a-b\|^2)$
+- Sigmoid: $K(a,b)=\tanh(ya^Tb+r)$
