@@ -1,0 +1,72 @@
+---
+title: "PCA(Principle Component Analysis)"
+date: "2021-10-25"
+emoji: "🪗"
+category: "ml"
+---
+## 공간변환의 필요성
+공간변환은 비지도 학습에 해당한다.
+
+실제 데이터가 너무 고차원일 때 사용할 수 있다. 고차원일 수록 데이터가 듬성듬성있어 특징을 찾기 힘들어 학습하기 어려워진다.
+
+또한 데이터를 공간변환으로 전처리해서 원 데이터에서 찾기 힘들었던 feature를 추출할 수 있다.
+
+## Dimensionality Reduction(차원 축소)
+### 차원의 저주
+데이터의 차원이 높으면 **고려해야할 변수가 많아지고, 데이터에 빈공간이 많아 학습하기 어려워진다**. 이 현상을 '차원의 저주'라고 한다.
+
+차원의 저주를 해결하기 위해 training instances를 충분히 마련해 데이터의 빈공간을 채우는 방법이 있지만, 현실적으로 힘들다.
+
+그렇다면 차라리 차원을 줄이는 방법을 사용할 수 있다.
+
+![차원의저주](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=http%3A%2F%2Fcfile1.uf.tistory.com%2Fimage%2F99FF9F335B8A484A31820B)
+
+### Main approach
+- **Projection:**  
+    가장 쉬운 차원 축소 방법이다.  
+    트레이닝 인스턴스가 일률적으로 퍼져있지 않고 특정 영역이 비어있다고 가정했을 때, 더 낮은 차원에 training instances를 투영하는 방법이다.  
+    단점: '어느 평면에 projection 할 것인가'가 문제다.
+
+- **Manifold Learning:**  
+    내제된 manifold가 있을 것이라고 가정하는 방법이다. 매니폴드 가정에 의해 고차원인 실제 데이터 셋이 더 낮은 저차원 매니폴드에 가깝게 놓여있다고 가정한다.
+
+## PCA(Principle Component Analysis)
+PCA는 데이터에 가장 가까운 초평면을 구한 다음, 데이터를 이 초평면에 투영시키는 방법이다.. PCA는 두 단계로 나뉜다.
+1. 데이터가 가장 잘 몰려있는 hyperplane을 찾는다.
+2. 데이터를 투영한다.
+
+### Hyperplane 선택 방법
+어떻게 하면 차원축소를 잘한 것일까? 
+
+데이터를 잘 구분할 수 있을 때, 즉, 데이터가 가장 퍼지는 hyperplane을 찾는 것이라고 할 수 있다. 데이터를 가장 퍼지게 할라면 **분산이 가장 큰 것**을 찾으면 된다.
+
+1. Variance가 가장 큰 축을 선택한다.
+2. 선택한 축에 직교하면서 분산이 최대인 축을 찾는다.  
+3. 첫 번째 축과 두 번째 축에 직교하고 분산이 최대인 세 번쨰 축을 찾는다.
+4. `1~3`과 같은 방법으로 데이터셋의 차원만큼의 축을 찾는다.
+
+![PCA](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=http%3A%2F%2Fcfile28.uf.tistory.com%2Fimage%2F99AC093E5B8A4904213CC3)
+
+이때 찾은 축들을 $i$번째 PC(Principle Component)라고 한다.
+
+보통 분산이 아직 충분히 클 때까지만(e.g. 95%) 차원축소를 한다. 차원축소 후에는 계산해야 할 특성이 줄어들어 계산이 원본 데이터에 비해 유리해진다.
+
+## Nonlinear Dimensionality Reduction
+### LLE(Locally Linear Embedding)
+Manifold learning을 기반으로 둔다. 
+데이터 샘플을 기준으로 거리상 가까운 이웃이 있을 것이고, 이웃들이 몰려있는 그룹이 여러개 있을 것이라고 가정했을 때, LLE는 인접한 이웃들과의 거리를 보존하는 하면서 데이터셋을 저차원으로 축소하는 방법이다.
+
+1. Training instances마다 가장 가까운 이웃들이 어디 있는지 확인한다.
+2. 이웃들과 거리가 가장 잘 보존되는 저차원을 찾는다.
+
+![lle](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=http%3A%2F%2Fcfile27.uf.tistory.com%2Fimage%2F990ABA4A5B90BA5006D06A)
+
+### 또다른 방법들
+- Kernel PCA: 커널 트릭을 사용한다.
+- t-Distributed Stochastic Neighbor Embedding(t-SNE): 가까이 있는 인스턴스는 가까이, 먼 인스턴스는 멀게 유지하는 차원을 찾는다.  
+    데이터 시각화에 많이 사용되며 데이터를 최초로 분석할 때 도움이 된다.
+
+<br/>
+
+참조:  
+<https://excelsior-cjh.tistory.com/167>
