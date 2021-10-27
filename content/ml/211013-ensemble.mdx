@@ -5,7 +5,7 @@ emoji: "👥"
 category: "ml"
 ---
 ## Ensemble?
-Ensemble은 집단지성과 비슷하다. 예측을 더 잘하기 위해 여러 예측기를 사용한다.
+Ensemble은 집단지성의 원리와 비슷하다. 예측을 더 잘하기 위해 여러 예측기로부터 에측을 수집한다.
 
 ## Voting Classifier
 - **Hard voting**  
@@ -13,14 +13,14 @@ Ensemble은 집단지성과 비슷하다. 예측을 더 잘하기 위해 여러 
     각 분류기를 'weak learner', ensemble을 'strong learner'라고 한다.
 
 - **Soft voting**  
-    각 분류기들이 어떤 클래스일 확률을 구할 수 있다면, 에측 확률들을 평균해서 가장 높은 확률을 가지는 클래스를 예측할 수 있다.
+    모든 분류기가 클래스의 확률을 예측할 수 있으면, 개별 분류기의 예측을 평균 내어 확률이 가장 높은 클래스를 예측할 수 있다.
 
 ### 다양한 분류기를 얻는 방법
 - 다양한 훈련 알고리즘 사용
 
-- 동일한 훈련 알고리즘을 사용하지만, 훈련 데이터의 무작위 부분집합을 뽑아 훈련한다.
-    - Sampling이 교체 없이 이루어지면 **'Pasting'** ex) 150 -> 50, 50, 50
-    - 교체가 있으면 **'Bagging'** ex) 150 -> 60, 60, 60
+- 동일한 훈련 알고리즘을 사용하지만, 훈련 데이터의 무작위 부분집합을 뽑아 훈련
+    - 훈련 세트에서 중복을 허용하지 않고 서브셋을 샘플링하는 방식을 **'Pasting'** ex) 150 -> 50, 50, 50
+    - 훈련 세트에서 중복을 허용하여 서브셋을 샘플링하는 방식을 **'Bagging'** ex) 150 -> 60, 60, 60
 
     각 부분집합을 학습한 분류기들의 예측을 합쳐서 가장 빈번한 예측, 혹은, 평균값을 사용한다.
 
@@ -39,30 +39,30 @@ Ensemble은 집단지성과 비슷하다. 예측을 더 잘하기 위해 여러 
 Bias와 Variance의 균형을 잘 맞춰야한다.
 
 ## Random Forest
-결정 트리의 ensemble이다. 랜덤으로 결정 트리를 여러개 만들어서 하나로 합친 것이다. 일반적으로 bagging을 사용해서 학습한다.
+결정 트리의 앙상블이다. 랜덤으로 결정 트리를 여러개 만들어서 하나로 합친 것이다. 일반적으로 bagging을 사용해서 학습한다.
 Bagging을 사용하기 때문에 아예 사용되지 못하는 데이터가 생길 수 있다는 것에 주의해야한다.
 
-무작위 부분집합에서 best feature를 찾기 때문에 결정 트리보다 다양성이 높다.
+무작위 부분집합에서 최적의 특성을 찾기 때문에 결정 트리보다 다양성을 높여 bias를 손해보는 대신, variance를 낮추어 전체적으로 더 훌륭한 모델을 만든다.
 
 **장점**: RF는 각 feature의 상대적인 중요성을 쉽게 측정할 수 있다.
 
 ## Boosting
 이때까지 본 앙상블 기법들은 예측기 자체를 업데이트를 하지는 않는다.
 
-Boosting은 여러 weak learner들을 합쳐 strong learner로 만든다. 예측기들을 순차적으로 학습하면서 이전 모델을 더 좋아지게 업데이트 하는 방법을 사용한다.
+Boosting은 여러 weak learner들을 연결해 strong learner로 만든다. 앞의 모델을 보완해나가면서 일련의 예측기를 학습시킨다.
 
-- **AdaBoost**
-    Underfit된 훈련 인스턴스에 더 집중한다. 즉 hard case에 더 집중한다.
+### AdaBoost
+Underfit된 훈련 인스턴스에 더 집중한다. 즉 hard case에 더 가중치를 높여서 새로운 학습기를 학습하기 어려운 샘플에 점점 맞추는 방식이다.
 
 ![adaboost](https://imghub.insilicogen.com/media/photos/boost.png)
 
-- **Gradient Boosting**
-    AdaBoost와 비슷하지만, gradient boosting은 이전 예측기의 차이값을 사용한다.
+### Gradient Boosting
+AdaBoost와 비슷하지만, gradient boosting은 이전 예측기의 잔여오차를 사용한다.
 
 ![gradient boosting](https://datascientistforai.github.io/DataScienceStudy/TimeSeriesData/Image/Boosting_GBM.png)
 
 ## Stacking
-Stacking은 voting을 학습한다. Hard voting같은 함수 대신 예측기들을 모아줄 모델을 학습한다. 예측기들의 예측값을 다시 학습해서 'blender'라는 최종 모델을 만든다. 
+Stacking은 voting을 학습한다. 앙상블에 속한 모든 예측기의 예측을 취합하는 간단한 함수를 사용하는 대신 취합하는 모델 자체를 만드는 방법이다. 취합하는 모델을 '블렌더'라고 한다.
 
 학습 방법은 다음과 같다.
 
@@ -71,3 +71,8 @@ Stacking은 voting을 학습한다. Hard voting같은 함수 대신 예측기들
 2. Training blender: 나머지 부분집합으로 blender를 학습한다. 나머지 데이터 셋을 이미 훈련된 예측기를 통과시킨 후 나온 예측값들로 blender를 학습한다.
 
 ![stacking](https://miro.medium.com/max/1838/1*C970iYXd80daTiOeCpGPEA.png)
+
+<br/>
+
+참조:  
+핸즈온 머신러닝  

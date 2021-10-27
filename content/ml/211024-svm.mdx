@@ -4,8 +4,11 @@ date: "2021-10-24"
 emoji: "🚊"
 category: "ml"
 ---
-## SVM Classifier
-SVM classifier는 두 개의 그룹을 분류할 때, **두 그룹간 margin이 최대가 되게 하는 hyperplane**을 찾는 것이 목표다.
+SVM은 매우 강력하고 **선형이나 비선형 분류, 회귀, 이상치 탐색**에도 사용할 수 있는 다목적 머신러닝 모델이다. 
+특히 복잡한 분류에 잘 들어맞고 작거나 중간 크기의 데이터셋에 적합하다.
+
+## SVM Classifier(SVC)
+선형 SVM 분류기는 두 개의 그룹을 분류할 때, **두 그룹간 margin이 최대가 되게 하는 hyperplane**을 찾는 것이 목표다.
 
 Margin을 최대로 해서 **일반화 능력을 향상**했다. 그렇기 때문에 DT에 비해 비교적 결정 경계가 쉽게 흔들리지 않는다.
 
@@ -21,9 +24,9 @@ $$
 - $w$: normal othogonal vector to the hyperplane.
 - $b$: hyperplane의 위치
 
-$d(x)$가 0보다 큰 것과 작은 것, 두 공간으로 나눌 수 있다.
+$d(x)$가 0보다 큰 것과 작은 것으로 공간을 두 개로 나눌 수 있다.
 
-SVM의 목표는 **margin이 가장 큰 hyperplane의 방항 $w$를 찾는 것**이다.
+SVM의 목표는 **margin($2h$)이 가장 큰 hyperplane의 방항 $w$를 찾는 것**이다.
 
 이 분류를 **'hard margin classification'**이라고 한다.
 $$
@@ -33,8 +36,8 @@ $$
 
 ### 문제점
 Hard margin classification에는 문제점이있다.
-1. 데이터가 linearly seperable 할 때만 사용가능하다.
-2. Outlier에 민감하다.
+1. 데이터가 **linearly seperable** 할 때만 사용가능하다.
+2. **Outlier에 민감**하다.
 
 이 단점들을 개선하기 위해 margin을 최대한 크게하되, **margin violation에 제한**을 두는 방법을 쓰는 유연한 모델을 사용할 수 있다.
 
@@ -43,8 +46,16 @@ Hard margin classification에는 문제점이있다.
 ### Nonlinear SVM classification
 선형 분리가 되지않는 데이터셋의 경우 feature를 더 추가해서 선형 분리가 되게 만들면 된다. 즉, 차원을 높여서 linear하게 풀 수 있게 할 수 있다.
 
-## SVM regression
-SVM regression은 특정 margin 안에 인스턴스가 최대한 많이 들어오게 하는 것이 목표다. 
+이때, 단순히 다항식 특성을 추가하는 것은 간단하지만, 낮은 차수의 다항식은 매우 복잡한 데이터셋을 잘 표현하지 못하고 높은 차수의 다항식은 굉장히 많은 특성을 추가하기 때문에 모델을 느리게 만든다.
+
+이런 경우 '커널 트릭'을 사용할 수 있다.
+
+## SVM regression(SVR)
+SVM 회귀는 특정 margin 안에 인스턴스가 최대한 많이 들어오게 하는 것이 목표다. 분류와 목표가 반대다.
+
+마진 폭은 하이퍼파라미터 $\varepsilon$으로 조절한다.
+
+마진 안에는 훈련 샘플이 추가되어도 모델의 예측에 영향이 없기 때문에 이 모델을 $\varepsilon$-insensitive라고 한다.
 
 ![SVM 회귀](https://mblogthumb-phinf.pstatic.net/MjAxOTA4MzFfOTkg/MDAxNTY3MjYyNTExMjY2.ugpwMb1qvuKxoV4xikPDlaSoQQTo1Il7RYuB3dCEdMIg.MssbWEzRgbEqXaUf-ViWLVpfej0HAOAlr29ggcIvIuIg.PNG.slykid/svm_regression_plot.png?type=w800)
 
@@ -71,3 +82,8 @@ $\Phi(x)$: 변환함수
 - Polynomial: $K(a,b)=(ya^Tb+r)^d$
 - Gaussian RBF: $K(a,b)=\exp(-y\|a-b\|^2)$
 - Sigmoid: $K(a,b)=\tanh(ya^Tb+r)$
+
+<br/>
+
+참조:  
+핸즈온 머신러닝  
