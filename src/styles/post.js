@@ -31,7 +31,7 @@ const postStyle = css`
     img {
         display: block;
         margin: 0 auto;
-        max-width: 100%;
+        max-width: 80%;
     }
 
     code {
