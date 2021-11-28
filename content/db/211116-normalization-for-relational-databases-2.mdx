@@ -26,7 +26,7 @@ FD는 속성들의 의미를 아는 사람이 명시적으로 정의해야 한�
 ## Normal Forms based on Primary Keys(PKs)
 Relations의 정규화는 관계 스키마에 대한 일련의 테스트를 거쳐 특정 정규형을 만족하는지 검증한 후, '나쁜' relation들을 **더 작은 relation들로 분해**하면서 이루어진다.
 
-반대로 비정규화(Denormalization)은 상위 정규형 relation의 조인을 하위 정규형 relation의 base relation으로 저장하는 것이다.
+반대로 **비정규화(Denormalization)**은 상위 정규형 relation의 조인을 하위 정규형 relation의 base relation으로 저장하는 것이다.
 
 ### Normal Form(NF)
 Relation의 **키(keys)와 FD들을 이용한 조건**을 통해 관계 스키마가 특정 정규형에 해당하는지 검증할 수 있다. Relation이 만족하는 가장 높은 조건이 NF 레벨이 된다.
@@ -56,12 +56,12 @@ NR도 MVA와 동일하게 제거하면 된다.
 **Full functional dependency**에 기반을 둔다. FD $X\rarr Y$는 $X$의 어느 속성 $A$라도 제거하는 것이 dependency를 유지하지 못하게 된다면 FFD이다.
 다른 말로 하면, $X-\{A\}$이면 $X$가 $Y$를 함수적으로 결정하지 못한다는 의미이다.
 
-**모든 nonprime attribute $A$가 PK(기본 키)에 대해서 'fully functionaly dependent'**하다면 그 relation은 2NF에 있다고 정의한다.
+**모든 nonprime attribute $A$가 PK(기본 키)에 대해서 'fully functionally dependent'**하다면 그 relation은 2NF에 있다고 정의한다.
 
 ![image](https://user-images.githubusercontent.com/33976823/141880397-448f7064-2f30-4ddd-93ac-cf6141602521.png)
 
 ### Third Normal Form(3NF)
-**Transitive functional dependency**에 기반을 둔다. FD $X\rarr Y$가 두 FD $X\rarr Y$, $Y\rarr Z$로부터 유도될 수 있다면 transitive functional dependency를 가진다. 여기서 $Z$는 nonprime attribute이다.
+**Transitive functional dependency**에 기반을 둔다. FD $X\rarr Z$가 두 FD $X\rarr Y$, $Y\rarr Z$로부터 유도될 수 있다면 'transitive functional dependency'를 가진다. 여기서 $Y$는 nonprime attribute이다.
 
 Relation이 **2NF를 만족하고 모든 nonprime attribute가 PK에 대해서 'transitively dependent'하지 않다면** 그 relation은 3NF에 있다고 정의한다.
 

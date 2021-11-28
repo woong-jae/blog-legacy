@@ -1,0 +1,66 @@
+---
+title: "Normalization for Relational DB - 3"
+date: "2021-11-16 13:37"
+emoji: "🍙"
+category: "db"
+---
+## General definitions of 2NF & 3NF
+### 2NF의 일반적 정의
+Relation $R$의 모든 nonprime attribute $A$가 $R$의 기본 키에 대해 'fully functionally dependent'하다면, $R$은 2NF를 만족한다.
+
+### 3NF의 일반적 정의
+Nontrivial FD $X\rarr A$에서
+1. $X$가 **슈퍼 키** 혹은,
+2. $A$가 **prime attribute**
+
+이면 relation은 3NF를 만족한다.
+
+![image](https://user-images.githubusercontent.com/33976823/141923908-708c13fc-d8a2-4763-bf40-ab5708c4be7c.png)
+
+1번 조건은 두가지 위반 사항을 잡을 수 있다. PK가 아닌 prime attribute가 nonprime attribute를 functionally 결정하는 것을 막아 2NF 위반을 잡을 수 있고, 
+nonprime attribute가 nonprime attribute를 functionally 결정하는 것을 막아 3NF 위반 또한 잡을 수 있다.
+
+3NF를 다른 방식으로도 정의내릴 수 있다. 모든 nonprime attribute가 a)모든 PK에 대해 FFD이고 b)모든 후보키에 대해 'non-transitively dependent'하다면 relation은 3NF이다.
+
+여기서 b)는 3NF에서는 허용되지만 'Boyce-Codd Normal Form'에서는 허용되지 않는다. 즉, transitive property 자체가 없어야 한다.
+
+## Boyce-Codd Normal Form
+Relation $R$의 모든 FD $X\rarr A$에서 $X$가 슈퍼키이면 R은 BCNF를 만족한다. 
+
+BCNF가 3NF보다 강력하기 떄문에 3NF이면서 BCNF인 relation은 존재하지 않는다.
+
+BCNF는 decomposition으로 달성할 수 있다. 분해했을 때 어떤 FD를 잃을 수도 있는데, 이것은 감내해야 하는 부분이다.
+
+어떻게 분해해야할까? decomposition의 두가지 특성중 하나를 보존하는 분해를 선택하면 된다.
+- **non-additive(lossless) join property**
+- functional dependency preservation property
+
+정규화 과정에서 분해할 것을 고를 때 'Nonadditive Join Test for Binary Decomposition(NJB)'을 사용할 수 있다.
+
+### NJB(Nonadditive Join Test for Binary Decomposition)
+$R$의 decomposition $D=\{R1, R2\}$의 FD 집합 $F$에 대해서, 
+- FD $((R1\cap R2 ))\rarr(R1-R2))$이 $F^+$에 있거나 
+- $((R1\cap R2 ))\rarr(R2-R1))$이 $F^+$에 있다면, 
+
+'non-additive join property'를 만족한다. ($F^+$는 $F$가 함축하는 모든 FD를 포함)
+
+아래 예시를 통해 한 번 해보자.
+![IMG_F46EDE6DFD45-1](https://user-images.githubusercontent.com/33976823/143765087-0e7c8372-60b6-40d8-93ae-bdad0099c588.jpg)
+
+- **Case 1**: R1(Student, Instructor) and R2(Student, Course)  
+    Student → Instructor 와 Student → Course, 둘 다 만족하지 못한다.
+
+- **Case 2**: R1(Course, Instructor) and R2(Course, Student)  
+    Course → Instructor 와 Course → Student, 둘 다 만족하지 못한다.
+
+- **Case 3**: R1(Instructor, Course) and R2(Instructor, Student)  
+    Instructor → Course 가 FD2와 같기 때문에 $F^+$에 속한다. NJB를 만족하므로 분해할 때 case 3을 선택하면 된다.
+
+### BCNF Decomposition 알고리즘
+$R$이 BCNF에 속하지 않은 relation이고 $X\sube R$일 때, $X\rarr A$를 BCNF violation을 발생시키는 FD라고 하자.
+
+이때 $R$은 두 가지 relation으로 분해될 수 있다.
+- $R-A$
+- $XA(=X\cup A)$
+
+두 가지 경우 중 BCNF에 속하지 않는 것이 있다면, 그 경우에 대해 알고리즘을 반복한다. 둘 다 BCNF에 속하게 되면 알고리즘을 종료한다.

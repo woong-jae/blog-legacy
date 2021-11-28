@@ -11,7 +11,7 @@ const variables = {
     },
     sizes: {
       bioWidth: "230px",
-      maxWidth: "900px"
+      maxWidth: "1000px"
     },
     sideSpace: {
       small: "20px",
