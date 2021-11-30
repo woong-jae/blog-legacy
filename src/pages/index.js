@@ -47,7 +47,7 @@ const IndexPage = ({ data }) => {
 
   function loadMorePosts() {
       setCount(v => {
-          if (v + 1 <= posts.length) return v + 1;
+          if (v + 2 <= posts.length) return v + 2;
           else return v;
       });
   }

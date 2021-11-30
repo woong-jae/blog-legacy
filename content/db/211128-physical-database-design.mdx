@@ -1,0 +1,243 @@
+---
+title: "Physical Database Design"
+date: "2021-11-28 20:43"
+emoji: "💽"
+category: "db"
+---
+데이터베이스는 일반적으로 디스크에 저장되고, 물리적 데이터베이스 파일 구조를 통해 접근된다.
+
+## Storage Hierarchy
+데이터베이스를 구성하는 데이터들은 어떤 물리적 저장 매체에 저장되어 있어야 한다. 컴퓨터 저장 매체는 계층 구조를 이룬다.
+
+1. **Primary Storage**: CPU에 의해 동작한다. Volatile, 즉, 전원이 꺼지면 사라지지만 빠르다.
+    - CPU cache, RAM(Random Access Memory) etc.
+
+2. **Secondary Storage**: Non-volatile하고 primary보다 싸다.
+    - HDD(Hard Disk Drives), USB(Flash memory), SSD(Solid-State Drives)
+
+3. **Tertiary Storage**: 가장 싸지만 제일 느리다. 보통 화석화, 아카이빙에 사용된다.
+    - Removable media: 테이프, 광학 디스크(CD-ROMS, DVDs etc.).
+
+### Storage Organization
+#### Persistent data (nonvolatile)
+대부분의 데이터베이스들은 일반적으로 장기간 지속되는 많은 양의 데이터를 저장한다. 
+
+이때 Secondary 저장소를 사용한다. 1) 메인 메모리를 사용하기엔 **저장해야 하는 데이터의 양이 너무 많고** 2) **nonvolatile**하기 때문에 전원이 꺼져도 데이터가 사라지지 않으며 3) 데이터 단위당 가격에 primary 저장소보다 10배 이상 **저렴하기 때문**이다.
+
+데이터를 사용할 때는 일부만 디스크에서 RAM으로 옮겨 사용한다.
+
+디스크에 저장된 데이터는 여러 레코드(records)로 이루어진 파일(file)로 구성된다. 각 레코드는 ER에 대한 사실을 나타내는 데이터 값들의 모음, 쉽게 말해서 각 row들이다.
+
+> Transient data (volatile): 프로그램 종료시 휘발되는 데이터이다. 프로그램 실행중에만 존재한다. e.g. ```malloc()```
+
+### File Organization
+#### Primary file organization
+Primary file organization은 레코드 파일들이 디스크에 어떻게 물리적으로 저장될지 결정한다. 즉, **레코드들에 대한 접근 방법을 결정**한다. 
+
+- **Heap file**: 새로운 레코드들 그냥 파일 끝에 순서 없이 디스크에 넣는다.
+
+- **Sorted file**: Sort key field에 대해서 레코드들의 순서를 유지한다.
+
+- **Hashed file**: 해시 함수와 hash key field를 이용해서 디스크의 어디에 넣을지 결정한다.
+
+- **Tree-structured file(B-Trees)**
+
+- Column-based file: 각각의 열을 따로 때서 저장한다. 보통 분석을 많이하는 응용에서 사용한다.
+
+#### Secondary organization (보조적인 접근 구조)
+대체 필드를 이용한 효율적인 접근을 가능하게 해주는 자료구조다. 보통 **'index'**를 사용한다.
+
+<br/>
+
+## Disk Architecture
+> **Disk: Nonvolatile, rotating magnetic storage**
+
+디스크는 랜덤 엑세스 주소 지정 장치다. Disk block 단위로 RAM과 데이터를 송수신한다.
+
+Block(or sector) 주소는 cylinder number, track number, block number로 이루어져 있다. Block 주소는 디스크 I/O 컨트롤러에 의해 관리된다.
+대부분의 현대 디스크 드라이브에서는 컨트롤러가 올바른 block에 **LBA(Logical Block Address)**를 자동으로 할당한다.
+
+- Disk read: 원하는 LBA를 가진 disk block이 버퍼에 복사된다.
+- Disk write: 버퍼의 내용이 disk block에 복사된다.
+
+디스크에서는 읽기와 쓰기 성능이 동일하다(Synchronous).
+
+### 내부 구조
+디스크는 magnetic **platter**의 스택이다. 각 platter의 표면은 여러 **track**으로 구성된다. 그리고 track은 **sector**로 나뉘어진다.
+
+![Disk Architecture](https://t1.daumcdn.net/cfile/tistory/998407335C74FC4026)
+
+Sector는 저장소의 기본단위다. Sector ID, 데이터(보통 512B), error-correction code 기타등등으로 이루어져있다. 
+
+Block(or page)는 여러 sector의 그룹이다(보통 4KB).
+
+Disk head는 spindle이 회전하는 동안 원하는 트랙으로 이동해서 원하는 sector를 찾게된다.
+
+#### Disk Access Time
+디스크 접근 시간에 영향을 주는 세 가지 중요한 요소가 있다.
+
+- **Seek time**: Disk head를 원하는 트랙에 옮기는데 걸린 시간.
+
+- **Rotational delay**: 원하는 sector가 회전해서 disk head 밑에 올때까지 걸리는 시간. 보통 1회전 시간의 절반으로 가정한다.
+
+- **Transfer time**: Disk block을 전송하는데 걸린 시간.
+
+다른 요소들에 의해 추가적인 지연이 발생할 수 있다. 예를 들어 **queueing delay**와 **disk controller overhead**(최적의 움직임 찾는데 걸리는 시간)가 있다.
+
+### 효율적인 데이터 접근을 위한 기법들
+- Buffering of data(in main memory)
+
+- 디스크에 데이터를 적절하게 조직
+
+- Prefetching: 데이터를 요청 전에 읽기
+
+- I/O 요청의 적절한 스케쥴링
+
+- Log disk를 활용해서 쓰기 작업을 일시적으로 들고있기: seek time을 없애기 위해 쓰여야 할 block은 하나의 log disk로 간다.
+
+- SSD 사용
+
+<br/>
+
+## Buffer management
+### Double Buffering
+Block 전송이 완료되면 CPU가 그 block에 대해서 일을 시작할 수 있다. CPU가 일을 하는 동시에 disk I/O 컨트롤러는 다음 블럭을 다른 버퍼로 읽고 전송할 수 있다.
+
+Block의 흐름을 연속적으로 읽을 수 있게된다.
+![IMG_957E19EEB8D2-1](https://user-images.githubusercontent.com/33976823/143984758-8320af62-a6b2-4799-b20b-ccd0c6778301.jpg)
+
+### Buffer manager of a DMBS
+버퍼 매니저는 데이터 요청에 응답한다. 이때 매니저는 1) **어떤 버퍼를 사용**할지, 2) **새로운 페이지(or disk blocks)를 받기 위해 어떤 버퍼의 페이지와 교체**할 지 결정(victim 선정)한다.
+
+사용 가능한 메인 메모리 저장소를 'buffer pool'로 본다.
+
+버퍼 매니저는 각 페이지에 대해 두가지 타입의 정보를 가지고 있다.
+- **Pin-count**: 그 페이지가 얼마야 요청되었는지, 혹은 그 페이지를 현재 사용하고 있는 유저의 수를 나타낸다. 0이 되면 unpinned.
+
+- **Dirty bit**: 페이지 내용이 변경되면 표시한다(0에서 1로). Disk와 메모리의 내용을 일치시키기 위해 사용한다.
+
+특정 페이지가 요청되면 버퍼 매니저는 요청한 페이지가 buffer pool에 있는지 확인한다. 만약 페이지가 버퍼에 존재한다면 페이지의 pin-count를 증가시키고 그 페이지를 제공한다.
+
+만약 **버퍼에 존재하지 않는다면**, 다음과 같은 작업을 거친다.
+
+일단 replacement policy에 따라 교체할 페이지를 선택하고 pin-count를 증가시킨다. 만약 교체할 페이지의 dirty bit가 마크되어 있다면 매니저는 그 페이지를 디스크에 write 해야한다.
+그리고 요청된 block을 방금 공간이 난 페이지에 write 하고 새로운 페이지의 메모리 주소를 요청자에게 건내준다. 
+
+만약 unpinned 페이지가 없고 요청된 페이지가 buffer pool에 없다면 매니저는 기다려야한다.
+
+### Buffer Replacement Strategies
+- **Least recently used(LRU)**: 가장 오랜시간 사용되지 않은 페이지를 방출한다.
+
+- **First-in-first-out(FIFO)**: 가장 오래있었던 페이지를 방출한다.
+
+- **Clock policy**: LRU에 round-robin을 적용한 방식이다.  
+    각 버퍼가 0(unused) 혹은 1(used) 값을 가질 수 있다고 할 때, 현재 버퍼부터 돌면서 0인 버퍼를 찾을 때까지 계속돈다. 1인 버퍼를 지나면 그 버퍼의 값을 0으로 바꿔준다.
+
+<br/>
+
+## Records and Files
+Record는 연관된 데이터 값들의 모음이다. 값들은 record field에 대응된다.
+
+Record type은 1) field의 이름과 2) 각 field에 대응되는 데이터 타입의 모음이다. Record meta data라고 할 수 있다.
+
+File은 일련의 레코드들이다.
+
+- Fixed-length records: 파일은 모든 레코드의 크기가 같다. 구현과 관리가 쉽다. 하지만 공강 낭비가 발생할 수 있다.
+
+- Varable-length records: 파일의 레코드들이 각기 다른 크기를 가진다. 크기가 달라지는 이유는 아래와 같다.
+    - Field의 값이 가변적이다.
+    - Field의 값이 반복된다.
+    - Field의 값이 선택적이다. 즉, 있을 수도 있고 없을 수도 있는 값이다.
+    - 파일이 다른 타입의 레코드를 가진다.
+### Record Blocking
+파일의 레코드는 무조건 disk block에 할당되어야 한다. 왜냐하면 block이 디스크와 메모리 사이의 데이터 전송 단위이기 때문이다. 
+
+Block의 사이즈가 레코드의 사이즈보다 크다면, 각 block은 여러 레코드를 가지고 있을 것이다.
+- **Spanned records**: 레코드가 block 보다 클 때 사용할 수 있다. 첫 block의 끝에 있는 포인터가 나머지 레코드를 담고있는 block을 가리키는 형태로 확장한다.
+
+- **Unspanned records**: 레코드가 block보다 작을 때 사용한다. 레코드가 block 경계를 교차하는 것을 허용하지 않는다.
+
+![image](https://user-images.githubusercontent.com/33976823/143996214-8ea21597-cd92-46a7-92b1-51ebeb2212bc.png)
+
+#### Blocking factor
+파일에서 한 block 당 평균 레코드의 수를 나타낸다.
+
+- Some unused space = $B-(bfr*R)$ bytes
+    - $B$: Block size, $R$: Record size
+
+$bfr$은 $r$ 레코드들을 위해 **필요한 block의 개수 $b$를 계산**하는데 사용할 수 있다.
+$$
+b=celing(r/bfr)
+$$
+
+### Allocating File Blocks on Disk
+- **Contiguous allocation**: File block들을 연속적인 disk block에 할당한다. 전체 파일을 **double buffering을 이용해서 빠르게 읽을 수 있는 장점**이 있지만, 확장하기 어렵다는 단점이 있다.
+
+- **Linked allocation**: 각 file block이 다음 file block을 가리키는 포인터를 가진다. **확장하기 쉽지만, 전체 파일을 읽는 시간은 느려진다.**
+
+- **Cluster allocation**: 위의 두 방식을 합친 방식이다. Cluster(file segments)을 link한다.
+
+- **Indexed allocation**: Index block이 실제 file block을 가리키는 방식이다. (e.g. hash file)
+
+#### File Headers
+File header는 시스템 프로그램이 file record에 접근할 때 필요한 정보들을 포함하고 있다. **File block의 disk address**나 필드의 길이, 필드의 순서 등의 정보를 가진 **record format description**을 가진다.
+
+### File Organization
+File organization은 데이터 파일을 records, blocks, 그리고 접근 구조로 조직하는 것이다. 레코드와 block들이 디스크에 저장되고 상호연결되는 방식을 포함한다.
+
+#### Access Method
+파일에 적용될 수 있는 연산들의 모음을 제공한다. 어떤 접근 방법은 특정 형식으로 조직된 파일들에만 적용될 수 있다.
+
+예를 들어, index 접근 방식은 index가 없는 파일에서 사용할 수 없다.
+
+<br/>
+
+## Basic File Structure: Primary File Organization
+### Heap File
+가장 간단하고 기본적인 파일 조직 방법이다. 레코드들이 삽입된 순서대로 파일에 놓여진다. 새로운 레코드들은 파일의 끝에 삽입된다.
+
+그냥 제일 끝에 넣는 방식을 사용하기 때문에 **새로운 레코드의 삽입이 굉장히 효율적**이다.
+> 1. 파일의 마지막 disk block을 버퍼에 복사한다.
+> 2. 새로운 레코드를 추가한다.
+> 3. Block을 다시 disk에 저장한다.
+
+하지만 레코드를 **검색할 때 선형 탐색(linear search)를 하기 때문에 비효율적**이다. 보통 파일에 $b$개의 block이 있다고 하면 평균적으로 $b/2$ 시간이 걸린다.
+
+#### Deletion
+Heap file에서 레코드를 삭제하기 위해서는 첫 번째로 block을 찾고, 그 block을 버퍼에 복사한 후 레코드를 삭제하고, block을 디스크에 저장해야한다.
+
+삭제할 때 다른 방법을 사용할 수도 있다. **Deletion marker**를 사용하는 방식이다. 각 레코드마다 레코드가 유효한지 나타내는 추가적인 bit를 둔다. 추가적인 bit를 통해 검색할 때 유효한 레코드만 가져오게 된다.
+
+이렇게 되면 새로운 레코드를 삽입할 때 유효하지 않은 레코드가 있는 공간을 사용하는 방법도 있다.
+
+> 두 방법 모두 주기적으로 파일을 **재조직(reorganization)**해서 낭비되는 공간을 정리해주어야 한다.
+
+### Sorted File
+Ordering field의 값을 기준으로 레코드들을 디스크에 물리적으로 정렬하는 방법이다.
+
+#### 장점
+- **Sorting 할 필요가 없어진다**.
+
+- 다음 레코드가 block의 끝에 위치하지 않는 이상 **다음 레코드를 찾기 위한 추가적인 block 접근이 필요 없어진다.**
+
+- **Binary search**를 사용한 빠른 접근이 가능하다.
+
+![image](https://user-images.githubusercontent.com/33976823/144005076-d9e2f4b0-8f46-4a95-8524-87814fb2fa3b.png)
+
+#### Deletion
+**Pointer chains** 혹은 deletion marker를 사용한다.
+
+#### Insertion
+레코드가 삽입되어야 하는 위치를 찾은 후, 남는 공간이 있으면 그 곳에 삽입한다.
+만약 남는 공간이 없다면, **overflow block**에 삽입한다.
+
+두 상황 모두 pointer chain을 업데이트 해야한다.
+
+이 방식도 주기적으로 파일을 재조직해야 한다.
+
+### Hash File
+Hash function을 특정 field에 적용해서 나온 값으로 레코드가 저장된 disk block의 주소를 알 수 있는 방식이다. 
+
+Disk block을 **bucket**이라고 한다. Bucket은 하나이상의 레코드를 가지는 저장소의 단위가 된다.
+
+**Hash field에 대한 quality condition에 한해서 굉장히 빠른 접근 속도를 제공**한다.
