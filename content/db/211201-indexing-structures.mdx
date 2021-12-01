@@ -1,0 +1,78 @@
+---
+title: "Indexing Structures for Files"
+date: "2021-12-01 21:49"
+emoji: "👉"
+category: "db"
+---
+> Indexing structure는 파일이 이미 어떤 primary organization으로 존재한다고 가정한다.
+
+'Indexes'(색인)은 특정 검색 조건에 대해 레코드를 빠르게 찾기 위해 사용한다.
+
+'Index structures' 는 secondary access path(보조 접근 경로)를 제공해주는 디스크의 추가적인 파일로, 
+**primary 데이터 파일의 물리적인 위치에 영향을 주지않고 레코드에 접근**할 수 있는 대체적인 방법을 제공한다.
+
+Index structure는 indexing field에 대한 효율적인 레코드 접근을 가능하게 한다. 여기서 indexing field는 레코드의 어느 필드나 사용가능하다. Multiple field에 대한 index도 생성가능하다.
+
+대부분의 index는 ordered files 그리고 트리 자료구조에 바탕을 둔다.
+
+## Single-Level Ordered Indexes
+Ordered index(정렬 색인)은 중요한 조건을 순서대로 정렬해서 찾기 쉽게하는 것이 목표다. 중요한 조건을 'indexing field'라고 한다.
+Index field가 정렬되어 있기 때문에 **binary search를 이용한 빠른 탐색이 가능**하다.
+
+Index file은 'Index field의 각 값 + 그 레코드를 가진 block에 대한 포인터'의 리스트를 보관한다. 그렇기 때문에 일반적으로 데이터 파일에 비해 크기가 훨씬 작다.
+
+### Primary Index (주요 색인)
+레코드의 정렬된 파일들의 **ordering key field**에 대한 색인이다.
+
+Primary index의 index record는 두 가지 field를 갖는다.
+- **Primary key**(block anchor): Block의 첫 레코드의 primary key field의 값
+- **Pointer to disk block**
+
+Primary index는 데이터 파일의 레코드들보다 1)적은 index entry를 가지고, 2)field의 수와 값도 작기 때문에 공간을 훨씬 적게 사용한다.
+
+![Primary Index](https://lh3.googleusercontent.com/proxy/xiulOqcKCp8ZIqZdJBLBPk-dnHH5zoMvzBnX-z03hmQF1PlijnyGtDKkf2As0xfJh1E8gzqUm1L1Le8_BD1yV8Mthh9Sxd6lGg)
+
+> **Dense index**는 모든 key value에 대해 index entry를 주는 것이다. 즉, 모든 레코드에 대해 색인을 만든다.
+>
+> **Sparse index**는 몇몇 값에 대해서만 entry를 만든다. **대부분 기본적으로 sparse index를 사용**한다. Primary index도 sparse index이다.
+
+#### Problems
+Primary index의 큰 문제점은 **새로운 레코드의 삽입과 삭제**다. 삽입하려면 새 레코드를 넣기 위해 다른 레코드들을 옮겨줘야 할 뿐만 아니라 index entry도 변경해야한다. 삭제도 몇몇 block의 block anchor를 변경시킬 수 있다.
+
+Insertion 문제는 **'unordered overflow file'**을 사용해서 해결할 수 있다. Overflow 레코드들의 연결 리스트를 각 block마다 둔다.
+
+Deletion 문제는 **deletion marker**로 해결할 수 있다.
+
+### Clustering Index (군집 색인)
+Non-key field에 대한 색인이다. 이때 데이터 파일은 **clustered file**이다.
+
+Clustering index도 sparse index다. **Clustering field에 대해 같은 값**을 가지는 레코드들에 대해 빠른 접근을 위해 만들어지기 때문이다.
+
+두 가지 field를 가진 정렬된 파일을 가진다.
+- Clustering field of clustered file
+- Pointer to disk block(값이 최초로 나타나는 data block을 가리킨다)
+
+#### Problems
+Clustering index 또한 레코드를 삽입, 삭제할 때 문제가 발생한다.
+
+이 문제를 해결하기 위해 block 하나를 통쩨로 clustering field의 각 값에 대해 할당할 수 있다. Field에 대해 같은 값을 가지는 모든 레코드들이 같은 block에 있게 된다.
+
+![Clustering Index](https://www.cs.uct.ac.za/mit_notes/database/htmls/media/chp11_8.png)
+
+### Secondary Index (보조 색인)
+Non-ordering field에 대한 색인이다. 데이터 파일에 접근할 수 있는 보조적인 수단을 제공한다. 보조적인 수단이기 때문에 데이터 레코드의 순서는 중요하지 않다.
+
+중복되는 값을 가지는 field에도 생성할 수 있고, unique한 값을 가지는 field에도 생성할 수 있다. 또한, 같은 데이터 파일에 대해 여러 보조 색인을 생성할 수 있다. 말그대로 추가적인 수단이기 때문이다.
+
+Secondary index 또한 두 가지 field를 가진다.
+- Indexing field
+- Pointer
+    - to record: Unique한 값을 가지는 field에 생성하게 될 경우 dense index가 된다. 즉, 포인터는 각 레코드를 가리킨다.
+    - to block
+
+![Secondary Index - dense](https://user-images.githubusercontent.com/33976823/144253875-b2a1b48c-d6fc-499f-8639-144333fc460a.png)
+
+### Summary
+![Summary](https://user-images.githubusercontent.com/33976823/144254390-0ffe53dd-72d0-4366-a5bf-0dd688faec27.png)
+
+## Multilevel Indexes
