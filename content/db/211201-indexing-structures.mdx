@@ -76,3 +76,60 @@ Secondary index 또한 두 가지 field를 가진다.
 ![Summary](https://user-images.githubusercontent.com/33976823/144254390-0ffe53dd-72d0-4366-a5bf-0dd688faec27.png)
 
 ## Multilevel Indexes
+Search cost를 줄이기 위해 디자인됐다.
+
+Multilevel index의 첫 번째 level은 index 파일 그 자체, 즉, block을 가리키는 포인터를 가진다. 두 번째 level은 첫 번째 level을 가리키는 index를 가지고, 이를 세 번째, 네 번째로 필요한 만큼 확장해서 사용할 수 있다.
+
+아래는 정적인 구조(static structure)를 가지는 two-level primary index이다. (ISAM)
+
+![Multilvel Index](https://www.cs.uct.ac.za/mit_notes/database/htmls/media/chp11_11.png)
+
+### Dynamic Multilevel Indexes
+위에서 봤던 정적인 구조, ISAM은 당연하게도 삽입과 삭제에 대한 문제가 발생한다. 모든 index level은 물리적인 파일이기 때문에 새로운 index가 추가됐을 때 구조를 바로바로 변경하기 쉽지않다. 
+이에 대한 대책으로 이전에 언급했던 overflow page를 사용할 수는 있지만, 성능이 좋지않다.
+
+이를 해결하기 위한 방법으로는 각 index block마다 여분의 공간을 비워놓거나 적절한 삽입/삭제 알고리즘을 사용해서 index block을 생성/삭게하는 방법을 사용할 수 있다. 이 방법을 적용한 것이 dynamic multilevel index다.
+
+#### Search Trees
+어떤 특정한 값을 가진 레코드를 찾기위해 사용되는 트리이다. 트리의 값들은 파일의 search field 값들을 가진다.
+
+**Fanout $p$**를 가진 search tree의 각 노드는 적어도 $p-1$개의 값, $p$개의 포인터를 가진다.
+
+![image](https://user-images.githubusercontent.com/33976823/144389155-bab456c0-2388-4e4c-a740-270e5125dda3.png)
+
+새로운 값이 삽입되거나 삭제될 때, 두 가지 제약조건이 지켜져야한다.
+- 트리의 각 노드마다 disk block이 할당되어야 하고
+- 새로운 레코드가 파일에 삽입되면 search field 값을 포함하고 새로운 레코드를 가리키는 포인터를 포함한 tree entry도 삽입되어야 한다.
+
+### B+-Tree
+**삽입과 삭제가 $log_pN$ 비용**으로 수행될 수 있다. ($p$ = fanout, $N$= # of leaf pages)
+
+B+ tree는 **트리의 높이를 통일(height-balanced)**시킨다. 또한 모든 노드는 **최소한 50% 이상 공간이 사용**되어야 한다. 즉, 절반 이상이 차있어야 한다.
+따라서 각 노드는 $d\leq n\leq 2d$ entry를 갖는다($d$, order of tree).
+
+**Equality**(tree의 높이 만큼만 방문) 와 효율적인 **range-search**를 제공한다.
+
+트리의 내부 노드는 검색용으로 사용되고 리프 노드(leaf node)는 실제 데이터가 저장된 곳을 가리킨다. 
+
+리프 노드는 search field의 각 값들과 연결된다. 
+Search field 의 값이 key field라면 포인터는 레코드를 가리키고, non-key라면 데이터 파일 레코드에 대한 포인터를 가진 block을 가리킨다.
+
+- **삽입(Insertion)**
+    1. 삽입할 leaf $L$을 찾는다.
+    2. $L$에 index entry를 넣는다.
+        - $L$에 충분한 공간이 있다면 끝
+        - 공간이 부족하다면 $L$을 쪼개야한다. Entry를 고르게 분포시키고 **middle key를 'copy up'**한다.
+            쪼개는 일은 부모 노드에게 전파될 수 있다. 부모 노드도 똑같이 동작하지만 middle key를 'push up'한다.
+
+![B+tree insertion](https://user-images.githubusercontent.com/33976823/144397599-3b2a4b63-bd60-4baa-bd99-c0acd66bd09a.png)
+
+- **삭제(Deletion)**
+    1. 삭제할 entry가 속한 leaf $L$을 찾는다.
+    2. Entry를 삭제한다.
+        - $L$이 적어도 절반 이상 차있다면 끝
+        - $d-1$ entry를 갖게 된다면, sibling의 entry를 빌려서 재분배(re-distribute)를 시도한다. 만약 재분배가 실패하면 $L$과 sibling을 merge한다.
+            Merge 또한 부모 노드에게 전파될 수 있다.
+
+![B+tree deletion-redistribute](https://user-images.githubusercontent.com/33976823/144398457-1d16257c-25b9-4a90-9dc6-138109a16472.png)
+
+![B+tree deletion-merge](https://user-images.githubusercontent.com/33976823/144398948-3a3584b5-b5aa-4254-8c4b-dae48b04c12f.png)
