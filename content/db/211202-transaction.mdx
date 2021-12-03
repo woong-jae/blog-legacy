@@ -123,5 +123,24 @@ Lock은 두 phase, growing(acuiring)과 shrinking(release)으로 나뉜다.
 > - **Dead lock**: 발생 시 DBMS에서 victim을 선정해서 lock을 release하거나, 유저가 직접 해결해야 한다.
 > - **Starvation**
 
+### Trabsaction Support in SQL
+SQL에서 명시적인 `BEGIN_TRANSACTION`문은 제공되지 않는다. 대신 모든 트랜잭션은 명시적인 종료문, `COMMIT`과 `ROLLBACK`을 사용해야 한다.
+
+모든 트랜잭션은 관련된 특정 특성을 갖는다. 특성은 'isolation level'으로 명시할 수 있다.
+
+```sql
+ISOLATION LEVEL <isolation>
+```
+- isolation = `READ UNCOMMITTED` | `READ COMMITTED`(Oracle의 default) | `REPEATABLE READ` | `SERIALIZABLE`
+
+트랜잭션이 `SERIALIZABLE`보다 낮은 레벨에서 실행되면 다음과 같은 현상이 나타날 수 있다.
+
+| Level | Description |
+| --- | --- |
+| Read Uncommitted | 아직 commit 되지 않은 데이터를 다른 트랜잭션이 읽는 것을 허용한다.<br/>Dirty read, Nonrepeatable read, Phantom read 현상 발생. |
+| Read Committed | Commit된 데이터만 읽는 것을 허용해서 dirty read를 방지한다.<br/>Nonrepeatable read, Phantom read 현상 여전히 발생. |
+| Repeatable Read | 선행 트랜잭션이 읽은 데이터를 후행 트랜잭션이 갱신/삭제하는 것을 막는다.<br/>같은 쿼리를 두 번 했을 때 일관성이 유지된다.<br/>Phantom read 여전히 발생 |
+| Serializable | 선행 트랜잭션이 읽은 데이터를 후행 트랜잭션이 갱신/삭제를 못하게 하거나 새 레코드 삽입을 막아준다. 완벽한 읽기 일관성 모드를 지원한다. |
+
 참조:  
 [[오라클 성능 고도화 Ⅰ] 트랜잭션과 Lock](https://velog.io/@whdnjsdyd111/%EC%98%A4%EB%9D%BC%ED%81%B4-%EC%84%B1%EB%8A%A5-%EA%B3%A0%EB%8F%84%ED%99%94-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%EA%B3%BC-Lock#%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%EC%9D%B4%EB%9E%80)
