@@ -1,0 +1,127 @@
+---
+title: "Transaction"
+date: "2021-12-02 19:18"
+emoji: "⛓"
+category: "db"
+---
+## Transaction? 
+트랜잭션은 **데이터베이스 처리 과정의 논리적 단위**이다. 무조건 하나의 작업처럼 전체가 처리되어야 한다.
+
+송금할 때 내 계좌에서 돈이 나가고 상대방 계좌에 돈이 들어가는 두 가지 작업은 하나의 일처럼 트랜잭션 처리가 필요하다.
+
+> Terminoligy
+> - **Data item**: 데이터베이스 레코드, disk block, 필드 값, 파일 전체 혹은 전체 데이터베이스를 지칭한다. 고유한 이름이 있어 각 data item을 유일하게 식별할 수 있다.
+> - Granularity: Data item의 사이즈
+> - Database: 명명된 data item들의 모음
+
+### Trasaction States
+DBMS는 다음 상태들에 대해 기록을 해두어야한다.
+- `BEGIN_TRANSACTION`: 트랜잭션의 시작을 알린다.
+
+- `READ` or `WRITE`: 데이터베이스에 대해 읽기/쓰기 작업을 수행함.
+
+- `END_TRANSACTION`: 트랜잭션 실행이 끝난 것을 알린다. 트랜잭션의 상태를 체크한다: committed or aborted
+
+- `COMMIT_TRANSACTION`: 트랜잭션이 성공적으로 끝났고 변화가 영구적으로 적용됐다는 것을 뜻한다.
+
+- `ROLL_BACK`(`ABORT`): 트랜잭션에 문제가 발생한채로 종료했다는 것을 알린다. 실행 취소가 되어야 한다.
+
+![transaction states](https://img.brainkart.com/imagebk12/nrWXpjW.jpg)
+
+> Partially committed? 유저에게 빠른 응답을 제공하기 위해 사용한다.
+
+### Recovery
+트랜잭션이 실패했을 경우 실행되었던 작업들이 모두 취소되어 데이터베이스에 영향을 끼치지 못하게 해야한다.
+
+> Types of failures
+> - Computer failure
+> - Transaction or system error
+> - Local errors or excection conditions detected by the transaction
+> - Concurrency control enforcement
+> - Disk failures
+> - Physical problems or catastrophe
+> 
+> DBMS는 1~4번 실패 유형이 발생했을 때 빠르게 복구하기 위한 충분한 정보를 저장하고 있어야한다.
+
+#### System Log
+DMBS는 실패로부터 복구하기 위해 트랜잭션 작업들을 기록해둔다.
+
+**System log**는 순차적(sequential)이고 늘어나기만 하는(append-only) 파일로, 디스크에 저장된다. 
+Log들은 메인 메모리 버퍼의 'log buffer'에 저장되고, 버퍼가 가득차면 로그 파일의 끝에 로그들을 붙여준다.
+
+저장한 로그들을 통해 데이터베이스의 과거 상태를 알고, 이를 바탕으로 undo 작업이나 redo 작업을 할 수 있다.
+
+## Transaction properties
+트랜잭션은 4가지 중요한 특성을 가진다.
+
+| Property | Description |
+| --- | --- |
+| ***Atomicity*** | 트랜잭션은 분해 불가능한 특성을 가진 작업의 최소 단위다. |
+| ***Consistency*** | 트랜잭션은 일관성을 유지해야한다. 프로그래머가 보장해야 한다. |
+| ***Isolation*** | 트랜잭션은 다른 트랜잭션과 격리돼서 실행되는 것 같이 나타나야 된다. |
+| ***Durability*** | 트랜잭션이 성공적이면 작업이 데이터베이스에 영속적으로 저장되어야 한다. |
+
+이 4가지 특성은 어떤 트랜잭션이든 무조건 갖추어야 한다.
+
+> Atomicity와 Durability는 recovery subsystem이, Consistency는 프로그래머가 보장해야 한다.
+> Durability는 동시성 제어 subsystem에 의해 강제된다.
+
+### Transaction Schedule
+트랜잭션의 스케쥴은 트랜잭션의 작업들의 실행 순서를 의미한다.
+
+서로 다른 트랜잭션의 작업들은 serial 할 수도 있고 interleave 할 수도 있다. 
+'Serial' 하다는 뜻은 각 트랜잭션의 작업들이 한 번에 쭉 수행된다는 의미이고, 'Interleave' 하다면 서로 다른 트랜잭션의 작업들이 번갈아가며 수행된다는 의미다.
+
+- Total ordering: 스케쥴 $S$의 어떤 두 작업이 있을 때, 한 작업에 다른 작업보다 먼저 실행되어야 한다.
+- Partial ordering: 특정 작업간 실행 순서가 시스템에 의해 결정되어 있지 않을 때 사용한다.
+
+#### Serial Schedule
+모든 serial schedule은 정확하다. 하지만 단점도 존재한다.
+
+다른 작업들이 끼어드는 것을 막기 때문에 **동시성에 제약**이 생기고, **다른 트랜잭션이 완료되는 것을 기다릴 수 없다.**
+
+이를 해결하기 위해 어떤 스케쥴이 serial 스케쥴과 'equivalent'한 지 결정하고 해당 스케쥴이 실행되게 할 수 있지만, 어떤 스케쥴이 'equivalent'한 지 결정하는 것은 쉽지않다.
+
+#### Nonserial Schedule
+스케쥴의 두 작업이 아래에 세 조건을 모두 만족하면 conflict를 일으킨다고 할 수 있다.
+- 두 작업이 서로 다른 트랜잭션에 속한다.
+- 다 작업이 똑같은 데이터 $X$에 접근한다.
+- 적어도 한 작업이 `write_item(X)`를 수행한다.
+
+Conflict의 두가지 타입: 1) **read-write** 2) **write-write** conflict
+
+Conflict를 해결하기 위해 동시성 제어 기법이 필요하다.
+
+## Concurrency Control
+### 동시성 제어가 없거나 부족하면 발생할 수 있는 문제들
+- **Lost update(갱신 손실)**  
+    두 트랜잭션이 같은 데이터에 쓰기 작업을 할 때, interleave된 작업에 의해 어느 한 쪽의 작업이 사라지는 현상이다.
+
+- **Dirty read(오손 읽기)**  
+    한 트랜잭션이 데이터를 업데이트하고 commit하지 않은 데이터를 다른 트랜잭션에서 읽게되면 발생한다.
+
+- **Nonrepeatable read(반복 불가능)**  
+    한 트랜잭션이 어떤 데이터에 대해서 같은 쿼리를 두 번 하는데, 두 쿼리 사이에 다른 트랜잭션이 데이터를 업데이트하면 발생한다. 
+    같은 데이터에 대해 쿼리를 하지만 두 쿼리는 다른 값을 읽게된다.
+
+- **Phantom read(유령 데이터)**  
+    한 트랜잭션이 일정 범위의 데이터를 두 번 읽을 때, 첫 쿼리 때 없었던 유령(phantom) 데이터가 두 번째 쿼리에서 나타나는 현상이다. 
+    트랜잭션 도중 새로운 데이터가 삽입되기 때문에 발생한다.
+
+### Serializable Schedule
+Serial 스케쥴 $S_1$의 결과와 nonserial 스케쥴 $S_2$가 동일한 데이터베이스 상태를 만들면, $S_1$과 $S_2$는 'equivalent' 할 수도 있다.
+이때 $S_2$를 'serializable' 하다고 한다.
+
+Serializable 스케쥴은 연속적인 트랜잭션이 실행되었을 때 언제나 정확하고, 동시 실행에 이점을 준다.
+
+Serializability를 보장하기 위해서 **concurrency control(CC) 프로토콜**을 사용할 수 있다. 
+보통 **two-phase locking(2PL)**을 사용한다. Data item을 'lock'해서 동시 실행중인 트랜잭션들이 서로 간섭하는 것을 막는다. 
+Lock은 두 phase, growing(acuiring)과 shrinking(release)으로 나뉜다.
+
+> Locking은 세 가지 주요 문제점을 가지고 있다.
+> - **High overhead**
+> - **Dead lock**: 발생 시 DBMS에서 victim을 선정해서 lock을 release하거나, 유저가 직접 해결해야 한다.
+> - **Starvation**
+
+참조:  
+[[오라클 성능 고도화 Ⅰ] 트랜잭션과 Lock](https://velog.io/@whdnjsdyd111/%EC%98%A4%EB%9D%BC%ED%81%B4-%EC%84%B1%EB%8A%A5-%EA%B3%A0%EB%8F%84%ED%99%94-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%EA%B3%BC-Lock#%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%EC%9D%B4%EB%9E%80)

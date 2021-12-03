@@ -30,7 +30,7 @@ Primary index의 index record는 두 가지 field를 갖는다.
 
 Primary index는 데이터 파일의 레코드들보다 1)적은 index entry를 가지고, 2)field의 수와 값도 작기 때문에 공간을 훨씬 적게 사용한다.
 
-![Primary Index](https://lh3.googleusercontent.com/proxy/xiulOqcKCp8ZIqZdJBLBPk-dnHH5zoMvzBnX-z03hmQF1PlijnyGtDKkf2As0xfJh1E8gzqUm1L1Le8_BD1yV8Mthh9Sxd6lGg)
+![Primary Index](https://media.geeksforgeeks.org/wp-content/uploads/20200625180746/gfg-Annotation-2020-06-25-180647.jpg)
 
 > **Dense index**는 모든 key value에 대해 index entry를 주는 것이다. 즉, 모든 레코드에 대해 색인을 만든다.
 >
@@ -98,8 +98,8 @@ Multilevel index의 첫 번째 level은 index 파일 그 자체, 즉, block을 �
 ![image](https://user-images.githubusercontent.com/33976823/144389155-bab456c0-2388-4e4c-a740-270e5125dda3.png)
 
 새로운 값이 삽입되거나 삭제될 때, 두 가지 제약조건이 지켜져야한다.
-- 트리의 각 노드마다 disk block이 할당되어야 하고
-- 새로운 레코드가 파일에 삽입되면 search field 값을 포함하고 새로운 레코드를 가리키는 포인터를 포함한 tree entry도 삽입되어야 한다.
+- 트리의 각 노드가 disk block에 할당되어야 하고,
+- 새로운 레코드가 파일에 삽입되면 search field 값과 새로운 레코드를 가리키는 포인터를 포함한 tree entry도 삽입되어야 한다.
 
 ### B+-Tree
 **삽입과 삭제가 $log_pN$ 비용**으로 수행될 수 있다. ($p$ = fanout, $N$= # of leaf pages)

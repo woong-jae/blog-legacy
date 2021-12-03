@@ -13,11 +13,11 @@ const postStyle = css`
     }
     
     h3 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         margin-bottom: 16px;
     }
     h4 {
-        font-size: 1.1rem;
+        font-size: 1.35rem;
         margin-bottom: 16px;
     }
 
