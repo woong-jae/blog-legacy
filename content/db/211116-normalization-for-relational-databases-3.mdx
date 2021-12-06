@@ -5,8 +5,10 @@ emoji: "🍙"
 category: "db"
 ---
 ## General definitions of 2NF & 3NF
+이전 글에서는 기본키에 대해서 일반형을 정의해봤다. 이번에는 일반화 해보자.
+
 ### 2NF의 일반적 정의
-Relation $R$의 모든 nonprime attribute $A$가 $R$의 기본 키에 대해 'fully functionally dependent'하다면, $R$은 2NF를 만족한다.
+Relation $R$의 **모든 nonprime attribute $A$가 $R$의 어느 키(기본키, 후보키)에 대해 'partially functional dependent'하지 않다면**, $R$은 2NF를 만족한다.
 
 ### 3NF의 일반적 정의
 Nontrivial FD $X\rarr A$에서
@@ -17,17 +19,20 @@ Nontrivial FD $X\rarr A$에서
 
 ![image](https://user-images.githubusercontent.com/33976823/141923908-708c13fc-d8a2-4763-bf40-ab5708c4be7c.png)
 
-1번 조건은 두가지 위반 사항을 잡을 수 있다. PK가 아닌 prime attribute가 nonprime attribute를 functionally 결정하는 것을 막아 2NF 위반을 잡을 수 있고, 
-nonprime attribute가 nonprime attribute를 functionally 결정하는 것을 막아 3NF 위반 또한 잡을 수 있다.
+1번 조건은 두가지 위반 사항을 잡을 수 있다. 
+- prime attribute가 nonprime 속성을 functionally 결정하는 경우: partial dependency를 잡아 2NF 위반을 잡을 수 있다. 
+- nonprime attribute가 nonprime 속성을 functionally 결정하는 경우: transitive dependency막아 3NF 위반을 잡을 수 있다.
 
-3NF를 다른 방식으로도 정의내릴 수 있다. 모든 nonprime attribute가 a)모든 PK에 대해 FFD이고 b)모든 후보키에 대해 'non-transitively dependent'하다면 relation은 3NF이다.
+3NF를 다른 방식으로도 정의내릴 수 있다. 
 
-여기서 b)는 3NF에서는 허용되지만 'Boyce-Codd Normal Form'에서는 허용되지 않는다. 즉, transitive property 자체가 없어야 한다.
+모든 nonprime attribute가 **a)**모든 키에 대해 FFD이고 **b)**모든 키에 대해 'non-transitively dependent'하다면 relation은 3NF이다.
+
+여기서 b)는 3NF에서는 허용되지만 'Boyce-Codd Normal Form'에서는 허용되지 않는다. 즉, candidate key에 의해 발생하는 transitive property도 없앤다.
 
 ## Boyce-Codd Normal Form
-Relation $R$의 모든 FD $X\rarr A$에서 $X$가 슈퍼키이면 R은 BCNF를 만족한다. 
+Relation $R$의 **모든 FD $X\rarr A$에서, $X$가 슈퍼키**이면 R은 BCNF를 만족한다. 
 
-BCNF가 3NF보다 강력하기 떄문에 3NF이면서 BCNF인 relation은 존재하지 않는다.
+BCNF가 3NF보다 강력하기 때문에 3NF이면서 BCNF인 relation은 존재하지 않는다.
 
 BCNF는 decomposition으로 달성할 수 있다. 분해했을 때 어떤 FD를 잃을 수도 있는데, 이것은 감내해야 하는 부분이다.
 
@@ -57,10 +62,19 @@ $R$의 decomposition $D=\{R1, R2\}$의 FD 집합 $F$에 대해서,
     Instructor → Course 가 FD2와 같기 때문에 $F^+$에 속한다. NJB를 만족하므로 분해할 때 case 3을 선택하면 된다.
 
 ### BCNF Decomposition 알고리즘
-$R$이 BCNF에 속하지 않은 relation이고 $X\sube R$일 때, $X\rarr A$를 BCNF violation을 발생시키는 FD라고 하자.
+$R$이 BCNF에 속하지 않은 relation이고 $X\sube R$일 때, $X\rarr A$가 BCNF 위반을 발생시키는 FD라고 하자.
 
 이때 $R$은 두 가지 relation으로 분해될 수 있다.
 - $R-A$
 - $XA(=X\cup A)$
 
 두 가지 경우 중 BCNF에 속하지 않는 것이 있다면, 그 경우에 대해 알고리즘을 반복한다. 둘 다 BCNF에 속하게 되면 알고리즘을 종료한다.
+
+## 정리
+
+|Normal Form|Description|
+|---|---|
+|1NF|도메인의 원자성|
+|2NF|부분 함수적 종속 제거|
+|3NF|이행 함수적 종속 제거|
+|BCNF|후보키가 아닌 결정자 제거|
