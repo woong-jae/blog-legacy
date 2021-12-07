@@ -9,7 +9,7 @@ category: "db"
 ## Storage Hierarchy
 데이터베이스를 구성하는 데이터들은 어떤 물리적 저장 매체에 저장되어 있어야 한다. 컴퓨터 저장 매체는 계층 구조를 이룬다.
 
-1. **Primary Storage**: CPU에 의해 동작한다. Volatile, 즉, 전원이 꺼지면 사라지지만 빠르다.
+1. **Primary Storage**: CPU에 의해 운영된다. Volatile, 즉, 전원이 꺼지면 사라지지만 빠르다.
     - CPU cache, RAM(Random Access Memory) etc.
 
 2. **Secondary Storage**: Non-volatile하고 primary보다 싸다.
@@ -89,11 +89,11 @@ Disk head는 spindle이 회전하는 동안 원하는 트랙으로 이동해서 
 
 - 디스크에 데이터를 적절하게 조직
 
-- Prefetching: 데이터를 요청 전에 읽기
+- Prefetching: Track의 다른 block들도 읽힐 수 있다고 가정한다.
 
-- I/O 요청의 적절한 스케쥴링
+- I/O 요청의 적절한 스케쥴링: Total accesss time 최소화를 목표로 한다.
 
-- Log disk를 활용해서 쓰기 작업을 일시적으로 들고있기: seek time을 없애기 위해 쓰여야 할 block은 하나의 log disk로 간다.
+- Log disk를 활용해서 쓰기 작업을 일시적으로 들고있기: seek time을 없애기 위해, write되야하는 block은 하나의 log disk로 간다.
 
 - SSD 사용
 
@@ -142,7 +142,7 @@ Record type은 1) field의 이름과 2) 각 field에 대응되는 데이터 타�
 
 File은 일련의 레코드들이다.
 
-- Fixed-length records: 파일은 모든 레코드의 크기가 같다. 구현과 관리가 쉽다. 하지만 공강 낭비가 발생할 수 있다.
+- Fixed-length records: 파일은 모든 레코드의 크기가 같다. 구현과 관리가 쉽다. 하지만 공간 낭비가 발생할 수 있다.
 
 - Varable-length records: 파일의 레코드들이 각기 다른 크기를 가진다. 크기가 달라지는 이유는 아래와 같다.
     - Field의 값이 가변적이다.
@@ -216,7 +216,7 @@ Heap file에서 레코드를 삭제하기 위해서는 첫 번째로 block을 �
 Ordering field의 값을 기준으로 레코드들을 디스크에 물리적으로 정렬하는 방법이다.
 
 #### 장점
-- **Sorting 할 필요가 없어진다**.
+- Ordering key에 대해서 정렬되어 있기 때문에, key에 대한 search/range condition이 굉장히 효율적이다.
 
 - 다음 레코드가 block의 끝에 위치하지 않는 이상 **다음 레코드를 찾기 위한 추가적인 block 접근이 필요 없어진다.**
 
@@ -238,6 +238,6 @@ Ordering field의 값을 기준으로 레코드들을 디스크에 물리적으�
 ### Hash File
 Hash function을 특정 field에 적용해서 나온 값으로 레코드가 저장된 disk block의 주소를 알 수 있는 방식이다. 
 
-Disk block을 **bucket**이라고 한다. Bucket은 하나이상의 레코드를 가지는 저장소의 단위가 된다.
+Disk block을 **bucket**이라고 한다. Bucket은 하나 이상의 레코드를 가지는 저장소의 단위가 된다.
 
-**Hash field에 대한 quality condition에 한해서 굉장히 빠른 접근 속도를 제공**한다.
+**Hash field에 대한 equality condition에 한해서 굉장히 빠른 접근 속도를 제공**한다.
