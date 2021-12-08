@@ -16,22 +16,26 @@ category: "db"
 
 ### Trasaction States
 DBMS는 다음 상태들에 대해 기록을 해두어야한다.
-- `BEGIN_TRANSACTION`: 트랜잭션의 시작을 알린다.
+- `BEGIN_TRANSACTION`: 트랜잭션의 시작을 뜻한다.
 
 - `READ` or `WRITE`: 데이터베이스에 대해 읽기/쓰기 작업을 수행함.
 
-- `END_TRANSACTION`: 트랜잭션 실행이 끝난 것을 알린다. 트랜잭션의 상태를 체크한다: committed or aborted
+- `END_TRANSACTION`: 트랜잭션 실행이 끝난 것을 뜻한다. 트랜잭션의 상태를 체크한다: committed or aborted
 
 - `COMMIT_TRANSACTION`: 트랜잭션이 성공적으로 끝났고 변화가 영구적으로 적용됐다는 것을 뜻한다.
 
-- `ROLL_BACK`(`ABORT`): 트랜잭션에 문제가 발생한채로 종료했다는 것을 알린다. 실행 취소가 되어야 한다.
+- `ROLL_BACK`(`ABORT`): 트랜잭션에 문제가 발생한 채로 종료됐다는 것을 뜻한다. 실행 취소가 되어야 한다.
 
 ![transaction states](https://img.brainkart.com/imagebk12/nrWXpjW.jpg)
 
-> Partially committed? 유저에게 빠른 응답을 제공하기 위해 사용한다.
+> **Partially committed**? 유저에게 빠른 응답을 제공하기 위해 사용한다. 
+> 
+> **동시성 제어** 프로토콜로 commit이 가능한지 체크하고, **recovery protocol**로 실패 여부와 데이터베이스에 어떤 영향을 끼쳤는지 확인해야 한다.
 
 ### Recovery
-트랜잭션이 실패했을 경우 실행되었던 작업들이 모두 취소되어 데이터베이스에 영향을 끼치지 못하게 해야한다.
+DBMS는 트랜잭션의 종료 상태를 committed와 aborted, 두 가지 상태로 결정한다.
+
+트랜잭션이 실패(aborted)했을 경우 실행되었던 작업들을 모두 취소해 데이터베이스에 영향을 끼치지 못하게 해야한다.
 
 > Types of failures
 > - Computer failure
@@ -43,13 +47,22 @@ DBMS는 다음 상태들에 대해 기록을 해두어야한다.
 > 
 > DBMS는 1~4번 실패 유형이 발생했을 때 빠르게 복구하기 위한 충분한 정보를 저장하고 있어야한다.
 
-#### System Log
+### System Log
 DMBS는 실패로부터 복구하기 위해 트랜잭션 작업들을 기록해둔다.
 
 **System log**는 순차적(sequential)이고 늘어나기만 하는(append-only) 파일로, 디스크에 저장된다. 
 Log들은 메인 메모리 버퍼의 'log buffer'에 저장되고, 버퍼가 가득차면 로그 파일의 끝에 로그들을 붙여준다.
 
 저장한 로그들을 통해 데이터베이스의 과거 상태를 알고, 이를 바탕으로 undo 작업이나 redo 작업을 할 수 있다.
+
+#### Commit point of transaction $T$
+트랜잭션 $T$가 데이터베이스에 대한 **모든 작업을 성공적으로 완료**하고, **작업의 영향이 log에 기록**됐을 때, $T$는 committed 됐다고 할 수 있다.
+그 다음 $T$는 log에 commit 기록을 남긴다.
+
+실패가 발생했을 때,
+- T의 commit 기록이 있는 경우, log에 따라 redo한다.
+- T의 commit 기록이 없지만 트랜잭션을 시작한 기록은 있는 경우, recovery process에 따라 트랜잭션의 영향을 undo한다(rollback).
+
 
 ## Transaction properties
 트랜잭션은 4가지 중요한 특성을 가진다.
@@ -72,7 +85,7 @@ Log들은 메인 메모리 버퍼의 'log buffer'에 저장되고, 버퍼가 가
 서로 다른 트랜잭션의 작업들은 serial 할 수도 있고 interleave 할 수도 있다. 
 'Serial' 하다는 뜻은 각 트랜잭션의 작업들이 한 번에 쭉 수행된다는 의미이고, 'Interleave' 하다면 서로 다른 트랜잭션의 작업들이 번갈아가며 수행된다는 의미다.
 
-- Total ordering: 스케쥴 $S$의 어떤 두 작업이 있을 때, 한 작업에 다른 작업보다 먼저 실행되어야 한다.
+- Total ordering: 스케쥴 $S$의 어떤 두 작업이 있을 때, 한 작업이 무조건 다른 작업보다 먼저 실행되어야 한다.
 - Partial ordering: 특정 작업간 실행 순서가 시스템에 의해 결정되어 있지 않을 때 사용한다.
 
 #### Serial Schedule
@@ -85,7 +98,7 @@ Log들은 메인 메모리 버퍼의 'log buffer'에 저장되고, 버퍼가 가
 #### Nonserial Schedule
 스케쥴의 두 작업이 아래에 세 조건을 모두 만족하면 conflict를 일으킨다고 할 수 있다.
 - 두 작업이 서로 다른 트랜잭션에 속한다.
-- 다 작업이 똑같은 데이터 $X$에 접근한다.
+- 두 작업이 똑같은 데이터 $X$에 접근한다.
 - 적어도 한 작업이 `write_item(X)`를 수행한다.
 
 Conflict의 두가지 타입: 1) **read-write** 2) **write-write** conflict

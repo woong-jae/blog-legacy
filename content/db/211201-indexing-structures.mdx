@@ -13,10 +13,10 @@ category: "db"
 
 Index structure는 indexing field에 대한 효율적인 레코드 접근을 가능하게 한다. 여기서 indexing field는 레코드의 어느 필드나 사용가능하다. Multiple field에 대한 index도 생성가능하다.
 
-대부분의 index는 ordered files 그리고 트리 자료구조에 바탕을 둔다.
+대부분의 index는 ordered file에 기반을 두고 트리 자료구조를 사용한다.
 
 ## Single-Level Ordered Indexes
-Ordered index(정렬 색인)은 중요한 조건을 순서대로 정렬해서 찾기 쉽게하는 것이 목표다. 중요한 조건을 'indexing field'라고 한다.
+**Ordered index(정렬 색인)**은 중요한 조건을 순서대로 정렬해서 찾기 쉽게하는 것이 목표다. 중요한 조건을 'indexing field'라고 한다.
 Index field가 정렬되어 있기 때문에 **binary search를 이용한 빠른 탐색이 가능**하다.
 
 Index file은 'Index field의 각 값 + 그 레코드를 가진 block에 대한 포인터'의 리스트를 보관한다. 그렇기 때문에 일반적으로 데이터 파일에 비해 크기가 훨씬 작다.
@@ -28,7 +28,8 @@ Primary index의 index record는 두 가지 field를 갖는다.
 - **Primary key**(block anchor): Block의 첫 레코드의 primary key field의 값
 - **Pointer to disk block**
 
-Primary index는 데이터 파일의 레코드들보다 1)적은 index entry를 가지고, 2)field의 수와 값도 작기 때문에 공간을 훨씬 적게 사용한다.
+Primary index는 데이터 파일보다 공간을 훨씬 적게 사용한다. 레코드 수보다 index entry의 수가 더 적고, entry의 사이즈가 더 작기 때문이다.
+따라서 index file에 대한 binary search가 데이터 파일보다 더 적은 block 접근을 필요로 한다.
 
 ![Primary Index](https://media.geeksforgeeks.org/wp-content/uploads/20200625180746/gfg-Annotation-2020-06-25-180647.jpg)
 
@@ -39,36 +40,38 @@ Primary index는 데이터 파일의 레코드들보다 1)적은 index entry를 
 #### Problems
 Primary index의 큰 문제점은 **새로운 레코드의 삽입과 삭제**다. 삽입하려면 새 레코드를 넣기 위해 다른 레코드들을 옮겨줘야 할 뿐만 아니라 index entry도 변경해야한다. 삭제도 몇몇 block의 block anchor를 변경시킬 수 있다.
 
-Insertion 문제는 **'unordered overflow file'**을 사용해서 해결할 수 있다. Overflow 레코드들의 연결 리스트를 각 block마다 둔다.
+Insertion 문제는 **'unordered overflow file'**을 사용해서 해결할 수 있다. 각 block마다 overflow 레코드들의 연결 리스트를 사용한다.
 
 Deletion 문제는 **deletion marker**로 해결할 수 있다.
 
 ### Clustering Index (군집 색인)
-Non-key field에 대한 색인이다. 이때 데이터 파일은 **clustered file**이다.
+Non-key field에 대한 색인이다. 데이터 파일이 non-key field에 대해 물리적으로 정렬된, 즉, 'clustered file'이면 사용할 수 있다.
 
-Clustering index도 sparse index다. **Clustering field에 대해 같은 값**을 가지는 레코드들에 대해 빠른 접근을 위해 만들어지기 때문이다.
+Clustering index는 **clustering field에 대해 같은 값을 가지는 레코드들을 빠르게 가져오기** 위해 사용한다. 때문에 clustering index는 sparse index다.
+
+Primary index의 index field는 unique한 값인 반면, clustering index는 중복되는 값이다.
 
 두 가지 field를 가진 정렬된 파일을 가진다.
 - Clustering field of clustered file
 - Pointer to disk block(값이 최초로 나타나는 data block을 가리킨다)
 
 #### Problems
-Clustering index 또한 레코드를 삽입, 삭제할 때 문제가 발생한다.
+Clustering index 또한 레코드를 **삽입, 삭제할 때 문제**가 발생한다.
 
-이 문제를 해결하기 위해 block 하나를 통쩨로 clustering field의 각 값에 대해 할당할 수 있다. Field에 대해 같은 값을 가지는 모든 레코드들이 같은 block에 있게 된다.
+이 문제를 해결하기 위해 **block 하나를 통째로 clustering field의 각 값에 할당**할 수 있다. Field에 대해 같은 값을 가지는 모든 레코드들이 같은 block에 있게 된다.
 
 ![Clustering Index](https://www.cs.uct.ac.za/mit_notes/database/htmls/media/chp11_8.png)
 
 ### Secondary Index (보조 색인)
-Non-ordering field에 대한 색인이다. 데이터 파일에 접근할 수 있는 보조적인 수단을 제공한다. 보조적인 수단이기 때문에 데이터 레코드의 순서는 중요하지 않다.
+데이터 파일에 접근할 수 있는 보조적인 수단을 제공한다. 보조적인 수단이기 때문에 데이터 레코드의 순서는 중요하지 않다.
 
 중복되는 값을 가지는 field에도 생성할 수 있고, unique한 값을 가지는 field에도 생성할 수 있다. 또한, 같은 데이터 파일에 대해 여러 보조 색인을 생성할 수 있다. 말그대로 추가적인 수단이기 때문이다.
 
 Secondary index 또한 두 가지 field를 가진다.
 - Indexing field
 - Pointer
-    - to record: Unique한 값을 가지는 field에 생성하게 될 경우 dense index가 된다. 즉, 포인터는 각 레코드를 가리킨다.
-    - to block
+    - to record
+    - to block: 해당 index field의 값을 가지는 block을 가리킨다.
 
 ![Secondary Index - dense](https://user-images.githubusercontent.com/33976823/144253875-b2a1b48c-d6fc-499f-8639-144333fc460a.png)
 
@@ -91,9 +94,9 @@ Multilevel index의 첫 번째 level은 index 파일 그 자체, 즉, block을 �
 이를 해결하기 위한 방법으로는 각 index block마다 여분의 공간을 비워놓거나 적절한 삽입/삭제 알고리즘을 사용해서 index block을 생성/삭게하는 방법을 사용할 수 있다. 이 방법을 적용한 것이 dynamic multilevel index다.
 
 #### Search Trees
-어떤 특정한 값을 가진 레코드를 찾기위해 사용되는 트리이다. 트리의 값들은 파일의 search field 값들을 가진다.
+어떤 특정한 값을 가진 레코드를 찾을 때 가이드 역할에 사용되는 트리이다. 트리의 값들은 파일의 search field 값을 가진다.
 
-**Fanout $p$**를 가진 search tree의 각 노드는 적어도 $p-1$개의 값, $p$개의 포인터를 가진다.
+**Fanout $p$**를 가진 search tree의 각 노드는 최대 $p-1$개의 값, $p$개의 포인터를 가진다.
 
 ![image](https://user-images.githubusercontent.com/33976823/144389155-bab456c0-2388-4e4c-a740-270e5125dda3.png)
 
@@ -107,12 +110,12 @@ Multilevel index의 첫 번째 level은 index 파일 그 자체, 즉, block을 �
 B+ tree는 **트리의 높이를 통일(height-balanced)**시킨다. 또한 모든 노드는 **최소한 50% 이상 공간이 사용**되어야 한다. 즉, 절반 이상이 차있어야 한다.
 따라서 각 노드는 $d\leq n\leq 2d$ entry를 갖는다($d$, order of tree).
 
-**Equality**(tree의 높이 만큼만 방문) 와 효율적인 **range-search**를 제공한다.
+**Equality**(tree의 높이 만큼만 방문) 와 효율적인 **range search**를 제공한다.
 
-트리의 내부 노드는 검색용으로 사용되고 리프 노드(leaf node)는 실제 데이터가 저장된 곳을 가리킨다. 
+트리의 내부 노드는 검색을 지시하고 리프 노드(leaf node)는 실제 데이터가 저장된 곳을 가리킨다. 
 
 리프 노드는 search field의 각 값들과 연결된다. 
-Search field 의 값이 key field라면 포인터는 레코드를 가리키고, non-key라면 데이터 파일 레코드에 대한 포인터를 가진 block을 가리킨다.
+Search field 의 값이 **key field라면 포인터는 레코드**를 가리키고, non-key라면 데이터 파일 레코드에 대한 포인터를 가진 block을 가리킨다.
 
 - **삽입(Insertion)**
     1. 삽입할 leaf $L$을 찾는다.
