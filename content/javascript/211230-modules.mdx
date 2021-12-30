@@ -1,0 +1,123 @@
+---
+title: "[JS] 모듈(Modules)" 
+date: "2021-12-30"
+emoji: "🗃"
+category: "javascript"
+---
+## 왜 모듈?
+보통 프로그램은 새로운 필요성이 생기면 새 기능을 추가하며 조직적으로 성장하게 된다. 
+하지만 프로그램 구조를 체계화하는 것은 추가적인 노력이 필요하다. 이 노력은 미래에 다른 사람이 이 프로그램에 일을 할 때서야 보통 빛을 발하게 된다.
+그렇기 때문에 현재 작업하는 사람으로서는 이를 무시하고 프로그램의 부분 부분들이 서로 얽히게 두기 쉽다.
+
+이렇게 되면 두 가지 실질적 문제가 발생할 수 있다.
+
+- **시스템을 이해하는 것이 어려워진다**. 부분 부분을 독립적으로 이해할 수 있는 것이 아닌, 전체 시스템에 대한 이해를 하도록 강요된다.
+
+- 프로그램의 어느 기능을 다른 상황에 사용하고 싶을 때, **그 부분을 다시 작성하는 것이 얽힌 것을 푸는 것보다 쉬워**질 수도 있다.
+
+이런 문제를 해결하기 위해 **'Modules'**를 도입하게 되었다.
+
+
+## 모듈(Modules)
+> 모듈은 **'어떤 다른 프로그램 조각에 의존'**하는지, 그리고 **'어떤 기능을 제공(인터페이스)'**하는지 명시하는 프로그램의 조각이다.
+
+모듈의 인터페이스는 객체의 인터페이스와 비슷하다. 
+모듈의 부분만 외부에 공개하고 나머지는 숨겨둠으로써 모듈들이 서로 상호작용하는 것을 제한해 서로 얽히는 것을 방지할 수 있다.
+
+모듈 사이의 관계를 **'dependecies'**라고 한다. 모듈이 동작하는데 다른 모듈의 조각이 필요할 때, 그 모듈에 '의존'한다고 한다.
+
+모듈의 의존성이 정확히 명시되어 있다면, 모듈을 동작하는데 필요한 다른 모듈들을 알아내고 의존성을 자동으로 로드하는데 사용할 수 있다. 
+이런 방식으로 동작하게 모듈을 분리하려면, 각 모듈은 자신만의 스코프가 필요하다. 
+자바스크립트 코드를 그냥 다른 파일로 분리하는 것으로는 이것을 이룰 수 없다. **파일들이 같은 global namespace를 공유하기 때문에 각자의 바인딩을 침범할 수 있기 때문이다**.
+
+### 즉흥적인 모듈 구현
+2015년 이전에는 자바스크립트에 내장된 모듈 시스템이 없었다. 하지만 사람들은 모듈이 필요했기에 언어 위에 모듈 시스템을 디자인했다.
+**함수를 사용해서 모듈들이 각자 로컬 스코프를 갖게** 하고, **객체를 사용해서 모듈의 인터페이스**를 나타냈다.
+
+함수를 그냥 정의해서 사용하는 것은, 위에서 언급했던 것처럼, 인터페이스를 global space에 올려놓고 의존성도 거기 있길 바라는 방식이다.
+따라서 의존성 관계가 코드의 부분이 되게 하려면, **의존성을 로드하는 것을 제어**해야 한다. 
+이것을 구현하기 위해서는 **문자열을 코드로 실행**하는 것이 필요한데, 자바스크립트에서는 이 기능을 지원한다.
+
+`Function` constructor를 사용하면 코드를 실행할 수 있다. 두 가지 인자: 1) 콤마로 나눠진 변수들 문자열 2) 함수 body 문자열을 가진다.
+Function 값으로 코드를 감싸기 때문에 자기만의 스코프를 가지게 된다.
+
+```js
+let plusOne = Function("n", "return n + 1;");
+console.log(plusOne(4));
+// -> 5
+```
+
+### CommonJS Modules
+가장 많이 사용되는 자바스크립트 모듈은 **CommonJS 모듈**이다.
+
+CommonJS의 가장 주요 개념은 `require`란 함수다. 이 함수를 모듈 이름과 호출하면 모듈이 로드되고 인터페이스를 반환한다.
+**로더가 모듈의 코드를 함수로 감싸기 때문에 모듈은 자동으로 자신만의 로컬 스코프**를 만들게 된다.
+따라서 모듈을 만들 때는 필요한 모듈들을 `require`로 불러오고, 인터페이스를 `exports`에 바인딩된 객체에 넣어주면 된다.
+
+아래는 날짜를 포멧팅 해주는 모듈의 예시다.
+```js
+const ordinal = require("ordinal");
+const { days, months } = require("date-names");
+
+exports.formatDate = function(date, format) {
+    return format.replace(/YYYY|M(MMM)?|Do?|dddd/g, tag => {
+        if (tag == "YYYY") return date.getFullYear();
+        if (tag == "M") return date.getMonth();
+        if (tag == "MMMM") return months[date.getMonth()]; if (tag == "D") return date.getDate();
+        if (tag == "Do") return ordinal(date.getDate()); if (tag == "dddd") return days[date.getDay()];
+    }); 
+};
+```
+
+#### require
+`require` 함수를 가장 미니멀하게 구현하면 다음과 같이 정의할 수 있다.
+```js
+require.cache = Object.create(null);
+
+function require(name) {
+    if (!(name in require.cache)) {
+        let code = readFile(name); // 파일을 읽고 내용을 문자열로 반환해주는 가상의 함수
+        let module = { exports: {}};
+        require.cache[name] = module;
+        let wrapper = Function("require, exports, module", code);
+        wrapper(require, module.exports, module);
+    }
+    return require.cache[name].exports;
+}
+```
+똑같은 모듈을 계속해서 로드하는 것을 막기위해 `require`는 캐시를 둔다. 모듈이 로드되지 않았다면, 모듈의 코드를 읽고 함수로 감싼 후 호출한다.
+
+### ECMAScript Modules
+ES module은 2015년부터 도입됐다. 의존성과 인터페이스에 대한 주요 개념은 동일하지만, 다른 점이 몇가지 있다. 
+일단 표기법이 이제 **언어 자체에 내장**됐다. `import` 키워드를 사용해서 모듈에 접근할 수 있다.
+
+```js
+import ordinal from "ordinal";
+import { days, months } from "date-names";
+
+export function formatDate(date, format) { /*...*/ }
+```
+
+비슷하게, `exports` 키워드를 사용해서 원하는 것을 내보낼 수 있다.
+
+ES 모듈의 인터페이스는 이제 하나의 값이 아니라 **바인딩의 집합**이다. 
+즉, 위에서 `formatDate`를 내보낼 때, 바인딩을 export하는 것이지 값을 보내는 것이 아니다. 
+따라서 내보내는 모듈이 바인딩의 값을 바꾸게 된다면, 받는 모듈은 새 값을 볼 수 있다.
+
+바인딩이 `default`로 이름지어지면 모듈의 메인 export 값이 된다.
+
+또 하나 중요한 점은, ES 모듈의 import는 모듈의 스크립트가 실행되기 전에 일어난다. 
+이 말은 `import` 선언은 함수는 블럭에서 나타날 수 없고, dependecies의 이름이 임의의 값이 아니라 문자열로 인용되어야 한다.
+
+## 패키지(Packages)
+패키지는 복사/설치될 수 있는 코드 덩어리다. 패키지는 하나 이상의 모듈을 가질 수 있고, 어떤 다른 패키지에 의존하는지에 대한 정보를 가진다.
+보통 어떻게 사용되는 지에 대한 문서도 같이 제공된다.
+
+패키지를 통해 똑같은 기능을 하는 코드를 '복사 & 붙여넣기' 하는 수고와 시간을 덜어낼 수 있다.
+
+이런 방식으로 작업하기 위해서는 인프라가 필요하다. 패키지를 저장하고 찾을 공간이 필요하고, 패키지를 쉽게 설치하고 업그레이드 할 방법이 필요하다.
+자바스크립트에서는 이런 인프라가 [NPM](https://npmjs.com)에 의해 제공된다.
+
+<br/>
+
+참조: Eloquent JavaScript
