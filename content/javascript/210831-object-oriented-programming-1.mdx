@@ -14,7 +14,7 @@ Interface를 제공함으로써 안의 세부 구현을 숨길 수 있게 된다
 **이렇게 인터페이스와 구현을 분리하는 방법을 '캡슐화'라고 한다.**
 
 ## 메서드
-함수가 메서드로 호출되면 함수 body의 `this` 바인딩은 자동적으로 **호출한 객체를 가리킨다**.
+함수가 메서드로 호출되면, 함수 body의 `this` 바인딩은 자동적으로 **호출한 객체를 가리킨다**.
 ```js
 function speak(line) {
     console.log(`The ${this.type} rabbit says '${line}'`);
@@ -97,11 +97,11 @@ function Rabbit(type) {
 Rabbit.prototype.speak = function (line) {
     console.log(`The ${this.type} rabbit says '${line}'`);
 }
-let wierdRabbit = new Rabbit("weird");
+let weirdRabbit = new Rabbit("weird");
 ```
 일반적으로 constructor의 이름을 대문자로 시작해서 다른 함수들과 구분한다.
 
 위 예시에서 `Rabbit` constructor의 프로토타입은 무엇일까? `Function.prototype`이다. Constructor는 근본적으로 함수이기 때문이다. 
-`wierdRabbit`의 프로토타입이 `Rabbit.prototype`이다. Constructor의 **'prototype' 속성 안에 인스턴스의 프로토타입**이 있다.
+`weirdRabbit`의 프로토타입이 `Rabbit.prototype`이다. Constructor의 **'prototype' 속성 안에 인스턴스의 프로토타입**이 있다.
 
 참조: Eloquent JavaScript
