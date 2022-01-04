@@ -7,11 +7,14 @@ const postStyle = css`
 
     h2 {
         padding-left: 8px;
-        border-left: solid;
         font-size: 1.8rem;
         margin-bottom: 18px;
+        border-left: solid;
     }
-    
+    h2:not(:first-child) {
+        margin-top: 35px;
+    }
+
     h3 {
         font-size: 1.6rem;
         margin-bottom: 16px;

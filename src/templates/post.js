@@ -138,9 +138,11 @@ const PostTemplate = ({ data, pageContext, location }) => {
           <PostTitle>{title}</PostTitle>
           <CategoryLabel slug={category} isLink="true" />
           <DividingLine />
-          <MDXProvider components={components}>
-            <MDXRenderer >{post.body}</MDXRenderer>
-          </MDXProvider>
+          <div>
+            <MDXProvider components={components}>
+              <MDXRenderer >{post.body}</MDXRenderer>
+            </MDXProvider>
+          </div>
         </ContentMain>
         <PostNavigator pageContext={pageContext} />
         <Comment />
