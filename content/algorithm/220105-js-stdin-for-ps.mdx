@@ -1,0 +1,69 @@
+---
+title: "[JS] 알고리즘 문제 풀이를 위한 node.js에서 입력받기"
+date: "2022-01-05"
+emoji: "✏️"
+category: "algorithm"
+---
+## 굳이 자바스크립트로?
+원래는 cpp로 알고리즘 문제를 풀었었다. 
+Cpp은 C++ 표준 라이브러리에서 스택, 큐, 정렬등 자료구조나 알고리즘을 제공하기 때문에 이를 편리하게 사용할 수 있다.
+하지만 자바스크립트에서는 스택과 큐가 내장되어 있지 않기 때문에 직접 구현해야 하는 불편함이 있다.
+
+자바스크립트로 앞으로 뭔가 효율적으로 구현하기 위해서는 자료구조와 알고리즘을 활용해야 한다. 
+Cpp로 구현한다고 해서 자바스크립트로 할 줄 안다는 의미가 아니기 때문에, 
+앞으로는 자바스크립트로 PS(Problem Solving)를 하면서 자료구조와 알고리즘, 자바스크립트에 대한 이해도를 높일 생각이다.
+
+## 입력 받기
+백준을 기준으로 두 가지 방법을 사용할 수 있다. 둘 중 내키는 것을 사용하자.
+### readline
+```js
+const readline = require('readline');
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+let input = [];
+rl.on('line', function(line) {
+    input.push(line.split(' '));
+}).on("close", function() {
+    // Solution
+    process.exit();
+});
+```
+입력 이벤트에 대해 줄마다 받는 방식이다. 
+
+백준의 경우 알고리즘을 테스트하기 위한 테스트 데이터들을 파일로 입력하기 때문에, 입력의 끝에 EOF가 있어 알아서 close되어 코드가 끝난다.
+본인 콘솔에서 입력하는 경우 `ctrl + D`를 입력해서 close 할 수 있다.
+
+### fs
+```js
+const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().split('\n');
+// Solution
+```
+테스트 케이스 파일을 읽어온다.
+
+### VSCode 터미널에서 입력하기
+`launch.json`파일에 `"console": "integratedTerminal"`을 추가해주면 된다. 그냥 터미널에서 실행하려면 `"externalTerminal"`로 넣으면 된다.
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/index.js",
+            "console": "integratedTerminal"
+        }
+    ],
+}
+```
+
+`launch.json` 파일이 없다면, VSCode 왼쪽 메뉴의 'Run and Debug'를 클릭하면 'create a launch.json file'이라고 하이라이트 된 것이 있는데,
+이것을 클릭하고 `Node.js`를 클릭하면 생성할 수 있다.
