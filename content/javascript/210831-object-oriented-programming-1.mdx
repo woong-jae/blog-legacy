@@ -14,7 +14,7 @@ Interface를 제공함으로써 안의 세부 구현을 숨길 수 있게 된다
 **이렇게 인터페이스와 구현을 분리하는 방법을 '캡슐화'라고 한다.**
 
 ## 메서드
-함수가 메서드로 호출되면, 함수 body의 `this` 바인딩은 자동적으로 **호출한 객체를 가리킨다**.
+함수가 메서드로 호출되면, 함수 내부에서 사용되는 `this` 키워드는 자동적으로 **호출한 객체를 가리킨다**.
 ```js
 function speak(line) {
     console.log(`The ${this.type} rabbit says '${line}'`);
@@ -29,6 +29,7 @@ speak.call(whiteRabbit, "Brup!");
 // -> The white rabbit says 'Burp!'
 ```
 모든 **함수는 자신만의 `this`를 가진다**. 따라서 `function` 키워드로 정의한 함수 안에서 주변 범위의 `this`를 참조할 수 없다.
+**`this`의 대상은 런타임에 결정**된다.
 
 근데 **arrow function**은 좀 다르다. 요놈은 **자신만의 `this`를 가지지 않는 대신, 주변 범위의 `this`를 참조할 수 있다**. 아래 예를 보자.
 ```js
@@ -88,7 +89,7 @@ function makeRabbit(type) {
 }
 ```
 
-자바스크립트에서 constructor를 더 쉽게 정의할 수 있는 방법을 제공한다. 함수 호출 부분 앞에 `new` 키워드를 사용하면 그 함수는 constructor로 작용한다.
+자바스크립트에서 constructor를 더 쉽게 정의할 수 있는 방법을 제공한다. **함수 호출 부분 앞에 `new` 키워드를 사용하면 그 함수는 constructor로 작용**한다.
 
 ```js
 function Rabbit(type) {

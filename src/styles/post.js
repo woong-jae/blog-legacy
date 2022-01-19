@@ -11,8 +11,8 @@ const postStyle = css`
         margin-bottom: 18px;
         border-left: solid;
     }
-    h2:not(:first-child) {
-        margin-top: 35px;
+    h2:not(:first-of-type) {
+        margin-top: 45px;
     }
 
     h3 {
@@ -20,6 +20,7 @@ const postStyle = css`
         margin-bottom: 16px;
     }
     h4 {
+        margin-top: 16px;
         font-size: 1.35rem;
         margin-bottom: 16px;
     }

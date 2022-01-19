@@ -34,7 +34,6 @@ Union-Find 는 주로 트리 자료구조를 사용해서 한 집합에 속하�
 트리로 집합 표현을 하면 `union` 연산이 굉장히 쉽다. 각 트리의 루트를 찾은 뒤, 하나를 다른 한쪽의 자손으로 넣어주면 된다.
 
 ```js
-/** @class NaiveDisjointSet representing a disjoint set */
 class NaiveDisjointSet {
     /**
     * @param {number} n The number of elements
@@ -70,7 +69,6 @@ class NaiveDisjointSet {
 이 최적화를 랭크에 의한 합치기(union-by-rank) 최적화라고 한다.
 
 ```js
-/** @class DisjointSet representing a disjoint set */
 class DisjointSet {
     /**
     * @param {number} n The number of elements
