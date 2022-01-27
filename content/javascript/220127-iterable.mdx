@@ -1,0 +1,140 @@
+---
+title: "[JS] Iterable(이터러블)" 
+date: "2022-01-27"
+emoji: "💧"
+category: "javascript"
+---
+Iterable, 한국어로 '반복 가능한'이라는 뜻을 가진 객체는 배열을 일반화한 객체다. 이 개념을 사용하면 **어느 객체에든 `for..of` 문을 사용**할 수 있다.
+
+배열과 문자열이 대표적인 iterable이다.
+
+## Symbol.iterable
+어떤 객체를 iterable로 만들기 위해서는 **객체에 `Symbol.iterator`라는 메서드를 추가**해 아래와 같은 일이 벌어지게 해야한다.
+
+1. `for..of`를 호출하면, `for..of`는 `Symbol.iterator`를 호출한다(없으면 에러발생). `Symbol.iterator`는 반드시 **iterator(메서드 `next()`가 있는 객체)를 반환**해야 한다.
+
+2. `for..of`는 반환된 iterator를 대상으로 작동한다.
+
+3. `for..of`에서 다음 값이 필요하면, `for..of`는 iterator의 `next()`를 호출한다.
+
+4. `next()`의 반환값은 `{ done: Boolean, value: any }`의 형태를 가져야한다. `done`은 반복이 끝났는지 여부를 알려준다. `done`이 `false`면 `value`에 다음 값이 저장된다.
+
+```js
+// 1번 방식
+let range = {
+    from: 1,
+    to: 5,
+};
+range[Symbol.iterator] = function () {
+    return {
+        current: this.from,
+        last: this.to,
+        next() {
+            if(this.current <= this.last) return { done: false, value: this.current++ };
+            else return { done: true };
+        }
+    }
+}
+// 2번 방식
+let range = {
+    from: 1,
+    to: 5,
+    [Symbol.iterator]() {
+        this.current = this.from;
+        return this;
+    },
+    next() {
+        if(this.current <= this.to) return { done: false, value: this.current++ };
+        else return { done: true };
+    }
+}
+
+for (const num of range) {
+    console.log(num);
+}
+// -> 1, 2, 3, 4, 5
+```
+
+1번 방식과 2번 방식의 차이점에는 '관심사의 분리(Seperate of Concern, SoC)'다.
+
+1번 방식에서는 range가 내부적으로 메서드 `next()`를 가지지 않는다. 대신 `range[Symbol.iterator]()`를 호출해서 만든 iterator 객체와 이 객체의 `next()`에서 반복에 사용될 값을 만들어낸다.
+이렇게 함으로써 iterator 객체와 대상 객체를 분리할 수 있다.
+
+2번 방식은 `range[Symbol.iterator]()`가 대상 객체를 반환한다. 반환된 객체에는 `next()`도 있고 `this.current`에 반복이 얼마나 진행되었는지 나타내는 값도 저장되어 있다. `range` 자체가 itertor가 된 것이다.
+
+Iterator는 명시적으로 호출할 수도 있다.
+```js
+let str = "Hello";
+let iterator = str[Symbol.iterator]();
+while(true) {
+    let result = iterator.next();
+    if(result.done) break;
+    console.log(result.value);
+}
+// -> H, e, l, l, o
+```
+
+## Iterable과 유사 배열
+- **Iterable**은 `Symbol.iterator` 메서드가 구현된 객체다.
+
+- **유사 배열(Array-like)**는 인덱스와 `length` 속성이 있어 배열처럼 보이는 객체다.
+
+```js
+let arrayLike = {
+    0: "안",
+    1: "녕",
+    length: 2
+};
+
+for (const item of arrayLike) {}
+// -> 에러 발생
+```
+
+문자열은 iterable이면서 유사 배열인 객체다.
+
+Iterable과 유사배열을 배열처럼, 즉 배열 메서드를 사용하고 싶을 때 `Array.from`을 사용할 수 있다.
+
+### Array.from
+`Array.from`은 iterable이나 유사 배열을 받아 '진짜' 배열을 만들어준다. 이 과정을 통해 iterable이나 유사 배열에 배열 메서드를 사용할 수 있다.
+
+```js
+let arrayLike = {
+    0: "안",
+    1: "녕",
+    length: 2
+};
+
+let array = Array.from(arrayLike);
+console.log(array.pop());
+// -> "녕"
+```
+
+7번 줄의 `Array.from`은 객체를 받아 iterable이나 유사 배열인지 검사한다. 넘겨 받은 인수가 iterable이나 유사 배열인 경우, 새로운 배열을 만들고 객체의 모든 요소를 새롭게 만든 배열로 복사한다.
+
+`Array.from`에는 매핑 함수를 선택적으로 넘겨줄 수 있다. `arr.map()`과 비슷하게 요소를 추가하기 전에 각 요소를 대상으로 매핑을 해준다.
+```js
+let array = Array.from(range, num => num * num);
+console.log(array);
+// -> [1, 4, 9, 16, 25]
+```
+
+`Array.from`은 `str.split`과 다르게 문자열 자체가 가진 iterable 속성을 이용해 동작한다. 따라서 **`for..of`처럼 서로게이트 쌍에도 제대로 적용**된다.
+```js
+let str = '𝒳😂';
+
+console.log(Array.from(str));
+// -> ["𝒳", "😂"]
+console.log(str.split(''));
+// -> ["�", "�", "�", "�"]
+```
+
+이것을 이용해서 서로게이트 쌍을 처리할 수 있는 `slice`를 직접 구현할 수도 있다.
+```js
+function slice(str, start, end) {
+    return Array.from(str).slice(start, end).join('');
+}
+```
+
+<br/>
+
+참조: ko.javascript.info
