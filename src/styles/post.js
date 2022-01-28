@@ -30,7 +30,7 @@ const postStyle = css`
     }
     
     p {
-        line-height: 1.7em;
+        line-height: 1.7rem;
     }
 
     img {
@@ -42,10 +42,10 @@ const postStyle = css`
     code {
         color: #557571;
         background-color: #D9FCDB;
-        padding: 0.1em 0.4em;
+        padding: 0.05em 0.35em;
         margin: 0.1em;
         border-radius: 4px;
-        font-size: 0.9em;
+        font-size: 0.85rem;
     }
 
     blockquote {

@@ -69,22 +69,6 @@ console.log(stringObject[toStringSymbol]());
 // -> a jute rope
 ```
 
-## 반복자(iterator) 인터페이스
-
-`for/of` 반복문에 전달된 객체는 반복해 처리할 수 있어야 한다. 
-
-이것을 위해 `Symbol.iterator` 심볼을 사용해서 이름 지어진 메서드가 존재한다. 요놈을 호출하면 `iterator`를 제공하는 객체가 반한된다. 실제로 반복되는 녀석이 이 반환된 녀석이다.
-
-```js
-let okIterator = "OK"[Sysmbol.iterator]();
-console.log(okIterator.next());
-// -> {value: "O", done: false}
-console.log(okIterator.next());
-// -> {value: "K", done: false}
-console.log(okIterator.next());
-// -> {value: undefined, done: true}
-```
-
 <br/>
 
 ## Getter, Setter, Statics

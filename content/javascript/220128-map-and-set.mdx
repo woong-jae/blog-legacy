@@ -1,0 +1,125 @@
+---
+title: "[JS] 맵과 셋(Map & Set)" 
+date: "2022-01-28"
+emoji: "🎣"
+category: "javascript"
+---
+## Map
+맵은 키가 있는 데이터를 저장한다. 객체와 비슷하지만, 객체와는 다르게 맵은 **키에 다양한 자료형을 사용**할 수 있다.
+
+맵은 객체도 키로 사용할 수 있다.
+
+> 객체는 키를 문자형으로 자동 변환한다.
+
+
+### 주요 메서드와 속성
+- `new Map()`
+- `map.set(key, value)`: `key`를 이용해 `value`를 저장하고 맵 자신을 반환한다..
+- `map.get(key)`: `key`에 해당하는 값을 반환한다. 존재하지 않으면 `undefined`를 반환한다.
+- `map.has(key)`
+- `map.delete(key)`: 해당하는 값을 삭제한다.
+- `map.clear()`: 맵 안의 모든 요소를 제거한다.
+- `map.size`: 요소의 개수
+
+```js
+let map = new Map();
+map.set('1', 'string');
+map.set(1, 'number');
+
+console.log(map.get(1));
+// -> number
+console.log(map.get('1'));
+// -> string
+```
+
+- `map.keys()`: 각 요소의 키에 대한 iterable을 반환한다.
+- `map.values()`: 각 요소의 값에 대한 iterable을 반환한다.
+- `map.entries()`: 요소의 `[키, 값]`을 한 쌍으로 하는 iterable을 반환한다. `for..of` 반복문의 기초로 쓰인다.
+- `map.forEach((value, key, map) => {})`
+
+```js
+let drink = new Map([['beer', 3000], ['soju', 1600]]);
+
+for (const name of drink.keys()) {
+    console.log(name);
+}
+// -> beer
+// -> soju
+for (const cost of drink.values()) {
+    console.log(cost);
+}
+// -> 3000
+// -> 1600
+```
+
+맵은 값이 **삽입된 순서대로 순회**를 실시한다.
+
+### 객체를 맵으로, 맵을 객체로
+#### Object.entries
+각 요소가 키-값 쌍인 배열이나 iterable을 맵에 전달해 초기화로 사용할 수 있다.
+```js
+let drink = new Map([['beer', 3000], ['soju', 1600]]);
+```
+평범한 객체를 맵으로 맨들고 싶다면 `Object.entries(obj)`를 활용해야 한다. 이 메서드는 객체의 `[키, 값]`을 요소로 가지는 배열을 반환한다.
+```js
+let obj = {
+    beer: 3000,
+    soju: 1600
+};
+
+let map = new Map(Object.entries(obj));
+console.log(map.get('beer'));
+// -> 3000
+```
+#### Object.formEntries
+`Object.fromEntries`를 사용하면 맵을 객체로 바꿀 수 있다. 각 요소가 `[키, 값]`인 배열을 객체로 바꿔준다.
+```js
+let drink = new Map([['beer', 3000], ['soju', 1600]]);
+
+let obj = Object.fromEntries(drink.entries());
+// Or
+let obj = Object.fromEntries(drink);
+
+console.log(obj);
+// -> {beer: 3000, soju: 1600}
+```
+## Set
+셋은 **중복 없는 값**을 모아놓는 컬렉션이다. 셋에는 키가 없는 값이 저장된다.
+
+셋은 값의 유일무이함을 확인하는데 최적화되어있다.
+
+### 주요 메서드와 속성
+- `new Set(iterable)`
+- `set.add(value)`: 값을 추가하고 셋 자신을 반환한다. 셋 내에 동일한 값이 있다면 `set.add(value)`를 여러번 호출해도 아무 반응이 없다.
+- `set.delete(value)`: 값을 제거하고, 성공하면 `true`, 실패하면 `false`를 반환한다.
+- `set.has(value)`: 셋 내에 값이 존재하면 `true`, 아니면 `false`를 반환한다.
+- `set.clear()`
+- `set.size`
+
+```js
+let set = new Set();
+
+set.add('beer');
+set.add('soju');
+set.add('beer');
+set.add('beer');
+
+console.log(set.size);
+// -> 2
+```
+
+맵도 셋과 마찬가지로 반복 작업을 위한 메서드가 있다. 모두 iterable을 반환한다.
+
+- `set.keys()`
+- `set.values()`
+- `set.entries()`
+- `set.forEach((value, valueAgain, set) => {})`
+
+셋의 `forEach`의 콜백은 똑같은 값을 두 번 받는다. 원래는 값과 키가 오지만, 셋에는 키가 없기 때문에 값이 두 개 온다.
+이는 배열과 맵에서 사용하는 `forEach`와 동일한 형태를 유지하기 위함이다.
+
+<br/>
+
+참조:  
+ko.javascript.info  
+<https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Set>

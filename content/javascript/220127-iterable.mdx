@@ -55,12 +55,12 @@ for (const num of range) {
 // -> 1, 2, 3, 4, 5
 ```
 
-1번 방식과 2번 방식의 차이점에는 '관심사의 분리(Seperate of Concern, SoC)'다.
+1번 방식과 2번 방식의 차이점은 '관심사의 분리(Seperate of Concern, SoC)'다.
 
 1번 방식에서는 range가 내부적으로 메서드 `next()`를 가지지 않는다. 대신 `range[Symbol.iterator]()`를 호출해서 만든 iterator 객체와 이 객체의 `next()`에서 반복에 사용될 값을 만들어낸다.
 이렇게 함으로써 iterator 객체와 대상 객체를 분리할 수 있다.
 
-2번 방식은 `range[Symbol.iterator]()`가 대상 객체를 반환한다. 반환된 객체에는 `next()`도 있고 `this.current`에 반복이 얼마나 진행되었는지 나타내는 값도 저장되어 있다. `range` 자체가 itertor가 된 것이다.
+2번 방식은 `range[Symbol.iterator]()`가 대상 객체를 반환한다. 반환된 객체에는 `next()`도 있고 `this.current`에 반복이 얼마나 진행되었는지 나타내는 값도 저장되어 있다. `range` 자체가 iterator가 된 것이다.
 
 Iterator는 명시적으로 호출할 수도 있다.
 ```js
