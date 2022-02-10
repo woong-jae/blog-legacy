@@ -42,27 +42,36 @@ normalize.call({coords: [0, 2, 3]}, length: 5);
 `normalize` 함수 안의 `map`에서 `function` 키워드를 사용히면 코드가 동작하지 않는다.
 
 ## 프로토타입(Prototypes)
-```js
-let empty = {};
-console.log(empty.toString);
-// -> function toString()...{}
-```
-`empty` 객체에 아무 속성을 주지 않았지만 `toString`이란 속성이 이미 존재한다. 왜냐하면 객체는 'prototype'을 가지기 때문이다.
+자바스크립트의 객체는 `[[Prototype]]`이라는 숨은 속성을 갖는다. 이 속성의 값은 `null`이거나 다른 객체에 대한 참조가 되는데,
+다른 객체를 참조하는 경우 참조 대상을 *'프로토타입'*이라 부른다.
 
-**Prototype은 속성을 대체하는 용도로 사용되는 또 다른 객체**다.
-즉, 객체가 가지고 있지 않은 속성을 요청하면 객체의 프로토타입, 프로토타입의 프로토타입, 이런 식으로 쭉 그 속성을 검색하게 된다.
+어떤 객체에서 속성을 읽으려고 하는데 **해당 속성이 없으면 자바스크립트는 자동으로 프로토타입에서 속성을 찾는다**. 이것을 '프로토타입 상속'이라 부른다.
 
-그럼 `empty`의 프로토타입은 뭘까? 거의 모든 객체의 조상인 `Object.prototype`이다.
+`[[Prototype]]`은 숨김 속성이지만, 개발자가 직접 값을 설정할 수 있다.
+
+`Object.getPrototypeOf`/`Object.setPrototypeOf` 메서드는 프로토타입의 getter와 setter 역할을 한다.
 
 ```js
-console.log(Object.getPrototypeOf({}) == Object.prototype);
+let animal = { eats: true };
+let rabbit = { jumps: true };
+Object.setPrototypeOf(rabbit, animal);
+console.log(rabbit.eats);
 // -> true
 ```
 
-대부분의 객체는 프로토타입으로 `Object.prototype`을 직접 갖는 대신, 다양한 기본 속성이 제공되는 별도의 객체를 갖는다.
-함수는 `Function.prototype`, 배열은 `Array.prototype`에서 파생된다.
+`rabbit`엔 `eats` 속성이 없지만, 자바스크립트는 `[[Prototype]]`이 참조하고 있는 객체인 `animal`에서 `eats`를 얻어낸다.
+이렇게 프로토타입에서 상속받은 속성을 '상속 속성(inherited property)'라고 한다.
 
-`Object.create`를 사용해서 특정 프로토타입으로 객체를 만들 수 있다.
+`rabbit`은 `animal`을, `animal`은 `Object.prototype`을, `Object.prototype`은 `null`을 상속받고 있다.
+거의 모든 프로토타입은 조상으로 `Object.prototype`을 가진다.
+
+> `animal`이 `Object.prototype`을 상속받는 이유는 객체 리터럴로 선언했기 때문이다.
+
+객체의 프로토타입을 변경하는 것은 브라우저 및 자바스크립트 엔진에서 매우 느린 작업이다. 
+상속 구조를 변경하는 것은 광볌위한 영향을 미치고, 프로토타입이 변경된 객체에 접근할 수 있는 모든 코드들에도 영향을 줄 수 있기 때문이다.
+
+따라서 `Object.setPrototypeOf`보다는 `Object.create`를 사용해 원하는 프로토타입으로 객체를 만드는 것이 바람직하다.
+
 ```js
 let protoRabbit = {
     speak(line) {
@@ -71,16 +80,19 @@ let protoRabbit = {
 }
 let whiteRabbit = Object.create(protoRabbit);
 whiteRabbit.type = "white";
+whiteRabbit.speak("hello");
+// -> The white rabbit says 'hello'
 ```
-`protoRabbit`은 다른 모든 토끼들의 공통되는 속성을 가지고 있는 역할을 한다. `whiteRabbit`같은 개별 토끼들은 자신에게 해당하는 속성만 가지고 있고 프로토타입에서 공유 속성을 가지고 온다.
 
 ## 클래스(Classes)
 자바스크립트의 프로토타입 체계는 'Class'라는 객체 지향의 개념을 비공식적으로 적용한 것으로 볼 수 있다.
 
-**클래스는 객체 타입이 어떤 속성과 메서드를 가지고 있는지 정의**한다. 그리고 **만들어진 객체를 클래스의 'instance'**라고 한다.
+**클래스는 객체 타입이 어떤 속성과 메서드를 가지고 있는지 정의**한다. 클래스로부터 **만들어진 객체를 클래스의 'instance'**라고 한다.
 프로토타입은 클래스의 모든 인스턴스에서 동일해야 할 속성을 정의하는데 사용한다.
 
-클래스의 인스턴스를 생성할 때, 만들어진 객체가 적절한 프로토타입에서 파생되고 필요한 모든 속성을 가지고 있도록 해야한다. 이것을 해주는 것이 **'constructor'** 함수의 역할이다.
+클래스의 인스턴스를 생성할 때, 만들어진 객체가 적절한 프로토타입에서 파생되고 필요한 모든 속성을 가지고 있도록 해야한다. 이것을 해주는 것이 **'constructor(생성자)'** 함수의 역할이다.
+
+아래 예시는 `protoRabbit`을 프로토타입으로 하는 객체를 생성해주는 생성자다.
 ```js
 function makeRabbit(type) {
     let rabbit = Object.create(protoRabbit);
@@ -89,7 +101,10 @@ function makeRabbit(type) {
 }
 ```
 
-자바스크립트에서 constructor를 더 쉽게 정의할 수 있는 방법을 제공한다. **함수 호출 부분 앞에 `new` 키워드를 사용하면 그 함수는 constructor로 작용**한다.
+자바스크립트에서 생성자를 더 쉽게 정의할 수 있는 방법을 제공한다. **함수 호출 부분 앞에 `new` 키워드를 사용하면 그 함수는 생성자로 작용**한다.
+`new` 연산자를 사용해 만든 객체는 **생성자 함수의 프로토타입 정보를 사용해 [[Prototype]]을 설정**한다.
+
+생성자 함수 `F`의 프로토타입은 `F.prototype`을 통해 설정할 수 있다. `F.prototype`은 '일반 속성'으로, 앞서 언급한 프로토타입과는 다르다.
 
 ```js
 function Rabbit(type) {
@@ -100,9 +115,16 @@ Rabbit.prototype.speak = function (line) {
 }
 let weirdRabbit = new Rabbit("weird");
 ```
-일반적으로 constructor의 이름을 대문자로 시작해서 다른 함수들과 구분한다.
+일반적으로 생성자 함수의 이름은 대문자로 시작해서 다른 함수들과 구분한다.
 
-위 예시에서 `Rabbit` constructor의 프로토타입은 무엇일까? `Function.prototype`이다. Constructor는 근본적으로 함수이기 때문이다. 
-`weirdRabbit`의 프로토타입이 `Rabbit.prototype`이다. Constructor의 **'prototype' 속성 안에 인스턴스의 프로토타입**이 있다.
+위 예시에서 `Rabbit` 생성자의 프로토타입은 무엇일까? `Function.prototype`이다. 생성자는 근본적으로 함수이기 때문이다. 
 
-참조: Eloquent JavaScript
+`weirdRabbit`은 생성자의 프로토타입 정보를 사용해서 생성했기 때문에 프로토타입은 `Rabbit.prototype`이다. 
+생성자의 **'prototype' 속성 안에 인스턴스의 프로토타입**이 있다.
+
+생성자의 프로토타입 속성은 기본값으로 `constructor` 속성 하나만 가지는 객체를 가리킨다. `constructor` 속성은 함수 자신을 가리킨다.
+
+참조:  
+Eloquent JavaScript  
+<https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Object/proto>  
+ko.javascript.info
