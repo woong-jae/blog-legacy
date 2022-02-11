@@ -92,7 +92,8 @@ whiteRabbit.speak("hello");
 
 클래스의 인스턴스를 생성할 때, 만들어진 객체가 적절한 프로토타입에서 파생되고 필요한 모든 속성을 가지고 있도록 해야한다. 이것을 해주는 것이 **'constructor(생성자)'** 함수의 역할이다.
 
-아래 예시는 `protoRabbit`을 프로토타입으로 하는 객체를 생성해주는 생성자다.
+아래 예시는 `protoRabbit`을 프로토타입으로 하는 객체를 생성한다. `Object.create()` 메서드는 지정된 프로토타입 객체 및 속성을 갖는 새 객체를 만든다.
+
 ```js
 function makeRabbit(type) {
     let rabbit = Object.create(protoRabbit);
@@ -119,10 +120,23 @@ let weirdRabbit = new Rabbit("weird");
 
 위 예시에서 `Rabbit` 생성자의 프로토타입은 무엇일까? `Function.prototype`이다. 생성자는 근본적으로 함수이기 때문이다. 
 
-`weirdRabbit`은 생성자의 프로토타입 정보를 사용해서 생성했기 때문에 프로토타입은 `Rabbit.prototype`이다. 
+`weirdRabbit`은 생성자의 프로토타입 정보를 사용해서 생성했기 때문에 프로토타입이 `Rabbit.prototype`이다. 
 생성자의 **'prototype' 속성 안에 인스턴스의 프로토타입**이 있다.
 
 생성자의 프로토타입 속성은 기본값으로 `constructor` 속성 하나만 가지는 객체를 가리킨다. `constructor` 속성은 함수 자신을 가리킨다.
+
+### 파생 속성 Override
+객체에 속성을 주게되면, 그 속성이 프로토타입에 속성으로 있던 없던 해당 객체에 속성이 추가된다. 만약 프로토타입에 같은 이름의 속성이 이미 존재하면, 이 속성은 객체의 속성에 가려져 더이상 객체에 영향을 미치지 못하게 된다.
+```js
+Rabbit.prototype.teeth = "작음";
+console.log(killerRabbit.teeth);
+// -> 작음
+killerRabbit.teeth = "길고 날카로움";
+console.log(killerRabbit.teeth);
+// -> 길고 날카로움
+```
+
+<br/>
 
 참조:  
 Eloquent JavaScript  

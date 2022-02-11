@@ -20,23 +20,153 @@ class Rabbit {
 }
 let whiteRabbit = new Rabbit("white");
 ```
+`Rabbit`이라는 이름을 가진 함수가 만들어진다. 함수 본문은 `constructor`에서 가져온다.
+그리고 `speak`같은 클래스 내의 메서드는 `Rabbit.prototype`에 저장된다.
+
 `class` 키워드는 클래스 선언을 뜻한다. 클래스의 body 안에 생성자와 메서드를 모두 정의할 수 있다.
 
-`constructor`는 우리가 이전 포스트에서 작성한 constructor 함수와 동일하고, `Rabbit`이라는 이름에 바인딩된다. 나머지 메서드는 constructor의 프로토타입에 포함된다.
+`constructor`는 우리가 이전 포스트에서 작성한 constructor 함수와 동일하고, `Rabbit`이라는 이름에 바인딩된다. 나머지 메서드는 `constructor.prototype(=Rabbit.prototype)`에 포함된다.
 설명을 보면 표기법만 다를 뿐, 앞서 알아본 클래스와 동일한 것임을 알 수 있다.
 
-### 파생 속성 Override
-객체에 속성을 주게되면, 그 속성이 프로토타입에 속성으로 있던 없던 해당 객체에 속성이 추가된다. 만약 프로토타입에 같은 이름의 속성이 이미 존재하면, 이 속성은 객체의 속성에 가려져 더이상 객체에 영향을 미치지 못하게 된다.
+물론 `class`는 단순 편의 문법이 아니다. `class`는 다음과 같은 특징을 가진다.
+
+- `class`로 만든 함수엔 특수 내부 속성인 `[[IsClassConstructor]]: true`가 붙는다.
+- 클래스에 정의된 메서드는 열거할 수 없다(non-enumerable).
+- 클래스는 항상 '엄격 모드'로 실행된다.
+
+### 클래스 필드
+> 필드 선언은 자바스크립트 표준화 위원회에 실험적 기능으로 제안되어 있다. 현재 지원하는 브라우져가 제한적이니 주의하자.
+
+클래스를 정의할 때 '<프로퍼티 이름> = <값>'을 써주면 간단히 클래스 필드를 만들 수 있다.
+만들어진 필드는 `Class.prototype`이 아닌 개별 객체에면 클래스 필드가 설정된다.
+
 ```js
-Rabbit.prototype.teeth = "작음";
-console.log(killerRabbit.teeth);
-// -> 작음
-killerRabbit.teeth = "길고 날카로움";
-console.log(killerRabbit.teeth);
-// -> 길고 날카로움
+class User {
+  name = "woong-jae";
+  sayHi() {
+    console.log(`${this.name}님 안녕하세요!`);
+  }
+}
+new User().sayHi();
+// -< woong-jae님 안녕하세요!
+console.log(User.prototype.name);
+// -> undefined
 ```
 
-<br/>
+필드 선언 앞에 `#`을 붙이면 그 필드는 'private' 필드가 된다. Private 필드는 클래스 내부에서만 읽고 쓰기가 가능하다.
+
+### Getter, Setter, Statics
+안터페이스는 대부분 함수로 되어있지만, `Array.length` 같이 함수가 아닌 값을 속성으로 가질 수 있다. 
+이런 경우 `length`와 같은 속성은 미리 계산해서 저장하는 방법도 있지만, **메서드로 숨기는 방법**이 더 좋다.
+
+아래 코드를 보자.
+```js
+let varySize = {
+    get size() {
+        return Math.floor(Math.random() * 100);
+    }
+}
+console.log(varySize.size);
+// -> 73
+console.log(varySize.size);
+// -> 49
+```
+`size`라는 속성을 읽으면 관련된 메서드가 호출된다. 이런 메서드를 **'getter'**라고 부른다. 객체나 클래스의 메서드 이름 앞에 `get`을 붙여주면 정의할 수 있다.
+
+속성에 기록 할 때 **'setter'**를 사용해서 비슷한 작업을 수행할 수 있다.
+
+```js
+class Temperature {
+    constructor(celsius) {
+        this.celsius = celsius;
+    }
+    get fahrenheit() {
+        return this.celcius * 1.8 + 32;
+    }
+    set fahrenheit(value) {
+        this.celcius = (value - 32) / 1.8;
+    }
+    static fromFahrenheit(value) {
+        return new Temperature((value - 32) / 1.8);
+    }
+}
+```
+`Temperature` 클래스는 온도를 섭씨나 화씨로 읽고 쓸 수 있게 한다. 섭씨는 내부에 저장하고, 화씨는 getter와 setter로 사용할 수 있다.
+
+필요에 따라 프로토타입이 아닌 생성자 함수에 일부 속성을 직접 추가할 수도 있다.
+이렇게 추가된 메서드는 클래스 인스턴스에 접근할 수는 없지만, 인스턴스를 생성하는 추가적인 방법으로 작동할 수 있다.
+
+클래스 선언에서 **이름 앞에 'static' 키워드가 붙어있는 메서드는 생성자에 포함**된다(정적 메서드/속성). 즉, `Temperature`에 직접 속성을 할당하는 것과 동일한 일을 한다.
+
+## 상속
+네모, 동그라미, 세모 같은 도형들을 클래스로 만들고 싶을 때, 어떻게 만들면 덜 귀찮게 만들 수 있을까?
+네모, 동그라미, 세모는 색상, 너비와 높이를 가지는 도형(Shape)이니까, 이 속성들을 도형에 정의하고 재사용하면 반복되는 코드를 줄여 비교적 쉽게 만들 수 있을 것 같다.
+
+자바스크립트의 프로토타입 시스템을 사용하면 **기존 클래스와 비슷하지만 일부 속성을 새롭게 정의해 새로운 클래스**를 만들 수 있다. 이것을 **'상속'**이라고 한다.
+```js
+class Shape {
+    constructor(width, height, color) {
+        this.width = width;
+        this.height = height;
+        this.color = color;
+    }
+    draw() {
+        console.log(`drawing ${this.color} of`);
+    }
+    getArea() {
+        return this.width * this.height;
+    }
+}
+
+class Triangle extends Shape {
+    draw() {
+        super.draw();
+        console.log(", Triangle");
+    }
+    getArea() {
+        return (this.width * this.height) / 2;
+    }
+}
+```
+`extends` 키워드로 만들어진 클래스를 'subclass(서브 클래스)'라고 하고 기존 클래스를 'superclass(슈퍼 클래스)'라고 한다. 
+
+`extends`는 프로토타입을 기반으로 동작한다. `extends`는 `Triangle.prototype.[[Prototype]]`을 `Shape.prototype`으로 설정한다.
+그리고 `Triangle`의 `[[Prototype]]`은 `Shape`이 된다. 그렇기 때문에 클래스의 일반 메서드와 정적 메서드를 상속할 수 있는 것이다.
+
+개발을 하다보면 부모 메서드를 호출하고 싶을 때가 있을 것이다. 이때 `super` 키워드를 사용할 수 있다.
+- `super.method(...)`는 슈퍼 클래스의 메서드를 호출한다.
+- `super(...)`는 슈퍼 클래스의 생성자를 호출한다.
+- 메서드는 내부 속성 `[[HomeObject]]`을 통해 자신이 정의된 클래스와 객체를 기억한다.
+
+위 코드를 보면 `draw`와 `getArea` 메서드를 재정의해서 사용하고 있다. 이것을 '메서드 오버라이딩(method overriding)'이라고 한다.
+
+생성자 오버라이딩은 좀 더 까다롭다. 클래스를 상속할 때 생성자를 정의하지 않으면 비어있는 생성자가 만들어진다. 위의 `Triangle` 클래스에 아래와 같은 일이 자동으로 일어난다.
+```js
+class Triangle extends Shaoe {
+    constructor(...args) {
+        super(...args);
+    }
+    // ...
+}
+```
+생성자는 기본적으로 슈퍼 클래스의 생성자를 호출한다. 생성자를 오버라이딩 하기 위해서는 생성자에 반드시 `super(...)`를 호출해야 한다.
+`super(...)`는 `this`를 사용하기 전에 반드시 호출해야 한다.
+
+자바스크립트는 상속 클래스의 생성자 함수와 그렇지 않은 함수를 구분한다. 상속 클래스의 생성자 함수엔 특수 내부 속성인 `[[ConstructorKind]]:"derived"`가 붙는다.
+상속 클래스의 생성자 함수가 실행되면, **빈 객체가 만들어지고 `this`에 이 객체를 할당하는 일을 부모 클래스의 생성자가 처리해주길 기대한다**.
+
+그렇기 때문에 상속 클래스의 생성자에서 `super`를 호출해야 한다. 아니면 `this`가 될 객체가 만들어지지 않아 에러가 발생한다.
+
+### instanceof
+`instanceof` 연산자를 사용해서 객체가 어떤 클래스로부터 파생됐는지 알 수 있다. 대상의 프로토타입 체인을 거슬러 올라가며 확인한다.
+```js
+console.log(new Triangle(2, 2, "blue") instanceof Triangle);
+// -> true
+console.log(new Triangle(2, 2, "blue") instanceof Shape);
+// -> true
+console.log([1] instanceof Array);
+// -> true
+```
 
 ## 심볼(Symbol)
 속성의 이름은 보통 문자열이지만, 경우에 따라선 **'symbol'**일 수도 있다. 심볼은 `Symbol` 함수로 만든 값이다. 문자열과 달리 **새롭게 생성된 심볼은 고유하며 동일한 심볼을 두 번 만들 수 없다**.
@@ -71,94 +201,6 @@ console.log(stringObject[toStringSymbol]());
 
 <br/>
 
-## Getter, Setter, Statics
-안터페이스는 대부분 함수로 되어있지만, `Array.length` 같이 함수가 아닌 값을 속성으로 가질 수 있다. 
-이런 경우 `length`와 같은 속성은 미리 계산해서 저장하는 방법도 있지만, **메서드로 숨기는 방법**이 더 좋다.
-
-아래 코드를 보자.
-```js
-let varySize = {
-    get size() {
-        return Math.floor(Math.random() * 100);
-    }
-}
-console.log(varySize.size);
-// -> 73
-console.log(varySize.size);
-// -> 49
-```
-`size`라는 속성을 읽으면 관련된 `method`가 호출된다. 이런 메서드를 **'getter'**라고 부른다. 객체나 클래스의 메서드 이름 앞에 `get`을 붙여주면 정의할 수 있다.
-
-속성에 기록 할 때 **'setter'**를 사용해서 비슷한 작업을 수행할 수 있다.
-
-```js
-class Temperature {
-    constructor(celsius) {
-        this.celsius = celsius;
-    }
-    get fahrenheit() {
-        return this.celcius * 1.8 + 32;
-    }
-    set fahrenheit(value) {
-        this.celcius = (value - 32) / 1.8;
-    }
-    static fromFahrenheit(value) {
-        return new Temperature((value - 32) / 1.8);
-    }
-}
-```
-`Temperature` 클래스는 온도를 섭씨나 화씨로 읽고 쓸 수 있게 한다. 섭씨는 내부에 저장하고, 화씨는 getter와 setter로 사용할 수 있다.
-
-필요에 따라 프로토타입이 아닌 생성자 함수에 일부 속성을 직접 추가할 수도 있다.
-이렇게 추가된 메서드는 클래스 인스턴스에 접근할 수는 없지만, 인스턴스를 생성하는 추가적인 방법으로 작동할 수 있다.
-
-클래스 선언에서 **이름 앞에 'static' 키워드가 붙어있는 메서드는 생성자에 포함**된다. 위 예제에서는 `Temperature.fromFahrenheit(100)`라고 작성하면 화씨 온도로 인스턴스를 생성할 수 있다.
-
-## 상속
-네모, 동그라미, 세모 같은 도형들을 클래스로 만들고 싶을 때, 어떻게 만들면 덜 귀찮게 만들 수 있을까?
-네모, 동그라미, 세모는 색상, 너비와 높이를 가지는 도형(Shape)이니까, 이 속성들을 도형에 정의하고 재사용하면 반복되는 코드를 줄여 비교적 쉽게 만들 수 있을 것 같다.
-
-자바스크립트의 프로토타입 시스템을 사용하면 **기존 클래스와 비슷하지만 일부 속성을 새롭게 정의해 새로운 클래스**를 만들 수 있다. 이것을 **'상속'**이라고 한다.
-```js
-class Shape {
-    constructor(width, height, color) {
-        this.width = width;
-        this.height = height;
-        this.color = color;
-    }
-    draw() {
-        console.log(`drawing ${this.color} of`);
-    }
-    getArea() {
-        return this.width * this.height;
-    }
-}
-
-class Triangle extends Shape {
-    draw() {
-        super.draw();
-        console.log(", Triangle");
-    }
-    getArea() {
-        return (this.width * this.height) / 2;
-    }
-}
-```
-`extends` 키워드로 만들어진 클래스를 'subclass'라고 하고 기존 클래스를 'superclass'라고 한다. 
-Superclass의 메서드를 그대로 상속 받으려면 `super` 키워드를 사용하면 된다. 
-
-위 코드를 보면 `draw`와 `getArea` 메서드를 재정의해서 사용하고 있다. 이런 식으로 사용하는 것을 **'다형성'**이라고 한다.
-
-### instanceof
-`instanceof` 연산자를 사용해서 객체가 어떤 클래스로부터 파생됐는지 알 수 있다.
-```js
-console.log(new Triangle(2, 2, "blue") instanceof Triangle);
-// -> true
-console.log(new Triangle(2, 2, "blue") instanceof Shape);
-// -> true
-console.log([1] instanceof Array);
-// -> true
-```
-
-참조: Eloquent JavaScript  
-
+참조:  
+Eloquent JavaScript  
+ko.javascript.info
