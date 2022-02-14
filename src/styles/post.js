@@ -9,7 +9,7 @@ const postStyle = css`
         padding-left: 8px;
         font-size: 1.8rem;
         margin-bottom: 18px;
-        border-left: solid;
+        border-left: solid 3px;
     }
     h2:not(:first-of-type) {
         margin-top: 45px;
