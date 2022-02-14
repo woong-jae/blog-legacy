@@ -74,6 +74,36 @@ while(true) {
 // -> H, e, l, l, o
 ```
 
+### async 이터레이터
+비동기 이터레이터를 사용하면 비동기적으로 들어오는 데이터를 필요에 따라 처리할 수 있다.
+네트워크를 통해 데이터가 여러 번에 걸쳐 들어오는 상황을 처리할 때 유용하게 사용할 수 있다.
+
+비동기 이터레이터는 `Symbol.iterator` 대신, `Symbol.asyncIterator`를 사용해야 한다. 그리고 `next()`는 프로미스를 반환해야 한다.
+```js
+let range = {
+    from: 1,
+    to: 5,
+    [Symbol.asyncIterator]() {
+        return {
+            current: this.from,
+            last: this.to,
+            async next() {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                if(this.current <= this.last) return { done: false, value: this.current++ };
+                else return { done: true };
+            }
+        }
+    }
+}
+(async () => {
+  for await (let value of range) {
+    console.log(value);
+  }
+})();
+// -> 1, 2, 3, 4, 5 가 1초 간격으로 출력
+```
+
 ## Iterable과 유사 배열
 - **Iterable**은 `Symbol.iterator` 메서드가 구현된 객체다.
 
