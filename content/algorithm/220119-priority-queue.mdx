@@ -85,6 +85,8 @@ class Heap {
     * @return {number}
     */
     pop() {
+        if(this.heap.length === 0) return null;
+        if(this.heap.length === 1) return this.heap.pop();
         const ret = this.heap[0];
         this.heap[0] = this.heap.pop();
         let here = 0;
