@@ -111,9 +111,84 @@ DOM을 변경하려면 다른 메서드가 필요하다.
 - `previousElementSibling`, `nextElementSibling`도 아까 본 것과 비슷하지만 요소 노드만 가리킨다.
 - `parentElement`는 부모 요소 노드를 가리킨다. 부모가 요소가 아니면 `null`을 반환한다.
 
+### 노드 검색하기
+DOM에서 원하는 노드를 검색하게 해주는 주요 메서드 6가지는 아래와 같다.
+
+|메서드|검색 기준|호출 대상이 요소가 될 수 있는지|컬렉션 갱신 여부|
+|---|---|:---:|:---:|
+|`querySelector`|CSS 선택자|✓|-|
+|`querySelectorALL`|CSS 선택자|✓|-|
+|`getElementById`|id|`document`에서만 가능|-|
+|`getElementByName`|name|`document`에서만 가능|✓|
+|`getElementByTagName`|tag나 '*'|✓|✓|
+|`getElementByClassName`|class|✓|✓|
+
+컬렉션 갱신 여부는 문서에 변경이 있을 때마다 컬렉션이 자동 갱신되어 최신 상태를 유지한다는 의미다.
+
+`querySelector*`의 CSS 선택자에는 가상 클래스(`:hover`, `:active` 등)도 사용할 수 있다.
+
+```html
+<div>첫 번째 div</div>
+
+<script>
+  let divs = document.getElementsByTagName('div');
+  alert(divs.length);
+  // -> 1
+</script>
+
+<div>두 번째 div</div>
+
+<script>
+  alert(divs.length); 
+  // -> 2
+</script>
+```
+
+여기서 `getElementByTagName` 대신 `querySelector`를 사용하면, 두 스크립트가 동일하게 `1`을 출력한다.
+
+이 외에 알아두면 좋을 메서드는 아래와 같다.
+- `elem.matches(css)`: 해당 CSS 선택자와 일치하는지 여부를 검사한다.
+- `elem.closest(css)`: 해당 CSS 선택자와 일치하는 가장 가까운 조상 요소를 탐색한다. `elem` 자신도 검색 대상에 포함된다.
+- `elemA.contains(elemB)`: `elemA`에 `elemB`가 속하거나 둘이 같다면 참을 반환한다.
+
+## DOM 노드
+DOM 노드는 종류에 따라 각각 다른 속성을 지원한다. 
+하지만 **모든 DOM 노드는 공통 조상**으로부터 만들어지기 때문에 공통된 속성과 메서드가 존재한다.
+
+DOM 노드는 종류에 따라 대응하는 내장 클래스가 다르다.
+계층 구조 꼭대기엔 EventTarget이 있고, Node는 EventTarget을, 다른 DOM 노드들은 Node 클래스를 상속받는다.
+
+<img src="https://ko.javascript.info/article/basic-dom-node-properties/dom-class-hierarchy.svg" />
+
+각 클래스는 다음과 같은 특징을 갖는다.
+- **EventTarget**: 루트에 있는 추상 클래스다. EventTarget이 모든 DOM 노드의 조상이기 때문에 DOM 노드에서 '이벤트'를 사용할 수 있다.
+- **Node**: 추상 클래스로, DOM 노드의 베이스 역할을 한다. 추상 클래스이기 때문에 `Node` 클래스의 객체는 생성되지 않지만, 이 클래스를 여러 클래스에서 상속받는다.
+  getter 역할을 하는 `parentNode`, `nextSibling`, `childeNodes` 등의 주요 '트리 탐색 기능'을 제공한다.
+- **Element**: DOM 요소를 위한 베이스 클래스다. 앞서 봤던 '요소 전용 탐색'을 도와주는 속성이나 메서드(`querySelector`, `children`...) 등이 제공된다.
+- **HTMLElement**: HTML 요소 노드의 베이스 역할을 하는 클래스다. HTMLElement 클래스를 상속받는 것들은 실제 HTML 요소에 대응된다.
+
+### 주요 노드 속성
+- `nodeType`: 요소 타입을 알고 싶을 때 사용할 수 있는 읽기 전용 속성이다. 요소 노드는 `1`, 텍스트 노드는 `3`을 반환한다. 각 노드 타입에 대응되는 상숫값이 있다.
+
+- `nodeName/tagName`: 요소 노드의 태그 이름을 알아날 때 사용하는 읽기 전용 속성이다.
+
+- `innerHTML`: 요소 안의 HTML을 알아내거나 수정할 수 있다.
+
+> `elem.innerHTML += "..."`를 사용하면 요소에 HTML을 추가할 수 있다. 그런데 `+=` 연산은 조금 특이하게 동작하기 때문에 주의해야 한다.
+> 결과적으로 원래 HTML에 추가하는 것 같아 보이지만, **기존 내용을 삭제한 후 기존 내용과 새로운 내용을 합친 새로운 내용**을 쓰게 된다.
+> 즉, 기존 내용이 완전히 삭제된 후 밑바닥부터 다시 내용이 쓰여지기 때문에 **이미지 등의 리소스가 전부 다시 로딩**된다.
+
+- `outerHTML`: 요소의 전체 HTML을 알아낼 수 있다.
+
+- `nodeValue/data`: 요소가 아닌 노드(텍스트, 주석 노드 등)의 내용을 읽거나 쓸 때 쓰인다. 두 속성은 거의 동일하게 동작한다.
+
+- `textContent`: HTML에서 모든 텍스트를 읽을 때 사용한다. 할당 연산을 통해 무언가 쓸 수도 있는데, 이때 **태그를 포함해도 모두 문자열로 처리**된다.
+
+- `hidden`: `true`로 설정하면 CSS에서 `display: none`을 설정한 것과 동일하다.
+
 <br/>
 
 참조:  
 ko.javascript.info  
 <https://poiemaweb.com/js-dom>  
-<https://developer.mozilla.org/ko/docs/Web/Web_Components/Using_shadow_DOM>
+<https://developer.mozilla.org/ko/docs/Web/Web_Components/Using_shadow_DOM>f
