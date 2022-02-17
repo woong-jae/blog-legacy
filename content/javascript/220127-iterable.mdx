@@ -107,7 +107,7 @@ let range = {
 ## Iterable과 유사 배열
 - **Iterable**은 `Symbol.iterator` 메서드가 구현된 객체다.
 
-- **유사 배열(Array-like)**는 인덱스와 `length` 속성이 있어 배열처럼 보이는 객체다.
+- **유사 배열(Array-like)**는 인덱스와 `length` 프로퍼티가 있어 배열처럼 보이는 객체다.
 
 ```js
 let arrayLike = {
@@ -148,7 +148,7 @@ console.log(array);
 // -> [1, 4, 9, 16, 25]
 ```
 
-`Array.from`은 `str.split`과 다르게 문자열 자체가 가진 iterable 속성을 이용해 동작한다. 따라서 **`for..of`처럼 서로게이트 쌍에도 제대로 적용**된다.
+`Array.from`은 `str.split`과 다르게 문자열 자체가 가진 iterable 프로퍼티를 이용해 동작한다. 따라서 **`for..of`처럼 서로게이트 쌍에도 제대로 적용**된다.
 ```js
 let str = '𝒳😂';
 

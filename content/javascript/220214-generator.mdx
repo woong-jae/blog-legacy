@@ -65,7 +65,7 @@ generator.next(4);
 ```
 
 ### async 제너레이터
-이터러블에 비동기적 작업을 다루기 위해 `Symbol.iterator`가 있듯이, 제너레이터에서는 `async`를 사용할 수 있다.
+이터러블에 비동기적 작업을 다루기 위해 `Symbol.asyncIterator`가 있듯이, 제너레이터에서는 `async`를 사용할 수 있다.
 
 제너레이터 함수 앞에 `async`를 붙이면, 본문에서 `await`를 사용할 수 있다.
 ```js
