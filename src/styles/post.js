@@ -28,6 +28,9 @@ const postStyle = css`
     ul, ol {
         padding-left: 27px;
     }
+    li {
+        margin: 5px 0;
+    }
     
     p {
         line-height: 1.7rem;
@@ -45,7 +48,6 @@ const postStyle = css`
         padding: 0.05em 0.35em;
         margin: 0.1em;
         border-radius: 4px;
-        font-size: 0.85rem;
     }
 
     blockquote {
