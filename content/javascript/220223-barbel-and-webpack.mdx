@@ -1,0 +1,259 @@
+---
+title: "[JS] Babel과 Webpack" 
+date: "2022-02-23 19:37"
+emoji: "👟"
+category: "javascript"
+---
+## Babel
+자바스크립트 언어의 문법은 빠르게 진화하고 있지만 정작 자바스크립트 코드를 실행하는 환경은 이를 따라기자 못하는 경우가 많다.
+브라우저마다 어떤 문법을 지원하는지 파악해야 하고, node.js의 경우에도 버전별로 지원하는 수준이 다르다.
+
+모든 실행 환경을 지원하기 위해 최신 ES6 이상의 문법을 안쓸 수는 없는 노릇이다. 
+이런 문제를 해결하기 위해 등장한 것이 바벨(Babel)이다.
+
+**바벨은 자바스크립트 트랜스파일러(transpiler)로 ES6 이상의 문법들이 다른 실행 환경에서도 돌아갈 수 있도록 소스 코드의 형태를 바꿔준다**.
+변화한 소스 코드는 ES5 이하의 예전 문법으로 작성한 것처럼 변한다.
+
+```js
+// ES6+
+[1, 2, 3].map(n => n ** n);
+// ES5
+"use strict";
+
+[1, 2, 3].map(function (n) {
+    return Math.pow(n, n);
+})
+```
+
+### Babel CLI 설치
+'npm'을 사용해서 Babel CLI를 설치할 수 있다. 프로젝트마다 설정이 다를 수 있기 때문에 로컬에 설치한다.
+```bash
+npm i @babel/core @babel/cli -D
+```
+
+### babelrc 설정 파일 작성
+바벨을 사용하기 위해서는 `@babel/preset-env`를 설치해야 한다. `@babel/preset-env`는 함께 사용되어야 하는 바벨 플러그인을 모아둔 것으로, '바벨 프리셋'이라고 부른다.
+
+플러그인이나 프리셋은 바벨에게 문법 변환 규칙을 알려준다. 플러그인은 규칙 하나하나를 미세하게 적용할 때 사용하고, 프리셋은 여러 개의 규칙을 한 번에 적용할 때 사용한다.
+
+바벨이 제공하는 공식 프리셋은 아래와 같다.
+- `@babel/preset-env`
+- `@babel/preset-flow`
+- `@babel/preset-react`
+- `@babel/preset-typescript`
+
+`env`는 ES6 이상 문법으로 작성된 코드를 ES5 문법의 코드로 변환해주는 모든 규칙을 정의하고 있다.
+
+```bash
+npm i @babel/preset-env -D
+```
+
+설치가 완료되었으면 프로젝트 루트에 `.babelrc` 파일을 생성하고 아래와 같이 작성한다. 프리셋을 지정해주는 것이다.
+```json
+{
+    "presets": ["@babel/preset-env"]
+}
+```
+
+### 트랜스파일링
+기본적으로는 아래와 같은 방법으로 트랜스파일링 할 수 있다.
+```bash
+npx babel script.js
+```
+`-o` 옵션을 사용하면 코드를 출력하는 대신 다른 파일에 저장할 수 있다.
+
+```bash
+npx babel before.js -o after.js
+```
+
+`-d` 옵션을 사용하면 특정 디렉토리에 여러 개의 변환된 파일을 저장할 수 있다.
+
+```bash
+npx babel src -d dist
+```
+
+`-w` 옵션은 타깃 폴더에 있는 모든 파일들의 변경을 감지해 자동으로 트랜스파일한다.
+
+```bash
+npx babel src -w -d dist
+```
+
+트랜스파일링 할 때마다 똑같은 커맨드를 작성하기 귀찮기 때문에 이를 npm 스크립트에 등록해 사용하는게 편하다.
+
+```json
+{
+    "scripts": {
+        "build": "babel src -w -d dist"
+    }
+}
+```
+
+## Webpack
+웹팩이란 최신 프론트엔드 프레임워크에서 가장 많이 사용되는 모듈 번들러(module bundler)다.
+모듈 번들러란 **웹 애플리케이션을 구성하는 자원(HTML, CS, 자바스크립트 등)을 모두 각각의 모듈로 보고, 이를 조합해 병합 및 압축된 하나의 결과물을 만드는 도구**를 의미한다.
+
+웹팩에서의 모듈은 기존의 [모듈](https://woong-jae.com/javascript/211230-modules)과는 개념이 다르다.
+웹팩에서 지칭하는 모듈은 웹 애플리케이션을 구성하는 모든 자원을 의미한다. HTML, CSS, 자바스크립트는 물론 이미지나 폰트도 포함된다.
+
+<img src="https://joshua1988.github.io/webpack-guide/assets/img/webpack-bundling.e79747a1.png" />
+
+웹팩은 아래의 문제점들을 해결하기 등장했다.
+- **자바스크립트 변수 유효 범위**: ES6의 모듈 문법과 모듈 번들링으로 해결한다.
+- **브라우저별 HTTP 요청 숫자의 제약**: TCP 스펙에 따라 브라우저에 한 번에 서버로 보낼 수 있는 HTTP 요청 숫자는 제약되어 있다.
+    웹팩을 이용해 변들링을 하면 브라우저별 HTTP 요청 숫자 제약을 피할 수 있고, 웹 어플리케이션의 성능을 높일 수 있다.
+- **사용하지 않는 코드 관리**
+- **Dynamic loading과 lazy loading 미지원**: 웹팩의 code splitting 기능을 이용해 원하는 모듈을 원하는 타이밍에 로딩할 수 있다.
+
+### 설치 및 구성
+설치할 때 `-D` 옵션을 주어 빌드하고 배포할 때 애플리케이션 코드에서 빠지게 한다.
+```bash
+npm i wepack webpack-cli -D
+```
+
+### 웹팩의 네 가지 주요 속성
+웹팩의 빌드 과정을 이해하기 위해서는 아래 4가지 주요 속성에 대해서 알아야 한다.
+- entry
+- output
+- loader
+- plugin
+
+<img src="https://joshua1988.github.io/webpack-guide/assets/img/diagram.519da03f.png" />
+
+### Entry
+`entry` 속성은 웹팩에서 웹 자원을 변환하기 위해 필요한 **최초 진입점이자 자바스크립트 파일 경로**다.
+```js
+// webpack.config.js
+module.exports = {
+  entry: './src/index.js'
+}
+```
+위 코드를 웹팩이 실행하면 `src` 폴더 밑의 `index.js`를 대상으로 빌드를 수행한다.
+
+`entry` 속성에 지정된 파일에는 웹 애플리케이션의 전반적인 구조와 내용이 담겨져 있어야 한다.
+웹팩이 해당 파일을 가지고 사용되는 모듈들의 연관 관계를 이해하고 분석하기 때문이다.
+
+엔트리 포인트는 여러 개가 될 수도 있다.
+
+```js
+entry: {
+  login: './src/LoginView.js',
+  main: './src/MainView.js'
+}
+```
+
+엔트리를 분리하는 경우는 특정 페이지로 진입했을 떄 서버에서 해당 정보를 내려주는 형태의 멀티 페이지 애플리케이션에 적합하다.
+
+### Output
+`output` 속성은 웹팩을 돌리고 난 결과물의 파일 경로를 의미한다.
+```js
+// webpack.config.js
+module.exports = {
+  output: {
+    filename: 'bundle.js'
+  }
+}
+```
+
+최소한 `filename`은 지정해주어야 하고, 일반적으로 아래와 같이 `path` 속성을 함께 정의한다.
+```js
+// webpack.config.js
+var path = require('path');
+
+module.exports = {
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, './dist')
+  }
+}
+```
+`filename`은 웹팩으로 빌드한 파일의 이름을 의미하고, `path`는 해당 파일의 경로를 의미힌다.
+
+`filename`은 추가적인 옵션으로 파일 이름에 뭔가 더 추가할 수 있다.
+기본적인 형태는 `[option].bundle.js`로, `option`은 네 가지가 있다.
+```js
+module.exports = {
+  output: {
+    filename: '[option].bundle.js'
+  }
+};
+```
+- `name`: 파일 이름에 `entry`를 포함시킨다.
+- `id`: 파일 이름에 웹팩 내부적으로 사용하는 모듈 ID를 포함한다.
+- `hash`: 매 빌드시 마다 고유 해시 값을 붙인다.
+- `chunkhash`: 웹팩의 각 모듈 내용을 기준으로 생성된 해시 값을 붙인다.
+
+### Loader
+Loader는 웹팩이 웹 애플리케이션을 해석할 때 **자바스크립트 파일이 아닌 웹 자원들을 변환할 수 있도록 도와주는 속성**이다.
+`module` 속성을 사용한다.
+```js
+// webpack.config.js
+module.exports = {
+  module: {
+    rules: []
+  }
+}
+```
+
+CSS를 `import`하기 위해서는 CSS loader를 적용해야 한다.
+```bash
+npm i css-loader -D
+```
+```js
+// webpack.config.js
+module.exports = {
+  entry: './app.js',
+  output: {
+    filename: 'bundle.js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ['css-loader']
+      }
+    ]
+  }
+}
+```
+
+자주 사용되는 로더 종류는 다음과 같다.
+- css loader
+- babel loader
+- sass loader
+- file loader
+- Vue loader
+- TS loader
+
+로더는 여러개 추가할 수 있다.
+
+### Plugin
+플러그인은 웹팩의 기본적인 동작에 추가적인 기능을 제공하는 속성이다. **결과물의 형태를 바꿔준다**.
+```js
+// webpack.config.js
+module.exports = {
+  plugins: []
+}
+```
+플러그인의 배열에는 생성자 함수로 생성한 객체 인스턴스만 추가될 수 있다.
+```js
+// webpack.config.js
+var webpack = require('webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+  plugins: [
+    new HtmlWebpackPlugin(),
+    new webpack.ProgressPlugin()
+  ]
+}
+```
+위 두 플러그인은 각각 다음과 같은 역할을 한다.
+- HtmlWebpackPlugin: 웹팩으로 빌드한 결과물로 HTML 파일을 생성해주는 플러그인
+- ProgressPlugin: 웹팩의 빌드 진행율을 표시해주는 플러그인
+
+<br/>
+
+참조:  
+<https://poiemaweb.com/es6-babel-webpack-1>  
+<https://www.daleseo.com/js-babel/>  
+<https://joshua1988.github.io/webpack-guide/>
