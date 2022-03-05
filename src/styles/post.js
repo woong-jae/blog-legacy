@@ -16,7 +16,7 @@ const postStyle = css`
     }
 
     h3 {
-        font-size: 1.6rem;
+        font-size: 1.55rem;
         margin-bottom: 16px;
     }
     h4 {
