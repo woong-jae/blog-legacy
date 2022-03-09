@@ -95,7 +95,6 @@ module.exports = {
       resolve: `gatsby-plugin-mdx`,
       options: {
         gatsbyRemarkPlugins: [
-          `gatsby-remark-smartypants`,
           {
             resolve: `gatsby-remark-images`,
             options: {

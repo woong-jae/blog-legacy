@@ -33,7 +33,6 @@
     "gatsby-remark-embed-youtube": "^0.0.7",
     "gatsby-remark-images": "^5.7.0",
     "gatsby-remark-prismjs": "^5.7.0",
-    "gatsby-remark-smartypants": "^4.7.0",
     "gatsby-source-filesystem": "^3.10.0",
     "gatsby-transformer-sharp": "^3.10.0",
     "prism-react-renderer": "^1.2.1",
