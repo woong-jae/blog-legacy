@@ -38,7 +38,6 @@ class Publisher {
             }
         });
     }
-    
     registerSubscriber(subscriber) {
         this.subscriber.add(subscriber);
     }
@@ -88,6 +87,12 @@ state.setState({ b: 7 });
 // -> a + b = 10
 ```
 발행기관에 구독자를 구독시킨 후 상태를 바꿨을 때, 각 구독자는 변화한 상태에 대해 처리를 해주는 것을 볼 수 있다.
+
+위에 구현한 발행기관과 구독자를 그대로 사용하기는 문제가 있다.
+
+발행기관의 `state`를 직접 접근해 상태를 변경할 경우 구독자들이 이를 알 수 없다.
+이를 방지하기 위해 `state`를 private 필드로 두거나 클로저를 사용해 숨겨두는 것이 좋다.
+`subscriber`나 구독자의 `notify` 역시 숨기는 것이 좋다고 생각된다.
 
 <br/>
 
