@@ -92,7 +92,75 @@ state.setState({ b: 7 });
 
 발행기관의 `state`를 직접 접근해 상태를 변경할 경우 구독자들이 이를 알 수 없다.
 이를 방지하기 위해 `state`를 private 필드로 두거나 클로저를 사용해 숨겨두는 것이 좋다.
-`subscriber`나 구독자의 `notify` 역시 숨기는 것이 좋다고 생각된다.
+`subscriber`도 마찬가지로 숨기는 것이 좋겠다.
+
+한가지 문제점이 더 발생할 수 있다.
+만약 10명의 구독자가 100개의 발행기관에 구독을 한다 했을 때, 구독 관련 코드가 무려 10 * 100 = 1000개가 필요하다.
+
+## 개선
+문제점을 개선하기 위해 앞서 작성한 코드를 `observable`과 `observe`의 관계로 단순화 해보자.
+
+`observable`은 `observe`에서 사용되고, `observable`에 변화가 생기면 observe에 등록된 함수가 실행되는 것이다.
+
+```js
+const state = observable({ a: 1, b: 3 });
+observe(() => console.log(`a + b = ${state.a + state.b}`));
+observe(() => console.log(`a * b = ${state.a * state.b}`));
+state.a = 3;
+// -> a + b = 5
+// -> a * b = 6
+```
+
+### 구현
+```js
+let requestingObserver = null;
+
+const observable = (object) => {
+  const observersPerProps = new Map();
+  return new Proxy(object, {
+    get(target, prop) {
+      if (!observersPerProps.has(prop)) observersPerProps.set(prop, new Set());
+      if (requestingObserver)
+        observersPerProps.get(prop).add(requestingObserver);
+      return target[prop];
+    },
+    set(target, prop, val) {
+      if (target[prop] === val) return true;
+      if (JSON.stringify(target[prop]) === JSON.stringify(val)) return true;
+      target[prop] = val;
+      observersPerProps.get(prop).forEach((notify) => notify());
+      return true;
+    }
+  });
+};
+
+const observe = (notify) => {
+    requestingObserver = notify;
+    notify();
+    requestingObserver = null;
+};
+
+const state = observable({ a: 3, b: 3 });
+
+observe(() => console.log(`a + b = ${state.a + state.b}`));
+// -> a + b = 6
+observe(() => console.log(`a * b = ${state.a * state.b}`));
+// -> a * b = 9
+state.a = 5;
+// -> a + b = 8
+// -> a * b = 15
+state.a = 5;
+// 아무것도 출력되지 않는다.
+```
+
+이전과 다른 점은 옵저버가 등록되는 방식이다.
+`observe`를 통해 `notify`를 등록하면 첫 번째로 `requestingObserver`가 `notify`를 가리키게 한다.
+그 다음 `notify`를 실행해 `observable`의 get 트랩에서 `requestingObserver`를 통해 `notify`를 옵저버에 추가한다.
+
+옵저버를 추가할 때에는 `notify`에서 **사용되는 프로퍼티에만 알람이 갈 수 있도록 프로퍼티 별로 옵저버를 등록**해준다.
+
+`state`가 변경되었을 때는 변경된 프로퍼티에 등록된 옵저버들에게 변경을 알린다. 
+만약 변경된 값이 이전 값과 같다면 알림이 가지 않게 방어 로직을 작성해줬다.
 
 <br/>
 
