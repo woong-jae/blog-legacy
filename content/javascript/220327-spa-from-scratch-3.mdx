@@ -153,6 +153,36 @@ export const observable = (object) => {
 };
 ```
 
+- Component.js
+
+```js
+import { observe } from "./observer.js";
+
+export default class Component {
+    constructor(target, props) {
+        this.target = target;
+        this.props = props;
+        this.state = {};
+        this.setup();
+        // 사용하고 있는 store.state에 변화가 있으면 다시 렌더링한다.
+        observe(() => {
+            this.render();
+            this.mounted();
+        });
+    }
+    template() { return ``; }
+    setup() {};
+    render() { this.target.innerHTML = this.template(); }
+    mounted() {}
+    updated() {}
+    setState(newState) {
+        this.state = { ...this.state, ...newState };
+        this.render();
+        this.updated();
+    }
+};
+```
+
 - store.js
 
 ```js
