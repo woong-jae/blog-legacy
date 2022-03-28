@@ -7,7 +7,7 @@ category: "javascript"
 ## 불편함 감지하기
 프로젝트에서 모달 창을 사용하고 싶었다. 모달은 하나를 두고 내용물을 상태에 따라 바꿔주는 것이 목표다.
 
-현재 컴포넌트 구조를 아래와 같다.
+현재 컴포넌트 구조는 아래와 같다.
 
 ```bash
 App.js
@@ -23,9 +23,8 @@ App.js
 여기서 불편한 점이 발생한다. 
 
 모달의 상태변화는 `Content.js`나 `Sidebar.js`의 하위 컴포넌트에서 변경된다.
-그래서 모달의 상태를 변화시키기 위해서는 `Modal.js`의 `setState` 메서드를 저 두 컴포넌트에 전달해야 하는 것이다.
-하지만 현재 구현해놓은 구조에서는 데이터를 역방향으로 보낼 수 없다.
-따라서 원하는 것을 구현하려면 모달의 상태를 `Main.js`에 두고 하위 컴포넌트로 계속 내려줘야 한다. 
+모달의 상태를 변화시키기 위해서는 `Modal.js`의 `setState` 메서드를 저 두 컴포넌트의 아래까지 전달해야한다.
+이 상황은 정말 귀찮다.
 
 이 문제는 react나 vue에서도 똑같이 발생한다. 'Props drilling' 이슈라고 한다.
 
@@ -34,27 +33,25 @@ React나 Vue는 이 문제를 어떻게 해결할까? 바로 '상태 관리 시�
 React는 Redux, Vue는 Vuex를 대표적으로 사용한다.
 
 ## 구현
-상태 관리 도구의 구현을 위해서는 '[옵저버 패턴](https://woong-jae.com/javascript/220322-observer-pattern)'에 대한 이해가 선행되어야 한다.
+> 상태 관리 도구의 구현을 위해서는 '[옵저버 패턴](https://woong-jae.com/javascript/220322-observer-pattern)'에 대한 이해가 선행되어야 한다.
 
 일단 Redux는 한 번 경험해봤었기 때문에 다시 사용하기 싫었다. 코드를 너무 많이 작성해야 돼서 귀찮다.
 
-그래서 Vuex 같은 상태 관리 시스템을 만들고자 했다. 대부분의 구현을 [이 포스트](https://junilhwang.github.io/TIL/Javascript/Design/Vanilla-JS-Store/)에서 참고했다. 정말 감사합니다!.
+그래서 Vuex 같은 상태 관리 시스템을 만들고자 했다. 대부분의 구현을 [이 포스트](https://junilhwang.github.io/TIL/Javascript/Design/Vanilla-JS-Store/)에서 참고했다. 정말 감사합니다!
 
 ### Vuex?
 Vuex는 아래와 같은 구조를 가지고 있다.
 
 <img src="https://vuex.vuejs.org/vuex.png" width="500px"/>
 
-`state`오직 `mutations`로만 변경할 수 있다. `actions`는 백앤드 api를 가져온 뒤 `mutations`를 이용할 때 사용한다.
+`state`를 오직 `mutations`로만 변경할 수 있다. `actions`는 백앤드 api를 가져온 뒤 `mutations`를 이용할 때 사용한다.
 나는 일단 `state`와 `mutations`만 구현해보고자 했다.
 
-Vuex의 가장 간단한 코드를 살펴보자.
+Vuex의 가장 간단한 사용 예시를 살펴보자.
 
 ```js
-import { createApp } from 'vue'
 import { createStore } from 'vuex'
 
-// Create a new store instance.
 const store = createStore({
   state () {
     count: 0
@@ -69,6 +66,7 @@ const store = createStore({
 store.commit('increment');
 
 console.log(store.state.count);
+// -> 1
 ```
 
 `createStore`를 통해 `state`와 `mutations`를 정의해주고, `commit`을 통해 `mutations`에 선언된 메서드를 호출한다.
@@ -232,7 +230,6 @@ export default class Modal extends Component {
 ```
 
 이렇게 원하던 대로 모달 창 구현을 할 수 있었다.
-
 
 <br/>
 
