@@ -138,6 +138,8 @@ class Component {
 ```
 
 `setState`를 하면 `state`를 변경해준 후 `render`와 `updated`를 순차적으로 호출해주면 된다.
+여기에 추가해서 `render`와 `updated`사이에 `mounted`를 넣어서 데이터와 하위 컴포넌트를 로드해줘야 한다.
+
 여기에 `props`를 추가해주고 `render`의 내용 부분을 `template`으로 따로 빼주었다.
 
 ```js
@@ -156,6 +158,7 @@ class Component {
     setState(newState) {
         this.state = { ...this.state, ...newState };
         this.render();
+        this.mounted();
         this.updated();
     }
     updated() {}

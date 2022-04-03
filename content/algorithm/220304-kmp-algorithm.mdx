@@ -103,7 +103,7 @@ function kmpSearch(H, N) {
 부분 일치 테이블을 생성하는 가장 간단한 방법은 $N$의 각 접두사에 대해 가능한 답을 하나씩 모두 시도하는 것이다.
 하지만 이것은 $O(|N|^3)$ 시간이 걸리기 때문에 비효율적이다.
 
-대신 각 접두사의 `pi[]`의 따로 계산하는 것이 아닌 모든 접두사에 대해 계산함으로써 최적화할 수 있다.
+대신 각 접두사의 `pi`를 따로 계산하는 것이 아닌 모든 접두사에 대해 계산함으로써 최적화할 수 있다.
 ```js
 function getPartialMatchNaive(N) {
     const pi = new Array(N.length).fill(0);
@@ -118,7 +118,7 @@ function getPartialMatchNaive(N) {
 ```
 $N$="aabaabac"에서 자기 자신을 찾으면서, 두 글자 `N[i]`와 `N[begin + i]`가 같다면 `pi[begin + i]`를 갱신해주면 된다.
 
-여기서 검색 과정을 KMP 알고리즘으로 더욱 최적화 할 수 있다. 바로 이전 단계에서 사용한 `pi[]` 값을 사용하는 것이다.
+여기서 검색 과정을 KMP 알고리즘으로 더욱 최적화 할 수 있다. 바로 이전 단계에서 얻은 `pi` 값을 사용하는 것이다.
 ```js
 function getPartialMatch(N) {
     const pi = new Array(N.length).fill(0);

@@ -1,20 +1,27 @@
 ---
 title: "[JS] 객체지향 프로그래밍(Object-Oriented Programming) - 1" 
 date: "2021-08-31"
+updated: "2022-04-03"
 emoji: "📦"
 category: "javascript"
 ---
 ## 캡슐화(Encapsulation)
 객체 지향의 핵심은 프로그램을 작은 조각으로 나누는 것이다. 각 조각들은 자신의 상태를 자체적으로 관리한다. 
 
-이 조각들을 객체를 사용해서 모델링한다. 객체들은 **interface**를 통해 서로 상호작용한다. 각 인터페이스는 특정 프로퍼티와 메서드로 구성된다.
+이 조각들은 객체를 사용해서 모델링한다. 객체들은 **interface**를 통해 서로 상호작용한다. 각 인터페이스는 특정 프로퍼티와 메서드로 구성된다.
 인터페이스의 일부분인 프로퍼티를 **'public'**이라고 하고, 외부에서 접근하지 못하는 나머지 프로퍼티를 **'private'**이라고 한다. 
 Interface를 제공함으로써 안의 세부 구현을 숨길 수 있게 된다.
 
 **이렇게 인터페이스와 구현을 분리하는 방법을 '캡슐화'라고 한다.**
 
-## 메서드
+## 메서드와 this
+객체의 프로퍼티에 할당된 함수를 '메서드(method)'라고 부른다.
+
+프로퍼티에 굳이 함수를 넣어주는 이유는 객체에 저장된 정보와 함수의 기능이 어떤 연관을 가지기 때문일 것이다.
+그렇다면 메서드에서 객체 프로퍼티 값에 어떻게 접근할까?
+
 함수가 메서드로 호출되면, 함수 내부에서 사용되는 `this` 키워드는 자동적으로 **호출한 객체를 가리킨다**.
+
 ```js
 function speak(line) {
     console.log(`The ${this.type} rabbit says '${line}'`);
@@ -28,8 +35,8 @@ whiteRabbit.speak("Give me carrot");
 speak.call(whiteRabbit, "Brup!");
 // -> The white rabbit says 'Burp!'
 ```
+### this가 없는 화살표 함수
 모든 **함수는 자신만의 `this`를 가진다**. 따라서 `function` 키워드로 정의한 함수 안에서 주변 범위의 `this`를 참조할 수 없다.
-**`this`의 대상은 런타임에 결정**된다.
 
 근데 **arrow function**은 좀 다르다. 요놈은 **자신만의 `this`를 가지지 않는 대신, 주변 범위의 `this`를 참조할 수 있다**. 아래 예를 보자.
 ```js
@@ -39,13 +46,82 @@ function normalize() {
 normalize.call({coords: [0, 2, 3]}, length: 5);
 // -> [0, 0.4, 0.6]
 ```
-`normalize` 함수 안의 `map`에서 `function` 키워드를 사용히면 코드가 동작하지 않는다.
+화살표 함수를 사용했기 때문에 `this.length`의 `this`는 주변 범위 함수인 `map`의 객체인 `coords`를 참조할 수 있게된다.
+화살표 함수 대신 `function` 키워드를 사용히면 `this`가 `map`를 가리키기 때문에 코드가 동작하지 않는다.
+
+### 자유로운 this
+자바스크립트에서 **`this`의 대상은 런타임에 결정**된다. 
+동일한 함수라도 다른 객체에서 호출됐다면 `this`가 참조하는 값이 달라진다.
+
+```js
+let woong = { name: "Woong-jae" };
+let cheol = { name: "Cheol-su" };
+
+function sayHi() {
+    console.log(this.name);
+}
+
+woong.f = sayHi;
+cheol.f = sayHi;
+
+woong.f();
+cheol.f();
+// -> Woong-jae
+// -> Cheol-su
+```
+
+### 잃어버린 this
+자유롭다는 특징 때문에 **`this` 정보가 사라지는 문제**도 발생한다. 특히 콜백으로 메서드롤 넘길 때 자주 일어난다.
+
+`setTimeout`의 경우를 보자.
+```js
+let user = {
+    firstName: "Woong",
+    sayHi() {
+        console.log(`Hello, ${this.firstName}!`);
+    }
+};
+
+setTimeout(user.sayHi, 1000); 
+// -> Hello, undefined!
+```
+`setTimeout`에 분리된 함수인 `user.sayHi`가 할당돼서 `this`의 컨텍스트를 잃어버리게 된다.
+이때 컨텍스트를 제대로 유지하기 위해서는 어떻게 해야할까?
+
+#### 래퍼 함수 사용하기
+```js
+setTimeout(function () {
+    user.sayHi();
+}, 1000);
+// -> Hello, Woong!
+```
+함수를 호출하기 때문에 외부 렉시컬 환경에서 `user`를 찾아 원하던 대로 동작하게 된다.
+
+이 방법대로 구현하면 `setTimeout`이 트리거 되기 전에 `user.sayHi`가 변경되면, 변경된 객체의 메서드가 호출된다는 것이 취약점이다.
+
+#### bind
+
+모든 함수는 `this`를 수정하게 해주는 내장 메서드 `bind`가 제공된다.
+
+```js
+let boundFunc = func.bind(context);
+```
+
+`bind`의 리턴 값으로 함수처럼 호출 가능한 특수 객체가 반환된다. 이 객체를 호출하면 `this`가 `context`로 고정된 함수 `func`가 반환된다.
+쉽게 말하면 `bind`를 통해 `this`를 `context`로 고정한 함수를 얻을 수 있다.
+
+```js
+setTimeout(user.sayHi.bind(user), 1000);
+// -> Hello, Woong!
+```
+
+> `bind`는 인수도 바인딩 가능하다.
 
 ## 프로토타입(Prototypes)
 자바스크립트의 객체는 `[[Prototype]]`이라는 숨은 프로퍼티를 갖는다. 이 프로퍼티의 값은 `null`이거나 다른 객체에 대한 참조가 되는데,
 다른 객체를 참조하는 경우 참조 대상을 *'프로토타입'*이라 부른다.
 
-어떤 객체에서 프로퍼티를 읽으려고 하는데 **해당 프로퍼티이 없으면 자바스크립트는 자동으로 프로토타입에서 프로퍼티를 찾는다**. 이것을 '프로토타입 상속'이라 부른다.
+어떤 객체에서 프로퍼티를 읽으려고 하는데 **해당 프로퍼티가 없으면 자바스크립트는 자동으로 프로토타입에서 프로퍼티를 찾는다**. 이것을 '프로토타입 상속'이라 부른다.
 
 `[[Prototype]]`은 숨김 프로퍼티이지만, 개발자가 직접 값을 설정할 수 있다.
 
@@ -68,9 +144,9 @@ console.log(rabbit.eats);
 > `animal`이 `Object.prototype`을 상속받는 이유는 객체 리터럴로 선언했기 때문이다.
 
 객체의 프로토타입을 변경하는 것은 브라우저 및 자바스크립트 엔진에서 매우 느린 작업이다. 
-상속 구조를 변경하는 것은 광볌위한 영향을 미치고, 프로토타입이 변경된 객체에 접근할 수 있는 모든 코드들에도 영향을 줄 수 있기 때문이다.
+상속 구조를 변경하는 것은 광범위한 영향을 미치고, 프로토타입이 변경된 객체에 접근할 수 있는 모든 코드들에도 영향을 줄 수 있기 때문이다.
 
-따라서 `Object.setPrototypeOf`보다는 `Object.create`를 사용해 원하는 프로토타입으로 객체를 만드는 것이 바람직하다.
+따라서 `Object.setPrototypeOf`보다는 **`Object.create`를 사용해 원하는 프로토타입으로 객체를 만드는 것이 바람직하다**.
 
 ```js
 let protoRabbit = {
@@ -102,7 +178,9 @@ function makeRabbit(type) {
 }
 ```
 
-자바스크립트에서 생성자를 더 쉽게 정의할 수 있는 방법을 제공한다. **함수 호출 부분 앞에 `new` 키워드를 사용하면 그 함수는 생성자로 작용**한다.
+자바스크립트에서 생성자를 더 쉽게 정의할 수 있는 방법을 제공한다.
+
+**함수 호출 부분 앞에 `new` 키워드를 사용하면 그 함수는 생성자로 작용**한다.
 `new` 연산자를 사용해 만든 객체는 **생성자 함수의 프로토타입 정보를 사용해 [[Prototype]]을 설정**한다.
 
 생성자 함수 `F`의 프로토타입은 `F.prototype`을 통해 설정할 수 있다. `F.prototype`은 '일반 프로퍼티'로, 앞서 언급한 프로토타입과는 다르다.
@@ -121,9 +199,16 @@ let weirdRabbit = new Rabbit("weird");
 위 예시에서 `Rabbit` 생성자의 프로토타입은 무엇일까? `Function.prototype`이다. 생성자는 근본적으로 함수이기 때문이다. 
 
 `weirdRabbit`은 생성자의 프로토타입 정보를 사용해서 생성했기 때문에 프로토타입이 `Rabbit.prototype`이다. 
-생성자의 **'prototype' 프로퍼티 안에 인스턴스의 프로토타입**이 있다.
+즉, 생성자의 **`prototype` 프로퍼티가 인스턴스의 프로토타입**이 된다.
 
-생성자의 프로토타입 프로퍼티는 기본값으로 `constructor` 프로퍼티 하나만 가지는 객체를 가리킨다. `constructor` 프로퍼티는 함수 자신을 가리킨다.
+모든 함수는 기본적으로 `prototype` 프로퍼티를 갖는다.
+프로토타입 프로퍼티는 기본값으로 `constructor` 프로퍼티 하나만을 가지는 객체다.
+`constructor` 프로퍼티는 함수 자신을 가리킨다.
+
+```js
+function Rabbit() {}
+// Rabbit.prototype = { constructor: Rabbit }
+```
 
 ### 파생 프로퍼티 Override
 객체에 프로퍼티를 주게되면, 그 프로퍼티가 프로토타입에 프로퍼티로 있던 없던 해당 객체에 프로퍼티가 추가된다. 만약 프로토타입에 같은 이름의 프로퍼티가 이미 존재하면, 이 프로퍼티는 객체의 프로퍼티에 가려져 더이상 객체에 영향을 미치지 못하게 된다.
