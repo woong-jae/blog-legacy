@@ -53,7 +53,7 @@ Vuex의 가장 간단한 사용 예시를 살펴보자.
 import { createStore } from 'vuex'
 
 const store = createStore({
-  state () {
+  state: {
     count: 0
   },
   mutations: {
@@ -72,6 +72,8 @@ console.log(store.state.count);
 `createStore`를 통해 `state`와 `mutations`를 정의해주고, `commit`을 통해 `mutations`에 선언된 메서드를 호출한다.
 
 `createStore`와 비슷하게 `Store.js` 클래스를 구성해보자.
+
+`state`를 `observable`로 만들어주고, 오직 `commit`만으로 `state`에 접근할 수 있게 인터페이스를 만들어야한다.
 
 ```js
 import { observable } from "./observer.js";
@@ -97,8 +99,9 @@ export default class Store {
     }
 }
 ```
-`store.state`의 프로퍼티들을 `get`으로 접근하면 외부에서 접근 불가능한 `#state`의 값을 알 수 있게 했다.
-`set` 메서드를 정의하지 않았고 `#state`는 private 프로퍼티이기 때문에 상태를 직접적으로 할당할 수 없다.
+`state`를 private 프로퍼티로 저장해 외부에서 접근할 수 없게 했다. 
+하지만 상태 값을 읽을 수는 있게 해야하기 때문에 각 프로퍼티마다 getter를 달아줘 접근 가능하게 했다.
+`set` 메서드를 정의하지 않았기 때문에 상태를 직접적으로 할당할 수 없다.
 
 `commit`을 호출하면 `action`에 맞는 `mutations`의 메서드를 호출해 상태를 변경하게 된다.
 
