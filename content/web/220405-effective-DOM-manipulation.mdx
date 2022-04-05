@@ -1,5 +1,5 @@
 ---
-title: "DOM 조작 최적화하기"
+title: "렌더링 최적화하기"
 date: "2022-04-05"
 emoji: "🤼‍♂️"
 category: "web"
@@ -47,9 +47,47 @@ DOM 트리와 CSSOM 트리가 생성되었으면 이 둘을 합쳐 렌더 트리
 
 DOM을 조작할 때 reflow가 최소한으로 발생하도록 해야 좋은 성능을 얻을 수 있다.
 
+## 렌더링 최적화하기
+그렇다면 어떻게 해야 DOM 조작을 최적화할 수 있을까? 함께 살펴보자.
+
+### 가상 노드 조작하기
+요소에 뭔가 변화를 줄 때는 DOM에 달려있는 채로 조작하는 것 보다는 DOM에서 떼어낸 채로 조작하는 것이 효과적이다.
+
+```js
+const target = document.querySelector(".target");
+const element = target.cloneNode(true);
+// 뭔가 변경 작업...
+target.replaceWith(element);
+```
+
+위에서 `element`에 `target`의 복사본을 두었다.
+이 복사본은 실제 DOM 요소와 똑같지만, document의 바디와는 전혀 무관해진다.
+
+**따라서 `element`를 여기저기 변경해도 실제 DOM에는 변경되는 게 없다**. 
+
+변경이 완료된 후 실제 요소 바꿔줌으로써 reflow를 최소화 할 수 있다.
+
+### requestAnimationFrame
+모든 DOM 조작이나 애니메이션은 `requestAnimationFrame(rAF)`을 통해 이루어지는 것이 좋다.
+
+DOM을 수정하게 되면 직전 레이아웃은 효력이 없어지고 reflow가 발생한다.
+브라우저는 일반적으로 현재 작업이나 프레임이 끝날 때까지 기다린 후 reflow를 계산하지만, 
+특정 속성(기하학적인 값)을 읽으면 최신 값을 계산하기 위해 reflow를 동기적으로 발생시킨다.
+
+이를 **강제 동기 레이아웃(layout thrashing)**이라고 한다.
+강제 동기 레이아웃이 발생하면 **reflow 계산을 위해 메인 쓰레드가 블락킹** 되므로 성능에 치명적인 원인이 될 수 있다.
+
+rAF에 등록된 콜백은 다음 리페인트 이전에 실행된다.
+DOM 조작을 rAF에서 하게되면 reflow로 인한 메인 쓰레드를 블락킹을 방지할 수 있다.
+그리고 **등록된 콜백들을 repaint 전에 한 번에 처리하기 때문에 reflow를 최소화** 할 수 있게 된다.
+
+좋은 예시를 [여기](https://codepen.io/omerillo/pen/reLmzK)에서 볼 수 있다. 꼭 보도록 하자.
+
 <br/>
 
 참조:  
 <https://junilhwang.github.io/TIL/Javascript/Design/Vanilla-JS-Virtual-DOM/#_1-reflow-repaint>  
-<https://kyu9341.github.io/WEB/2021/01/24/WEB_BrowserRendering/>
+<https://kyu9341.github.io/WEB/2021/01/24/WEB_BrowserRendering/>  
+<https://ui.toast.com/fe-guide/ko_PERFORMANCE>  
+<https://thisblogfor.me/web/raf_perform/>
 
