@@ -1,13 +1,14 @@
 ---
 title: "렌더링 최적화하기"
 date: "2022-04-05"
+modified: "2022-04-06"
 emoji: "🤼‍♂️"
 category: "web"
 ---
 ## 렌더링(Rendering)
 어찌됐든 저찌됐든 웹 어플리케이션의 가장 중요한 목표는 데이터를 화면에 보여주는 것이다.
 데이터를 화면에 보여준다는 것은 결국 **요소를 화면에 렌더링하는 것**이다.
-그리고 요소를 화면에 렌더링 요소들은 DOM으로 정의된다.
+그리고 화면에 렌더링 요소들은 DOM으로 정의된다.
 
 즉, 화면에 데이터를 '잘' 보여주기 위해서는 DOM 조작을 효과적으로 해야한다.
 
@@ -83,11 +84,109 @@ DOM 조작을 rAF에서 하게되면 reflow로 인한 메인 쓰레드를 블락
 
 좋은 예시를 [여기](https://codepen.io/omerillo/pen/reLmzK)에서 볼 수 있다. 꼭 보도록 하자.
 
+### 가상 DOM 적용
+많은 SPA 프레임워크에서 렌더링을 최적화하기 위해 'Virtual DOM'을 사용한다.
+
+UI에 대한 표현을 메모리 상에 저장하고 이것을 진짜 DOM과 동기화해서 최소한의 연산만을 하는 것이다.
+**UI에 변경이 생기면 메모리 상에서 먼저 변경하고 진짜 DOM과 비교하며 변경해야하는 부분만 변경**한다.
+이 과정을 'reconcilation'이라고 한다.
+
+그렇다면 가상 DOM의 핵심은 무엇을 바꿀지 말지 아는 것이다. 이때 사용하는 것이 ***'Diff 알고리즘'***이다.
+진짜 DOM을 새로운 DOM으로 바꾸기 위한 최소 연산을 구하는 알고리즘이다.
+
+<img src="https://i1.wp.com/programmingwithmosh.com/wp-content/uploads/2018/11/lnrn_0201.png?ssl=1" />
+
+가장 간단한 Diff 알고리즘을 구현해보자.
+
+구현할 것은 `applyDiff(parent, oldNode, newNode)`란 함수로,
+진짜 노드의 부모 요소, 실제 노드(old), 새로운 노드(가상 노드)을 인자로 주면 차이를 계산해 바꿔줄 것이다.
+
+```js
+applyDiff(parent, oldNode, newNode);
+```
+
+이제 내용을 차례차례 채워보자.
+
+1. 먼저 `newNode`이 없다면, 삭제되었다는 뜻이므로 실제 DOM을 삭제한다.
+2. 반대로 `newNode`이 있는데 `oldNode`이 없다면 추가된 것이므로 그냥 추가해준다.
+3. 둘 다 존재한다면 차이가 있는지 확인하고 차이가 있다면 `oldNode`을 `newNode`으로 바꿔줘야 한다.
+4. 현재 노드에서 차이가 없다면 이 다음으로는 두 노드의 자식 요소들을 비교해야 한다.
+
+```js
+function applyDiff(parent, oldNode, newNode) {
+    // 1.
+    if(oldNode && !newNode) {
+        oldNode.remove();
+        return;
+    }
+    // 2.
+    if(!oldNode && newNode) {
+        parent.append(newNode);
+        return;
+    }
+    // 3.
+    if(isNodeChanged(oldNode, newNode)) { // isNodeChanged는 노드가 변경됐는지 확인해주는 함수
+        oldNode.replace(newNode);
+        return;
+    }
+    // 4.
+    const oldChildren = Array.from(oldNode.children);
+    const newChildren = Array.from(newNode.children);
+
+    const max = Math.max(oldChildren.length, newChildren.length);
+    for(let i = 0; i < max; i++) {
+        applyDiff(oldNode, oldChildren[i], newChildren[i]);
+    }
+}
+```
+
+이제 `isNodeChanged`를 살펴보자. 노드에는 어떤 변경에 발생할 수 있을까?
+
+일단 노드의 타입이 변경됐을 수도 있겠다. 타입이 같다면 그 다음으로는 노드의 어트리뷰트가 변화됐을 수도 있다.
+혹은 엣지 노드의 경우에는 내부 텍스트가 다를 수도 있다.
+
+이런 변화들을 감지해보자.
+
+```js
+isNodeChanged(oldNode, newNode) {
+    // 타입이 다른지 확인
+    if(oldNode.type !== newNode.type) {
+        return true;
+    }
+    
+    const oldAttributes = oldNode.attributes;
+    const newAttributes = newNode.attributes;
+    // 어트리뷰트 길이가 다른지 확인
+    if(oldAttributes.length !== newAttributes.length) return true;
+
+    // 어트리뷰트 내용이 달라진게 있는지 확인
+    const differentAttribute = Array.from(oldAttributes).find(attribute => {
+        const { name } = attribute;
+        const oldAttribute = oldNode.getAttribute(name);
+        const newAttribute = newNode.getAttribute(name);
+        return oldAttribute !== new newAttribute;
+    });
+    if(differentAttribute) return true;
+
+    // 엣지 노드면 내부 텍스트 확인
+    if(oldNode.children.length === 0 && 
+        newNode.children.length === 0 &&
+         oldNode.textContent !== newNode.textContent) return true;
+
+    return false;
+}
+```
+
+완성이다! 실제 사용되는 알고리즘보다는 덜하겠지만 충분히 쓸만하다고 생각된다.
+
+더 최적화하는 것은 사용자의 필요에 따라 추가하면 되겠다.
+
 <br/>
 
 참조:  
 <https://junilhwang.github.io/TIL/Javascript/Design/Vanilla-JS-Virtual-DOM/#_1-reflow-repaint>  
 <https://kyu9341.github.io/WEB/2021/01/24/WEB_BrowserRendering/>  
 <https://ui.toast.com/fe-guide/ko_PERFORMANCE>  
-<https://thisblogfor.me/web/raf_perform/>
+<https://thisblogfor.me/web/raf_perform/>  
+Frameless Front-End Development
 
