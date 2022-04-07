@@ -126,7 +126,7 @@ function applyDiff(parent, oldNode, newNode) {
     }
     // 3.
     if(isNodeChanged(oldNode, newNode)) { // isNodeChanged는 노드가 변경됐는지 확인해주는 함수
-        oldNode.replace(newNode);
+        oldNode.replaceWith(newNode);
         return;
     }
     // 4.
@@ -148,7 +148,7 @@ function applyDiff(parent, oldNode, newNode) {
 이런 변화들을 감지해보자.
 
 ```js
-isNodeChanged(oldNode, newNode) {
+function isNodeChanged(oldNode, newNode) {
     // 타입이 다른지 확인
     if(oldNode.type !== newNode.type) {
         return true;
