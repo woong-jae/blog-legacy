@@ -1,0 +1,75 @@
+---
+title: "[JS] 순열(permutation)과 조합(combination)" 
+date: "2022-04-09 15:10"
+emoji: "🐧"
+category: "algorithm"
+---
+## 순열(permutation)
+순열은 '순서를 고려해' 뽑는 모든 경우의 수다.
+예를 들어, `ABC`가 주어지면 `ABC`, `ACB`, `BAC`, `BCA`, `CBA`, `CAB`가 모든 경우의 수다.
+
+순열을 구해주는 `getPermutation()` 함수를 만들어보자.
+이 함수는 배열을 넣어주면 순열을 반환해줄 것이다.
+
+어떻게 구현할 수 있을까?
+
+아까 `ABC`를 보자. 
+위에서 나온 모든 경우의 수에서 `A`를 빼면 `BC`, `CB`가 남는다.
+이것은 `ABC`에서 `A`를 제외하고 구한 순열에, 넣을 수 있는 모든 곳에 `A`를 넣은 것이다.
+
+즉, 배열이 주어졌을 때 첫 원소를 제외하고 순열을 만든 후에 첫 원소를 넣을 수 있는 모든 곳에 넣어주면 된다.
+
+이것을 코드로 구현해보자.
+
+```js
+function getPermutation(elements) {
+    // 기저사례: 원소가 하나만 있으면 자기 자신을 반환한다.
+    if(elements.length === 1) return [elements];
+    const permutations = [];
+    
+    // 첫 번째 원소를 제외한 순열을 구한다.
+    const smallerPermutations = getPermutation(elements.slice(1));
+
+    // 첫 번째 원소를 넣을 수 있는 모든 곳에 넣어준다.
+    const fisrtElement = elements[0];
+    smallerPermutations.forEach(permutation => {
+        for(let positionIndex = 0; positionIndex <= permutation.length; positionIndex++) {
+            const prefix = permutation.slice(0, positionIndex);
+            const suffix = permutation.slice(positionIndex);
+            permutations.push(prefix.concat([fisrtElement], suffix));
+        }
+    });
+
+    return permutations;
+}
+```
+
+## 조합(combination)
+조합은 $N$개에서 $R$개를 뽑을 때 순서를 고려하지 않고 뽑는 것이다.
+`ABC`에서 2개를 뽑아 만들 수 있는 모든 경우의 수는 `AB`, `AC`, `BC`다.
+
+조합을 구현하는 것은 순열과 크게 다르지 않다.
+
+첫 번째 원소부터 시작해서 원소를 제외해서 만든 조합과 합쳐준다.
+그 다음부터는 이전 원소를 제외하고 조합을 만든다. 중복되는 조합이 나오지 않게하기 위해서다.
+
+```js
+function getCombination(elements, pick) {
+    // 기저사례: 골라야 하는 길이가 1이면 각 원소가 조합이 된다.
+    if(pick === 1) return elements.map(elem => [elem]);
+    
+    const combinations = [];
+    // 각 원소에 남은 원소로 만들 수 있는 조합들을 붙인다.
+    elements.forEach((element, index) => {
+        // 만약 남은 원소의 길이가 골라야 하는 길이보다 짧으면 빈 배열이 반환되기 때문에 조합이 생성되지 않는다.
+        const smallerCombinations = getCombination(elements.slice(index + 1), pick - 1);
+        smallerCombinations.forEach(combination => {
+            combinations.push([element].concat(combination));
+        });
+    });
+    return combinations;
+}
+```
+
+참조:  
+<https://github.com/trekhleb/javascript-algorithms>
