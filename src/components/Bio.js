@@ -23,6 +23,7 @@ const BioContainer = styled.div`
     }
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
         padding: 1.3em 1em;
+        align-items: center;
         flex-direction: column;   
     }
 `
