@@ -18,28 +18,41 @@ const BioContainer = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     @media screen and (max-width: ${props => props.theme.responsive.large}) {
         position: relative;
+        flex-direction: row;
         width: auto;
     }
     @media screen and (max-width: ${props => props.theme.responsive.small}) {
         padding: 1.3em 1em;
+        flex-direction: column;   
     }
 `
 
 const BioHeader = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: baseline;
 `;
 
 const BioName = styled.div`
   margin-left: 10px;
   font-weight: 600;
   letter-spacing: 1px;
-  font-size: 1.1em;
+  font-size: 1.3em;
+  margin-bottom: 10px;
   color: #fff;
 `;
 
 const BioMain = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   margin-top: 1em;
+  @media screen and (max-width: ${props => props.theme.responsive.large}) {
+    margin-left: 1em;
+  }
+  @media screen and (max-width: ${props => props.theme.responsive.small}) {
+    margin-left: 0em;
+  }
 `;
 
 const BioText = styled.p`
@@ -85,13 +98,13 @@ const Bio = ({ author, socials }) => {
                 src="../images/woong.png" 
                 alt="avatar" 
                 placeholder="blurred" 
-                style={{width: '80px', height: '80px', borderRadius: '10px'}}
+                style={{width: '180px', height: '180px', borderRadius: '10px'}}
                 />
+            </BioHeader>
+            <BioMain>
                 <BioName>
                     {author}
                 </BioName>
-            </BioHeader>
-            <BioMain>
                 <BioText>
                   이것 저것 공부하고 발전하는 대학생.
                 </BioText>

@@ -5,15 +5,13 @@ export default function throttleOnRendering(cb) {
   
     let tick = false;
   
-    return function() {
-        if (tick) {
-            return;
-        }
+    return function(...params) {
+        if (tick) return;
     
         tick = true;
         return requestAnimationFrame(() => {
             tick = false;
-            return cb();
+            return cb(...params);
         });
     };
 }

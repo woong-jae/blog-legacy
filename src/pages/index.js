@@ -7,10 +7,10 @@ import Layout from "../components/Layout"
 import Seo from "../components/Seo";
 import Posts from "../components/Posts";
 import Bio from "../components/Bio";
-import throttleOnRendering from "../utils/throttleOnRendering";
 import useIntersectionObserver from "../hooks/useIntersectionObserver";
 import useCategory from "../hooks/useCategory";
 import Category from "../components/Category";
+import throttleOnRendering from "../utils/throttleOnRendering";
 
 const MainContent = styled.div`
     display: flex;
@@ -40,10 +40,7 @@ const IndexPage = ({ data }) => {
   const [category, changeCategory] = useCategory();
   const posts = data.allMdx.nodes;
   const [count, setCount] = useState(10);
-  const [,setRef] = useIntersectionObserver(throttleOnRendering((entry, observer) => {
-      // observer.unobserve(entry.target);
-      loadMorePosts();
-  }));
+  const [,setRef] = useIntersectionObserver(throttleOnRendering(loadMorePosts));
 
   function loadMorePosts() {
       setCount(v => {

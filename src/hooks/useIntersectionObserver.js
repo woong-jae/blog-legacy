@@ -8,11 +8,9 @@ const defaultOptions = {
 
 export default function useIntersectionObserver(onIntersect, option = defaultOptions) {
     const [ref, setRef] = useState(null);
-	// intersecting이 있을 때 target 엔트리와 observer를 넘겨주자.
+    // intersecting이 있을 때 target 엔트리와 observer를 넘겨주자.
     const checkIntersect = useCallback(([entry], observer) => {
-        if (entry.isIntersecting) {
-          onIntersect(entry, observer);
-        }
+        if (entry.isIntersecting) onIntersect(entry, observer);
     }, [onIntersect]);
 	// ref나 option이 바뀔 경우 observer를 새로 등록한다.
     useEffect(() => {
