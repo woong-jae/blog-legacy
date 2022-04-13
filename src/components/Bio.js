@@ -78,6 +78,7 @@ const BioLinks = styled.div`
     color: #FFF;
     &:hover {
       color: ${(props) => props.theme.colors.silver};
+      transform: scale(1.3);
     }
   }
 `;
@@ -98,7 +99,7 @@ const Bio = ({ author, socials }) => {
                 src="../images/woong.png" 
                 alt="avatar" 
                 placeholder="blurred" 
-                style={{width: '180px', height: '180px', borderRadius: '10px'}}
+                style={{width: '183.5px', height: '183.5px', borderRadius: '30px'}}
                 />
             </BioHeader>
             <BioMain>
