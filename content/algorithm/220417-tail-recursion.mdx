@@ -1,0 +1,58 @@
+---
+title: "[JS] Tail Recursion (꼬리 재귀)"
+date: "2022-04-17 00:10"
+emoji: "🪱"
+category: "algorithm"
+---
+## 재귀 함수의 한계
+재귀 함수는 '기저 사례(base case)'와 '재귀적 관계(recurrence relation)'만 알면 정말 간단하게 구현할 수 있다.
+또한 코드가 짧아서 가독성도 좋다.
+
+하지만 장점이 있으면 단점도 있는 법이다.
+
+재귀 호출을 할 때마다 콜 스택에 새로운 프레임이 쌓이고, 각 프레임은 지역 변수나 인수를 저장하기 위해 메모리를 사용한다.
+이게 보통은 문제가 되지 않지만, 만약 각 프레임에서 기가바이트 단위의 데이터를 받아 처리해야 하는 경우에는 문제가 심각해질 수도 있다.
+혹은 콜 스택이 너무 깊어지면 스택 공간이 가득차 **스택 오버플로우(stack overflow)**가 발생할 수 있다.
+
+위 단점을 보완하기 위한 방법이 'Tail Recursion'이다.
+
+## Tail recursion(Tail Call Optimizaition, TCO)
+Tail recursion에서 재귀 호출은 제일 마지막 인스트럭션이고, 단 한 번만 호출된다.
+
+이러면 재귀 함수의 결과를 받은 후 더이상 할 일이 없기 때문에 콜 스택에 프레임을 두는 것은 낭비다.
+따라서 매 호출마다 새로운 프레임을 생성하는 것보다 이미 있는 것을 재사용하는 것이 효율적이다.
+**프레임을 재사용하면 콜 스택이 깊어지지 않기 때문에 스택 공간을 효율적으로 사용**할 수 있다.
+프레임 재사용은 컴파일러가 tail recursion을 감지해 알아서 해준다.
+
+> 만약 컴파일러가 TCO를 지원하지 않는다면 최적화는 일어나지 않는다.
+
+거듭제곱을 해주는 함수인 `pow`를 예시로 최적화를 해보자.
+
+아래는 일반적인 재귀 함수로 구현한 거듭제곱 함수다.
+```js
+function naivePow(x, n) {
+    if(n === 0) return 1;
+    return x * naivePow(x, n - 1);
+}
+```
+위 함수는 재귀 호출의 결과를 사용해 연산을 추가적으로 해야하기 때문에 `n` 깊이만큼 콜 스택이 쌓인다.
+
+이제 tail recursion을 적용해보자.
+```js
+function optimizedPow(x, n) {
+    function helper(x, n, acc) {
+        if(n === 0) return acc;
+        return helper(x, n - 1, acc * x);
+    }
+    return helper(x, n, 1);
+}
+```
+이제는 재귀 호출 이후 해야할 연산이 하나도 없기 때문에 콜 스택이 깊어질 이유가 없다.
+따라서 TCO가 적용되어 콜 스택이 깊어지지 않는다.
+
+
+<br/>
+
+참조:  
+<https://www.baeldung.com/cs/tail-vs-non-tail-recursion>  
+<https://medium.com/@soyoung823/tail-recursion-%EA%BC%AC%EB%A6%AC-%EC%9E%AC%EA%B7%80-a84c2cd9a7e8>

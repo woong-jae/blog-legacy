@@ -39,23 +39,22 @@ arr.sort([compareFunc]);
 
 > 추가적으로 파이어폭스에서 사용하는 'Spidermonkey'는 merge sort를 사용한다.
 >
-> Spidermonkey 깃허브의 [`jsarray.cpp`](https://github.com/ricardoquesada/Spidermonkey/blob/master/js/src/jsarray.cpp)를 보면 `MergeSort`가 구현되어 있다.
+> Spidermonkey 깃허브의 [jsarray.cpp](https://github.com/ricardoquesada/Spidermonkey/blob/master/js/src/jsarray.cpp)를 보면 `MergeSort`가 구현되어 있다.
 
 ### Tim Sort?
 이 정렬 알고리즘은 'Insertion Sort'과 'Merge Sort'를 결합하여 만든 정렬이라고 한다.
 주석의 내용으로 추측할 수 있듯이 merge sort를 기반으로 엄청나게 최적화를 한 알고리즘이다.
-시간복잡도 $O(n log n)$, stable, in-place 정렬이다.
+시간복잡도 $O(n\log n)$, stable, in-place 정렬이다.
 
-$O(n log n)$ 정렬 알고리즘의 단점을 최대한 극복한 알고리즘으로, Java와 Python에서도 사용된다.
+$O(n\log n)$ 정렬 알고리즘의 단점을 최대한 극복한 알고리즘으로, Java와 Python에서도 사용된다.
 
-자세한 내용은 [여기](https://d2.naver.com/helloworld/0315536)에서 살펴보자.
+알고리즘 동작에 대한 자세한 내용은 [여기](https://d2.naver.com/helloworld/0315536)에서 살펴보자.
 
 
 ## 마치며
 배열의 `sort` 메서드가 내부적으로 어떤 알고리즘을 사용하는지 알아봤다.
 
 막연히 quick sort나 merge sort를 사용할 줄 알았지만, 처음 듣는 알고리즘이 튀어나와서 당황했다.
-Timsort에 대해 알아봐야겠다.
 
 <br/>
 
