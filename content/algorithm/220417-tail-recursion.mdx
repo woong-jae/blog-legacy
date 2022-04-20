@@ -96,7 +96,7 @@ function optimizedPow(x, n) {
     return val;
 }
 ```
-물론 이제 재귀함수라고 할 수 없지만 얼추 모양은 비슷하게 유지하면서, `val`이 한 번씩 호출되기 때문에 더이상 콜 스택도 깊어지지 않는다.
+물론 이제 재귀함수라고 할 수 없지만, 얼추 모양은 비슷하게 유지하면서 `val`이 한 번씩 호출되기 때문에 더이상 콜 스택도 깊어지지 않는다.
 
 이제 아까 작성한 함수보다 훨씬 큰 `n` 값을 다룰 수 있게 됐다!
 
@@ -111,4 +111,6 @@ Tail recursion에 대해 알아봤다.
 
 참조:  
 <https://www.baeldung.com/cs/tail-vs-non-tail-recursion>  
-<https://medium.com/@soyoung823/tail-recursion-%EA%BC%AC%EB%A6%AC-%EC%9E%AC%EA%B7%80-a84c2cd9a7e8>
+<https://medium.com/@soyoung823/tail-recursion-%EA%BC%AC%EB%A6%AC-%EC%9E%AC%EA%B7%80-a84c2cd9a7e8>  
+<https://stackoverflow.com/questions/37224520/are-functions-in-javascript-tail-call-optimized>  
+<https://stackoverflow.com/questions/42788139/es6-tail-recursion-optimisation-stack-overflow>
