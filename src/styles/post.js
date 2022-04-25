@@ -72,7 +72,7 @@ const postStyle = css`
     }
 
     table {
-        margin: 0 auto;
+        margin: 15px auto;
         border: 1px solid #444444;
         border-collapse: collapse;
     }

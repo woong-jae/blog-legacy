@@ -1,0 +1,48 @@
+---
+title: "[JS] Sorting Algorithms"
+date: "2022-04-25 12:54"
+emoji: "🍦"
+category: "algorithm"
+---
+## Bubble Sort(거품 정렬)
+거품 정렬은 **인접한 원소끼리 비교하고, 원소가 잘못된 순서라면 자리를 교환**해 정렬하는 알고리즘이다.
+
+비교를 1회전 진행하면 가장 큰 자료가 맨 뒤로 이동하기 때문에 다음 회전부터는 뒤로 이동시킨 원소를 제외시킨다.
+회전마다 비교하는 원소가 하나씩 줄어들고, 비교할 원소가 없을 때까지 진행하면 정렬이 완료된다.
+
+<img src="https://camo.githubusercontent.com/34e1e2a85f90e3d7c005ada9e1c7a5f57a7eb9a4d519fb369b276a0dd7f5aec9/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f632f63382f427562626c652d736f72742d6578616d706c652d33303070782e676966" />
+
+### 구현
+```js
+function bubbleSort(arr) { // ascending order
+    for(let iter = 0; iter < arr.length - 1; iter++) {
+        for(let index = 0; index < arr.length - 1 - iter; index++) {
+            if(arr[index] > arr[index + 1]) {
+                [arr[index], arr[index + 1]] = [arr[index + 1], arr[index]];
+            }
+        }
+    }
+    return arr;
+}
+```
+
+### Complexity
+
+|Name|Best|Average|Worst|Stable|In-place|
+|---|---|---|---|---|---|
+|Bubble Sort|$O(N^2)$|$O(N^2)$|$O(N^2)$|Yes|Yes|
+
+> **Inplace?** 정렬을 위해 추가적인 메모리 공간이 거의 안드는 정렬을 의미한다.
+>
+> **Stable?** 정렬했을 때 중복된 값들의 순서가 변하지 않음을 의미한다.
+
+Best case 성능을 개선하기 위해서는 이번 회전에서 교환이 발생했는지 안했는지 검사한 후,
+교환이 한 번도 발생하지 않았다면 바로 정렬을 끝내면 된다. 이렇게 되면 best case는 $O(N)$이 된다.
+
+### Pros & Cons
+거품 정렬은 구현이 매우 간단하다는 장점 외에는 좋은 점이 하나도 없다.
+
+알고리즘을 최적화하지 않는다면 best, average, worst case가 모두 $O(N^2)$인 비효울적인 알고리즘이다.
+또한 원소가 자기 자리를 찾아가기 위해 교환 연산이 굉장히 많이 일어난다.
+
+## Selection Sort(선택 정렬)
