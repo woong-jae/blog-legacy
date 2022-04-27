@@ -12,7 +12,7 @@ category: "algorithm"
 
 <img src="https://camo.githubusercontent.com/34e1e2a85f90e3d7c005ada9e1c7a5f57a7eb9a4d519fb369b276a0dd7f5aec9/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f632f63382f427562626c652d736f72742d6578616d706c652d33303070782e676966" />
 
-### Implementation
+### 구현
 ```js
 function bubbleSort(arr) { // ascending order
     for(let iter = 0; iter < arr.length - 1; iter++) {
@@ -26,7 +26,7 @@ function bubbleSort(arr) { // ascending order
 }
 ```
 
-### Complexity
+### 성능
 
 |Name|Best|Average|Worst|Stable|In-place|
 |---|---|---|---|---|---|
@@ -39,7 +39,7 @@ Best case 성능을 개선하기 위해서는 이번 회전에서 교환이 발�
 >
 > **Stable?** 정렬했을 때 중복된 값들의 순서가 변하지 않음을 의미한다.
 
-### Pros & Cons
+### 장단점
 거품 정렬은 구현이 매우 간단하다는 장점 외에는 좋은 점이 하나도 없다.
 
 알고리즘을 최적화하지 않는다면 best, average, worst case가 모두 $O(N^2)$의 시간복잡도를 갖는 비효울적인 알고리즘이다.
@@ -52,7 +52,7 @@ Best case 성능을 개선하기 위해서는 이번 회전에서 교환이 발�
 
 <img src="https://camo.githubusercontent.com/fe834a61b6e60d9e46d124f8c5b90e73f7b44db1442371932aa069257654493a/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f392f39342f53656c656374696f6e2d536f72742d416e696d6174696f6e2e676966" />
 
-### Implementation
+### 구현
 ```js
 function selectionSort(arr) { // ascending order
     for(let target = 0; target < arr.length - 1; target++) {
@@ -66,7 +66,7 @@ function selectionSort(arr) { // ascending order
 }
 ```
 
-### Complexity
+### 성능
 
 |Name|Best|Average|Worst|Stable|In-place|
 |---|---|---|---|---|---|
@@ -74,7 +74,7 @@ function selectionSort(arr) { // ascending order
 
 매 반복마다 주어진 배열 전체를 비교하기 때문에 best, average, worst case 모두 $O(N^2)$의 시간복잡도를 가진다.
 
-### Pros & Cons
+### 장단점
 버블 정렬과 마찬가지로 구현이 매우 단순하다.
 
 선택 정렬도 버블 정렬과 같이 $O(N^2)$의 시간복잡도를 가지지만,
@@ -94,7 +94,7 @@ function selectionSort(arr) { // ascending order
 
 <img src="https://camo.githubusercontent.com/ac772dfad98df54c1658e98dcfeb11f76aa7e7f027558554067c9eeef219d852/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f302f30662f496e73657274696f6e2d736f72742d6578616d706c652d33303070782e676966" />
 
-### Implementation
+### 구현
 ```js
 function insertionSort(arr) { // ascending order
     for(let start = 1; start < arr.length; start++) {
@@ -109,19 +109,125 @@ function insertionSort(arr) { // ascending order
 }
 ```
 
-### Complexity
+### 성능
 |Name|Best|Average|Worst|Stable|In-place|
 |---|---|---|---|---|---|
-|Selection Sort|$O(N)$|$O(N^2)$|$O(N^2)$|Yes|Yes|
+|Insertion Sort|$O(N)$|$O(N^2)$|$O(N^2)$|Yes|Yes|
 
 배열이 이미 정렬되어있는 경우 요소의 이동없이 한 번의 비교만 이루어지기 때문에 $O(N)$의 시간복잡도를 가진다.
 
-### Pros & Cons
+### 장단점
 구현이 간단하고 선택정렬과 버블정렬에 비해 빠르다는 장점을 가진다.
 
 하지만, 배열의 크기가 커지면 마찬가지로 비효율적이다.
 
+## Quick Sort(퀵 정렬)
+퀵 정렬은 분할 정복을 통해 정렬을 수행한다.
+
+1. 배열에서 요소 하나를 고른다(=**pivot**).
+2. Pivot보다 작은 요소를 좌측으로, 큰 요소를 우측으로 재배치해 배열을 둘로 나눈다. 분할 이후 pivot은 움직이지 않는다.
+3. 분할된 두 배열에 대해 재귀적으로 이 과정을 반복한다.
+
+<img src="https://camo.githubusercontent.com/9d156a36ab19a3ae2dfbabc70daaaa074fddfaac233f6d0bfce45b8d07ad5289/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f362f36612f536f7274696e675f717569636b736f72745f616e696d2e676966" />
+
+### 구현
+```js
+function quickSort(arr) { // ascending order
+    function sort(arr, left, right) {
+        if(left >= right) return;
+        const pivot = partition(arr, left, right);
+        sort(arr, left, pivot - 1);
+        sort(arr, pivot + 1, right);
+    }
+    
+    function partition(arr, left, right) {
+        // right is pivot
+        const pivot = right, pivotVal = arr[right];
+        while(left < right) {
+            while(pivotVal > arr[left]) left++;
+            while(left < right && pivotVal <= arr[right]) right--;
+            [arr[left], arr[right]] = [arr[right], arr[left]];
+        }
+        [arr[right], arr[pivot]] = [arr[pivot], arr[right]];
+        return right;
+    }
+
+    sort(arr, 0, arr.length - 1);
+    return arr;
+}
+```
+
+## 성능
+|Name|Best|Average|Worst|Stable|In-place|
+|---|---|---|---|---|---|
+|Quick Sort|$O(NlogN)$|$O(NlogN)$|$O(N^2)$|No|Yes|
+
+퀵 정렬은 대개 매우 좋은 성능을 보여주지만, 
+배열의 최대값/최소값을 pivot으로 선택하여 분할이 되지 않은 경우 $O(N^2)$의 시간복잡도를 가진다.
+
+이를 피하기 위해 배열의 끝값과 중간값을 바꿔주면 확률적으로나마 시간복잡도를 개선할 수는 있지만,
+worst case를 $O(NlogN)$으로 보장하지는 않는다.
+
+## 장단점
+다른 $NlogN$ 정렬 알고리즘과 비교했을때 **가장 속도가 빠르다**는 장점을 가진다.
+또한 정렬을 위한 추가 메모리 공간을 필요로 하지 않는다(in-place).
+
+단점으로는 **unstable**하다는 점과 **정렬된 배열에 대해서는 불균형 분할 때문에 오히려 시간이 더 걸린다**는 것이다.
+
+## Merge Sort(병합 정렬)
+병합 정렬도 분할 정복을 통해 정렬을 수행한다.
+
+1. 배열을 같은 크기의 2개의 배열로 분할한다.
+2. 각 배열을 정렬한다.
+3. 정렬된 배열을 하나의 배열로 병합(merge)한다.
+
+<img src="https://camo.githubusercontent.com/1d3f6508e07151f337fddc8e0e25b3f53fb1abd4cb3cebca16d8333544fc3d99/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f632f63632f4d657267652d736f72742d6578616d706c652d33303070782e676966" />
+
+### 구현
+```js
+function mergeSort(arr) {
+    function sort(arr) {
+        if(arr.length <= 1) return arr;
+        const middleIndex = Math.floor(arr.length / 2);
+
+        const leftSortedArr = sort(arr.slice(0, middleIndex));
+        const rightSortedArr = sort(arr.slice(middleIndex));
+        
+        return merge(leftSortedArr, rightSortedArr);
+    }
+
+    function merge(leftArr, rightArr) {
+        const mergedArr = [];
+        let left = 0, right = 0;
+        while(left < leftArr.length && right < rightArr.length) {
+            let minElem = leftArr[left] <= rightArr[right] ? leftArr[left++] : rightArr[right++];
+            mergedArr.push(minElem);
+        }
+        return mergedArr.concat(leftArr.slice(left), rightArr.slice(right));
+    }
+
+    return sort(arr);
+}
+```
+### 성능
+|Name|Best|Average|Worst|Stable|In-place|
+|---|---|---|---|---|---|
+|Merge Sort|$O(NlogN)$|$O(NlogN)$|$O(OlogN)$|Yes|No|
+
+병합 과정에서 배열의 길이만큼 메모리가 필요하기 때문에 in-place 정렬이 아니다.
+
+> 만약 배열을 연결 리스트로 구현하면 in-place 정렬로 구현할 수 있다. 링크 인덱스만 변경돼서 데이터의 이동은 무시할 수 있을 정도로 작아지기 때문이다.
+
+### 장단점
+퀵 정렬과는 다르게 **데이터의 분포가 정렬 시간에 영향을 덜 끼치고, 안정적(stable)**이다.
+
+병합 과정이 순차적인 비교로 진행되게 때문에 연결 리스트의 정렬에 매우 효율적이다.
+
+단점으로는 배열의 클경우 원소들의 이동횟수가 많아 느리다.
+
 <br/>
 
 참조:  
-<https://github.com/trekhleb/javascript-algorithms>
+<https://github.com/trekhleb/javascript-algorithms>  
+<https://gmlwjd9405.github.io/tags#sort>  
+<https://gyoogle.dev/blog/>
