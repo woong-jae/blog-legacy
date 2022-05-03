@@ -74,32 +74,35 @@ class Heap {
     * @param {number} newValue
     */
     push(newValue) {
-        this.heap.push(newValue);
-        let index = this.heap.length - 1;
-        while(index > 0 && this.heap[Math.floor((index - 1) / 2)] < this.heap[index]) {
-            [this.heap[Math.floor((index - 1) / 2)], this.heap[index]] = [this.heap[index], this.heap[Math.floor((index - 1) / 2)]];
-            index = Math.floor((index - 1) / 2);
+        const heap = this.heap;
+        heap.push(newValue);
+        let index = heap.length - 1, parent = Math.floor((index - 1) / 2);
+        while(index > 0 && heap[parent] < heap[index]) {
+            [heap[parent], heap[index]] = [heap[index], heap[parent]];
+            index = parent;
+            parent = Math.floor((index - 1) / 2);
         }
     }
     /**
     * @return {number}
     */
     pop() {
-        if(this.heap.length === 0) return null;
-        if(this.heap.length === 1) return this.heap.pop();
-        const ret = this.heap[0];
-        this.heap[0] = this.heap.pop();
+        const heap = this.heap;
+        if(heap.length === 0) return null;
+        if(heap.length === 1) return heap.pop();
+        const ret = heap[0];
+        heap[0] = heap.pop();
         let here = 0;
         while(1) {
             let left = here * 2 + 1, right = here * 2 + 2;
             // 리프에 도달
-            if(left >= this.heap.length) break;
+            if(left >= heap.length - 1) break;
             // heap[here]가 내려갈 위치를 찾는다.
             let next = here;
-            if (this.heap[next] < this.heap[left]) next = left;
-            if (right < this.heap.length && this.heap[next] < this.heap[right]) next = right;
+            if (heap[next] < heap[left]) next = left;
+            if (right < heap.length - 1 && heap[next] < heap[right]) next = right;
             if (next === here) break;
-            [this.heap[here], this.heap[next]] = [this.heap[next], this.heap[here]]
+            [heap[here], heap[next]] = [heap[next], heap[here]];
             here = next;
         }
         return ret;
