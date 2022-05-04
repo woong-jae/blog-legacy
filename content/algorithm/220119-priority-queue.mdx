@@ -1,6 +1,7 @@
 ---
 title: "[JS] 우선순위 큐" 
 date: "2022-01-19"
+modified: "2022-05-03"
 emoji: "🏹"
 category: "algorithm"
 ---
@@ -88,8 +89,7 @@ class Heap {
     */
     pop() {
         const heap = this.heap;
-        if(heap.length === 0) return null;
-        if(heap.length === 1) return heap.pop();
+        if(heap.length <= 1) return heap.pop();
         const ret = heap[0];
         heap[0] = heap.pop();
         let here = 0;
