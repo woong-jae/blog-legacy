@@ -25,7 +25,7 @@ category: "algorithm"
 먼저 트리를 저정할 배열을 만들어야 한다. 배열에는 모든 노드가 들어갈 수 있을 만큼 충분히 큰 크기여야 한다.
 배일의 길이와 가장 가까운 2의 제곱으로 올림한 뒤 2를 곱하거나, 귀찮다면 그냥 4배 해주면 된다.
 
-> 예시에서는 배열의 길이라 10이라고 가정한다.
+> 예시에서는 배열의 길이가 10이라고 가정한다.
 
 이제 구간 트리를 만들어야 한다. 현재 노드에 저장한 값은 왼쪽과 오른쪽 자식 중 더 작은 것을 저장하면 된다.
 
@@ -34,7 +34,10 @@ const segmentTree = Array(10 * 4);
 function init(start, end, node) {
     if(start === end) return segmentTree[node] = arr[start];
     const mid = Math.floor((start + end) / 2);
-    return segmentTree[node] = Math.min(init(start, mid, node * 2), init(mid + 1, end, node * 2 + 1));
+    return segmentTree[node] = Math.min(
+        init(start, mid, node * 2), 
+        init(mid + 1, end, node * 2 + 1)
+    );
 }
 ```
 
@@ -92,5 +95,5 @@ function update(target, newValue) {
 <br/>
 
 참조:  
-<https://m.blog.naver.com/PostView.naver?blogId=ndb796&logNo=221282210534&referrerCode=0&searchKeyword=%EA%B5%AC%EA%B0%84%20%ED%8A%B8%EB%A6%AC>  
+[안경잡이개발자 네이버 블로그](https://m.blog.naver.com/PostView.naver?blogId=ndb796&logNo=221282210534&referrerCode=0&searchKeyword=%EA%B5%AC%EA%B0%84%20%ED%8A%B8%EB%A6%AC)  
 프로그래밍 대회에서 배우는 알고리즘 문제 해결 전략
