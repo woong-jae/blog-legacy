@@ -78,7 +78,7 @@ class Heap {
         const heap = this.heap;
         heap.push(newValue);
         let index = heap.length - 1, parent = Math.floor((index - 1) / 2);
-        while(index > 0 && heap[parent] > heap[index]) {
+        while(index > 0 && heap[parent] < heap[index]) {
             [heap[parent], heap[index]] = [heap[index], heap[parent]];
             index = parent;
             parent = Math.floor((index - 1) / 2);
@@ -99,8 +99,8 @@ class Heap {
             if(left >= heap.length) break;
             // heap[here]가 내려갈 위치를 찾는다.
             let next = here;
-            if (heap[next] > heap[left]) next = left;
-            if (right < heap.length && heap[next] > heap[right]) next = right;
+            if (heap[next] < heap[left]) next = left;
+            if (right < heap.length && heap[next] < heap[right]) next = right;
             if (next === here) break;
             [heap[here], heap[next]] = [heap[next], heap[here]];
             here = next;
