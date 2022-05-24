@@ -1,0 +1,154 @@
+---
+title: "[React] Recoil"
+date: "2022-05-23"
+emoji: "🛹"
+category: "react"
+---
+
+## 상태 관리(State Management)
+Recoil은 React를 위한 '상태 관리' 라이브러리다.
+Recoil에 대해 알아보기 전에 먼저 상태 관리가 뭔지 알아보자.
+
+상태(state)는 애플리케이션의 동작 방식을 설명하는 모든 데이터를 의미한다.
+상태는 크게 외부에서 주입되는 동적인 데이터(서버로부터 받은 데이터)와 애플리케이션 UI 상태(닫혔는지 열렸는지 등) 두 가지로 나눌 수 있다.
+
+'동적으로 변할 수 있는 것'으로 state에 대한 설명을 요약할 수 있을 것 같다.
+
+React는 상태를 기반으로 View를 제어하는 라이브러리다. 
+따라서 상태를 어떻게 관리하느냐는 React 애플리케이션 구축에 아주 중요한 부분이다.
+
+### React 자체 상태관리
+호환성과 단순함을 위해서는 외부 라이브러리보다는 React 자체에 내장된 상태 관리 기능을 사용하는 것이 좋다.
+하지만 React의 상태 관리 로직은 다음과 같은 한계를 가진다.
+
+- 컴포넌트의 상태를 공유하기 위해서는 **상태를 공통된 상위 요소까지 끌어올려야 한다**. 이때 심할 경우 애플리케이션 최상단까지 올라가야하는 문제가 발생할 수 있다(prop drilling).
+- Context API는 동적인 데이터를 저장하는데 적합하지 않고 최적화 관점에서 성능적 한계가 명확하다.
+    Context API는 **컴포넌트의 로컬 상태를 공통된 상위 요소로 끌어올린 후 하단에 흘려보낸다는 점에서 상태 관리보다는 의존성 주입에 가깝다**.
+
+이 두 가지 한계점 때문에 **'상태가 만들어지는 곳'과 '상태를 사용하는 곳'의 코드 분할이 어렵게 된다**는 문제점도 발생한다.
+
+애초에 React는 View에만 관심을 가질 뿐인 라이브러리다.
+
+이 문제점들을 해결하기 위해 Redux, MobX, Recoil, Jotai, Zustand등 '전역 상태관리' 라이브러리들이 등장했다.
+
+### Redux가 싫어요...
+Redux는 가장 많이 사용되는 전역 상태관리 라이브러리다.
+Redux를 사용하면 여러분이 만들게 될 컴포넌트들의 상태 관련 로직들을 다른 파일들로 분리시켜서 더욱 효율적으로 관리 할 수 있고
+전역 상태 관리도 비교적 쉽게 할 수 있다.
+
+나도 Redux를 제일 먼저 접하게 됐지만 별로 좋아하지 않는다. 너무 불편하다.
+처음에 아주 많은 보일러 플레이트 코드를 생성해야 사용할 수 있다.
+또한 비동기적 동작을 처리하기 위해서는 추가적인 패키지를 필수적으로 사용해야 한다.
+
+요약해서 개발 경험이 너무 불편했다.
+
+이를 개선하기 위해서 Redux Toolkit이란게 나왔지만,
+또 redux를 사용하기 위해 뭔갈 공부하기 보다는 다른 상태관리 라이브러리를 경험해보고 싶었다.
+
+그래서 다른 대체제를 찾았고 Recoil이 눈에 들어왔다.
+
+## Recoil
+Recoil이 눈에 들어왔던 이유는 React를 만든 페이스북의 팀이 만들었다는 것과 API가 React의 Hook과 매우 비슷해 사용하기 쉬워보였다.
+그리고 사용해봤을 때 쉬워 보이는게 아니라 정말 쉬웠다.
+
+Recoil은 전역 상태를 **'atom'**이라는 단위로 관리한다. React 컴포넌트는 atom을 구독하고 업데이트 할 수 있다.
+Atom이 업데이트 되면 구독된 각각의 컴포넌트들은 새로운 상태를 반영해 다시 렌더링 한다.
+
+Atom은 아래와 같이 생성할 수 있다.
+
+```js
+import { atom } from "recoil"
+
+export const fontSizeState = atom({
+    key: "fontSizeState",
+    default: 14,
+});
+```
+
+정말 간단하다.
+
+컴포넌트에서 atom을 읽거나 쓰려면 `useRecoilState`라는 훅을 사용하면 된다. `useState`훅과 거의 비슷하다.
+
+```js
+import { useRecoilState } from "recoil"
+import { fontSizeState } from "../atoms"
+
+function FontButton() {
+    const [fontSize, setFontSize] = useRecoilState(fontSizeState);
+    return (
+        <button onClick={() => setFontSize((size) => size + 1)} style={{fontSize}}>
+        Click to Enlarge
+        </button>
+    );
+}
+```
+
+Recoil은 또 **'selector'**라는 좀 특이한 상태를 제공한다.
+Selector는 다른 전역 상태로부터 파생된 데이터로, 다른 atom이나 selector에 의존하는 동적인 데이터를 만들 수 있다.
+상태를 기반으로 하는 파생 데이터를 계산하는 데 사용되는 순수 함수로써 최소한의 상태 집합만 atoms에 저장하고 다른 모든 파생되는 데이터는 selector에 명시된 함수를 통해 계산해 쓸모없는 상태의 보존을 방지한다.
+
+컴포넌트에서 selector와 atoms는 동일한 인터페이스를 가져 동일하게 사용할 수 있다.
+
+```js
+// ...
+export const fontSizeLabelState = selector({
+    key: 'fontSizeLabelState',
+    get: ({get}) => {
+        const fontSize = get(fontSizeState);
+        const unit = 'px';
+
+        return `${fontSize}${unit}`;
+    },
+});
+```
+
+```js
+// ...
+function FontButton() {
+    const [fontSize, setFontSize] = useRecoilState(fontSizeState);
+    const fontSizeLabel = useRecoilValue(fontSizeLabelState);
+
+    return (
+        <>
+        <div>Current font size: ${fontSizeLabel}</div>
+
+        <button onClick={setFontSize(fontSize + 1)} style={{fontSize}}>
+            Click to Enlarge
+        </button>
+        </>
+    );
+}
+```
+
+보통 React의 기능만 사용해 파생된 데이터를 처리하는 경우, 특히 비동기적인 데이터를 처리할 때 `useEffect`를 사용하는 경우가 많다.
+**Selector를 사용하면 비동기적인 데이터도 처리할 수 있기** 때문에 `useEffect`로 처리하던 로직을 분리할 수 있다.
+관심사의 분리를 효과적으로 할 수 있다는 것이다.
+
+Recoil을 사용하면 atom과 selector로 구성되는 data-flow graph를 만들 수 있다.
+Recoil 공식문서에서는 이 그래프가 React 트리에 '직교하는 방향 그래프'라고 설명한다.
+직교한다는 것은 data-flow graph를 통해 상태 변화가 흐르고, 각 상태에 대응되는 컴포넌트에 데이터가 투영(project)되는 방식이라고 이해했다.
+
+<img src="https://velog.velcdn.com/images/parixscm/post/4ebbbea1-c914-4bea-a8aa-09e550fa0ef8/image.png" />
+
+다른 유용한 API들도 제공되나 여기서는 다루지 않을 것이다.
+
+## 사용 후기
+사용했을 때 다음과 같은 점이 좋았다.
+- 쉬운 비동기 동작 처리와 React Suspense와의 호환
+- 심플한 세팅과 굉장히 간단한 API
+- 간편한 관심사의 분리
+
+하지만 장점만 있는 것도 아니다.
+
+레퍼런스가 부족하고 아직 버전이 0.7.2인 만큼 API의 신뢰성이 다른 라이브러리와 비교해 부족하다.
+그래서 아주 큰 프로젝트에서 적극 사용하기는 조금 힘들지 않을까 싶다.
+
+하지만 단점에도 불구하고 장점이 너무 마음에 들기 때문에 많이 사용할 것 같다.
+
+<br/>
+
+참조:  
+<https://clelab.io/course/react-state-management/%EC%83%81%ED%83%9C%EA%B4%80%EB%A6%AC%EB%9E%80>  
+<https://jbee.io/react/thinking-about-global-state/>  
+<https://recoiljs.org/ko/>  
+<https://abangpa1ace.tistory.com/212>
