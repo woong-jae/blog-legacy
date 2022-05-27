@@ -1,6 +1,7 @@
 ---
 title: "[JS] 모듈(Modules)" 
 date: "2021-12-30"
+modified: "2022-05-25"
 emoji: "🗃"
 category: "javascript"
 ---
@@ -110,6 +111,17 @@ ES 모듈의 인터페이스는 이제 하나의 값이 아니라 **변수의 �
 또 하나 중요한 점은, ES 모듈의 import는 모듈의 스크립트가 실행되기 전에 일어난다. 
 이 말은 `import` 선언은 함수는 블럭에서 나타날 수 없고, dependecies의 이름이 임의의 값이 아니라 문자열로 인용되어야 한다.
 
+## CommonJS와 ES module
+우리가 프레임워크(React, Vue..)나 다른 라이브러리를 사용하면 모듈을 들고오는데, 이 모듈 포멧은 현재 하나로 통일돼있지 않다.
+어떤 건 CommonJS로, 어떤 건 ES module로 제공된다.
+하지만 번들러를 사용하는 환경에서 개발할 때 CommonJS 모듈을 `import` 문법으로 가져와도 에러가 발생하지 않는다.
+
+이게 어떻게 가능한지 한 번 알아보자.
+
+
+
 <br/>
 
-참조: Eloquent JavaScript
+참조:  
+Eloquent JavaScript  
+<https://ui.toast.com/weekly-pick/ko_20190418>  
