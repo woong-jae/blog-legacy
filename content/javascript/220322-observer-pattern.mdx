@@ -128,7 +128,7 @@ const observable = (object) => {
             if (JSON.stringify(target[prop]) === JSON.stringify(val)) return true;
             target[prop] = val;
             observersPerProps.get(prop).forEach((notify) => notify());
-        return true;
+            return true;
         }
     });
 };

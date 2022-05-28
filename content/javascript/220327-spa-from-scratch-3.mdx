@@ -35,12 +35,12 @@ React는 Redux, Vue는 Vuex를 대표적으로 사용한다.
 ## 구현
 > 상태 관리 도구의 구현을 위해서는 '[옵저버 패턴](https://woong-jae.com/javascript/220322-observer-pattern)'에 대한 이해가 선행되어야 한다.
 
-일단 Redux는 한 번 경험해봤었기 때문에 다시 사용하기 싫었다. 코드를 너무 많이 작성해야 돼서 귀찮다.
-
-그래서 Vuex 같은 상태 관리 시스템을 만들고자 했다. 대부분의 구현을 [이 포스트](https://junilhwang.github.io/TIL/Javascript/Design/Vanilla-JS-Store/)에서 참고했다. 정말 감사합니다!
+대부분의 구현을 [이 포스트](https://junilhwang.github.io/TIL/Javascript/Design/Vanilla-JS-Store/)에서 참고했다. 정말 감사합니다!
 
 ### Vuex?
-Vuex는 아래와 같은 구조를 가지고 있다.
+참고한 구현은 vuex를 모방한 형식이다.
+
+Vuex에 대해 간단히만 알아보자.
 
 <img src="https://vuex.vuejs.org/vuex.png" width="500px"/>
 
@@ -105,6 +105,36 @@ export default class Store {
 
 `commit`을 호출하면 `action`에 맞는 `mutations`의 메서드를 호출해 상태를 변경하게 된다.
 
+이제 `state`를 observable로 만들어 줬으니, `state`가 변경됐을 때 다시 컴포넌트가 렌더링 될 수 있게 observe에 등록해주면 된다.
+
+```js
+import { observe } from "./observer.js";
+
+export default class Component {
+    constructor(target, props) {
+        this.target = target;
+        this.props = props;
+        this.state = {};
+        this.setup();
+        // 컴포넌트에서 스토어의 상태를 observe해 render와 mounted를 수행한다.
+        observe(() => {
+            this.render();
+            this.mounted();
+        });
+    }
+    template() { return ``; }
+    setup() {};
+    render() { this.target.innerHTML = this.template(); }
+    mounted() {}
+    updated() {}
+    setState(newState) {
+        this.state = { ...this.state, ...newState };
+        this.render();
+        this.updated();
+    }
+};
+```
+
 ## 프로젝트에 적용
 프로젝트에 적용된 모습은 아래와 같다.
 
@@ -151,36 +181,6 @@ export const observable = (object) => {
       return true;
     }
   });
-};
-```
-
-- Component.js
-
-```js
-import { observe } from "./observer.js";
-
-export default class Component {
-    constructor(target, props) {
-        this.target = target;
-        this.props = props;
-        this.state = {};
-        this.setup();
-        // 사용하고 있는 store.state에 변화가 있으면 다시 렌더링한다.
-        observe(() => {
-            this.render();
-            this.mounted();
-        });
-    }
-    template() { return ``; }
-    setup() {};
-    render() { this.target.innerHTML = this.template(); }
-    mounted() {}
-    updated() {}
-    setState(newState) {
-        this.state = { ...this.state, ...newState };
-        this.render();
-        this.updated();
-    }
 };
 ```
 
