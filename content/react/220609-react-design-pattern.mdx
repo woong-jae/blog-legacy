@@ -1,0 +1,92 @@
+---
+title: "[React] React 디자인 패턴"
+date: "2022-06-09"
+emoji: "🚧"
+category: "react"
+---
+
+## "디렉토리 어떻게 관리하지..."
+이 생각은 프론트엔드든 백엔드든 많이 고민하는 부분일 것이다.
+
+React에서는 어떻게 디렉토리를 나눠야 할까?
+
+React를 사용하는 목표는 React 엘리먼트 트리를 만들어 화면에 렌더링하는 것이다.
+React 엘리먼트 트리는 컴포넌트를 단위로 구성된다.
+그렇다면 컴포넌트들은 필연적으로 계층적인 구조를 가질 수 밖에 없다.
+컴포넌트들이 계층적인 구조를 가지기 때문에 디렉토리 구조도 컴포넌트의 계층에 따라 구성하는 것이 자연스럽다.
+
+이번 글에서는 계층을 나누는 '기준'을 제시해주는 대표적인 디자인 패턴 몇 가지를 정리해본다.
+
+## 디자인 패턴
+### Presentational and Container Component Pattern
+2015년 [Dan Abramov가 처음 소개한 패턴](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0)이다.
+가장 기본적이고 유명한 디자인 패턴이다.
+
+> 첫 소개 이후 Dan Abramov가 2019년에 새로 글을 업데이트 했는데, 더이상 자신이 소개한 패턴으로 컴포넌트를 나누는 것을 추천하지 않는다고 한다.
+> 추천하지 않는다곤 하지만 이전에는 어떤 필요성에 의해 이런 패턴이 고안됐고, 이제는 왜 추천하지 않는지, 그렇다면 무엇을 추천하는지 살펴보자.
+
+이 접근 방식은 컴포넌트를 **'Conatainer'와 'Presentational'**의 두 카테고리로 나눈다.
+
+**Presentational 컴포넌트는 화면에 보여지는 것만 담당하는 컴포넌트다.**
+보여지는 것만 담당하기 때문에 어플리케이션의 다른 부분과의 의존성을 갖지 않고, 데이터가 어떻게 가져와지고 변화되는지도 모른다.
+그저 받은 것을 보여주는 컴포넌트다. 상태를 가질 수는 있지만 UI와 관련된 상태만 가진다.
+
+**Container 컴포넌트는 동작에 관한 것을 담당하는 컴포넌트다.**
+동작만을 다루기 때문에 DOM 마크업 구조나 스타일을 가지지 않는다.
+Pesentational 컴포넌트에 보여줄 데이터를 가져오거나 변화시키고 컴포넌트의 행동(behavior)을 정의한다.
+
+#### 장점
+- 관심사를 분리할 수 있다.  
+    기능과 UI가 명확하게 분리되기 때문에 코드의 구조를 이해하기 쉬워지고 유지보수, 재사용성이 뛰어나다.
+
+- 재사용성을 높일 수 있다.  
+    Presentational 컴포넌트는 다른 부분과 의존성을 갖지 않기 때문에 다른 container애서 마음껏 사용할 수 있다.
+
+- 마크업이 편하다.  
+    이 패턴을 사용하면 '레이아웃 컴포넌트'가 추출될 수 밖에 없다. 이 레이아웃 컴포넌트를 통해 똑같은 마크업을 여러번 작성하는 것을 방지할 수 있다.
+
+#### 이제는 추천하지 않는 이유
+Dan Abramov는 두 가지 이유로 이 패턴을 추천하지 않는다고 한다.
+필요하지도 않는데 너무 맹목적으로 이 패턴을 강제하는 현상이 있다는 것과 로직을 분리하는 작업을 이제는 Hooks를 통해 할 수 있다는 것이다.
+
+Hooks로 로직을 사용하게 되면 view 뿐만 아니라 로직까지 재사용이 가능하다는 이점을 가져갈 수 있다.
+
+[React hooks와 context를 이용한 설계 패턴에 관한 글](https://www.huskyhoochu.com/react-pattern-hooks-and-contexts/)이 있는데 참고하면 도움이 될 것 같다.
+
+알아둘 것은 추천하지 않는다는 것이지 사용하면 안된다는 의미가 아니다.
+
+### Atomic Design Pattern
+이 패턴은 2013년 Brad Frost에 의해 처음으로 제시된 디자인 패턴이다. 생각보다 역사가 오래됐는데, 이 패턴은 원래 디자인 시스템을 위한 것이다.
+즉, 디자인 시스템에서 컴포넌트들을 효율적으로 구성하는 방식을 의미한다. 
+
+Brad Fost는 화학에서 용어를 빌려 UI 구성요소를 설명한다.
+Label, input, button 같은 작은 단위의 컴포넌트인 'atom'부터,
+atom을 여러개 조합한 'molucule', molucule을 여러개 조합한 'organisms',
+만든 컴포넌트를 넣을 레이아웃인 'template', template 위에서 만든 컴포넌트들을 다 주입한 'page'로 구성된다.
+
+<img src="http://3xyh3sqxv063a8xzo5uk2zn1-wpengine.netdna-ssl.com/wp-content/uploads/2019/10/gif.gif" />
+
+이 디자인 패턴은 컴포넌트를 뷰가 아닌 기능의 단위로 나눈다는 것을 기억하자.
+
+이렇게 컴포넌트들을 구성할 경우 UI 재사용성이 뛰어나다는 장점을 가지지만, 디자인 시스템을 구축하기 위한 초기 비용이 많이 들고
+로직과 상태를 낮은 단위까지 내려줘야 하기 때문에 props drilling issue가 발생할 수 있다.
+
+### 실무에서 사용되는 방식 엿보기
+[리디(RIDI)에서는 아토믹 디자인 패턴을 어떻게 적용](https://www.youtube.com/watch?v=exf4enLbVm4)하는지 참고해보자.
+
+영상을 보면 앞서 소개한 두 가지 패턴을 혼합해서 사용하고 있다.
+
+리디에서는 컴포넌트를 5단계가 아니라 atom, block, pages의 3단계로 나눈다고 한다.
+이렇게 되면 pages부터 시작된 prop이 atom까지 4단계가 아닌 2단계로 끝날 수 있어서 props drilling issue를 예방할 수 있을 것 같다.
+
+그리고 컴포넌트는 각각의 디렉토리를 가지고 `index.tsx`로 최상위 컴포넌트를 반환한다.
+`index.tsx`는 container 컴포넌트의 역할을 하게해서 오직 로직만 남기고 presentational 컴포넌트와 분리한다.
+
+이 영상을 보고 느낀 점은 뭐든 이분법적으로 나누고 맹목적으로 따르면 안된다는 것이다.
+장점과 단점을 정확히 알고 좋다고 생각되는 것을 뽑아 쓸줄 아는 것이 중요한 것 같다.
+
+참조 :
+<https://tecoble.techcourse.co.kr/post/2021-04-26-presentational-and-container/>  
+<https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0>  
+<https://ui.toast.com/weekly-pick/ko_20200213>  
+<https://www.youtube.com/watch?v=exf4enLbVm4>  
