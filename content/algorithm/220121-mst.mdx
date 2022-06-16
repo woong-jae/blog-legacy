@@ -79,7 +79,7 @@ function prim(V, adjList, selected) {
         // 다음에 트리에 추가할 정점 u를 찾는다.
         let u = -1;
         for (let v = 0; v < V; v++) {
-        if (!added[v] && (u === -1 || minWeight[u] > minWeight[v])) u = v;
+            if (!added[v] && (u === -1 || minWeight[u] > minWeight[v])) u = v;
         }
         // (parent[u], u)를 트리에 추가한다.
         if (parent[u] !== u) selected.push({ u, v: parent[u] });

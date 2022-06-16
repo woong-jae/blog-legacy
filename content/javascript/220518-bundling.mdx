@@ -58,8 +58,7 @@ Webpack, Rollup, Parcel 같은 기존 번들러들은 엔트리 JavaScript 파�
 
 ### 더 빠른 서버 구동
 번들러 기반의 도구는 (캐싱한 데이터가 없다면) 애플리케이션 내 모든 소스 코드에 대해 크롤링 및 빌드 작업을 마쳐야 실제 페이지를 제공할 수 있다고 했다.
-
-기존 번들러는 NodeJS 기반으로 돌아가기 때문에 컴포넌트 라이브러리/프레임워크와 같이 몇 백개의 모듈을 갖고 있는 매우 큰 디펜던시에 대한 번들링 과정이 비효율적이었고 많은 시간을 소요했다.
+기존 번들러는 Node.js 기반으로 돌아가기 때문에 컴포넌트 라이브러리/프레임워크와 같이 몇 백개의 모듈을 갖고 있는 매우 큰 디펜던시에 대한 번들링 과정이 비효율적이었고 많은 시간을 소요했다.
 
 이를 극복하기 위해 차세대 번들러는 이 동작을 네이티브 영역에서 돌려 성능을 높였다. **Golang을 기반으로하는 'Esbuild'**, Rust를 기반으로 하는 'SWC'가 대표적이다.
 
@@ -69,6 +68,7 @@ Snowpack와 Vite에서 esbuild를 사용한 사전 번들링을 통해 기존 �
 기존 번들러는 파일 하나가 변경되면 연관된 모든 파일을 다시 빌드하고 다시 번들링 해야해 비효율적이었다.
 
 차세대 번들러는 **Native ESM**을 이용해 문제점을 개선했다. 
+소스코드는 Native ESM을 사용하고, NPM 패키지들은 Esbuild로 사전 번들링을 수행한다.
 
 엥? 이게 무슨 소릴까? 아래 이미지를 보자.
 
@@ -102,4 +102,5 @@ Webpack을 실제 프로젝트에 처음부터 적용해본 적은 없지만, we
 <https://radixweb.com/blog/webpack-vs-vitejs-comparison>  
 <https://engineering.ab180.co/stories/webpack-to-vite>  
 <https://www.youtube.com/watch?v=nBYo2B2XN5s>  
-<https://wormwlrm.github.io/2020/08/12/History-of-JavaScript-Modules-and-Bundlers.html>
+<https://wormwlrm.github.io/2020/08/12/History-of-JavaScript-Modules-and-Bundlers.html>  
+<https://black7375.tistory.com/82>
