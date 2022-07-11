@@ -16,24 +16,9 @@ module.exports = {
         color: "#fff",
       },
       {
-        name: "Gatsby",
-        slug: "gatsby",
-        color: "#BFA2DB",
-      },
-      {
-        name: "Web",
-        slug: "web",
-        color: "#FFF5EB",
-      },
-      {
         name: "JavaScript",
         slug: "javascript",
         color: "rgb(255, 204, 76)",
-      },
-      {
-        name: "React",
-        slug: "react",
-        color: "rgb(96, 218, 251)"
       },
       {
         name: "Algorithm",
@@ -41,15 +26,30 @@ module.exports = {
         color: "#F5FDB0"
       }, 
       {
+        name: "Projects",
+        slug: "pj",
+        color: "#B8DFD8"
+      },
+      {
+        name: "Web",
+        slug: "web",
+        color: "#FFF5EB",
+      },
+      {
+        name: "React",
+        slug: "react",
+        color: "rgb(96, 218, 251)"
+      },
+      {
+        name: "Gatsby",
+        slug: "gatsby",
+        color: "#BFA2DB",
+      },
+      {
         name: "Database",
         slug: "db",
         color: "#C2B8A3"
       },
-      {
-        name: "Machine Learning",
-        slug: "ml",
-        color: "#B8DFD8"
-      }
     ],
   },
   plugins: [

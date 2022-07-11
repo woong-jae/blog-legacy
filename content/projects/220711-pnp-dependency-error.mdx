@@ -1,0 +1,115 @@
+---
+title: "Yarn PnP 의존성 에러 해결기"
+date: "2022-07-11 18:12"
+emoji: "🔌"
+category: "javascript"
+---
+
+## 발단
+프로젝트에서 `react-codemirror`를 사용하려고 의존성을 설치했다.
+
+```sh
+yarn add @codemirror/lang-javascript @uiw/react-codemirror
+```
+
+그리고 예제 코드를 실행하자 아래와 같은 에러가 발생했다.
+
+```sh
+Module not found: Error: @uiw/react-codemirror tried to access @codemirror/view (a peer dependency) but it isn't provided by your application; this makes the require call ambiguous and unsound.
+Required package: @codemirror/view
+```
+
+의존성을 찾지 못한다는 것이다. 그래서 비슷한 에러가 있나 찾아봤는데, 의존성 패키지가 의존하는 패키지를 코드에서 `import` 할 때 해당 패키지를 찾지 못하는 문제가 종종 발생한다는 것을 알게됐다.
+하지만, 이유는 적혀있지 않아서 직접 패키지의 코드를 확인해봤다.
+
+## 과정
+PnP 기능을 사용하고 있었기 때문에 패키지의 코드를 보기 위해서는 먼저 패키지를 `unplug` 해줘야 한다.
+
+```sh
+yarn unplug @uiw/react-codemirror
+```
+
+그러면 `.yarn/cache/unplugged` 폴더에 압축 해제된 패키지를 볼 수 있다. 
+
+무슨 의존성이 문제인지 보기 위해 `package.json` 파일과 에러에서 알려준 파일인 `@uiw/react-codemirror/esm/basicSetup.js`의 `import` 부분을 봤다.
+
+```json
+// ...
+    "peerDependencies": {
+        "@babel/runtime": ">=7.11.0",
+        "@codemirror/theme-one-dark": ">=6.0.0",
+        "@codemirror/view": ">=6.0.0",
+        "codemirror": ">=6.0.0",
+        "react": ">=16.8.0",
+        "react-dom": ">=16.8.0"
+    },
+    "dependencies": {
+        "@babel/runtime": ">=7.11.0",
+        "@codemirror/theme-one-dark": "^6.0.0",
+        "codemirror": "^6.0.0"
+    },
+// ...
+```
+
+```js
+import { lineNumbers, highlightActiveLineGutter, highlightSpecialChars, drawSelection, dropCursor, rectangularSelection, crosshairCursor, highlightActiveLine, keymap } from '@codemirror/view';
+import { EditorState } from '@codemirror/state';
+import { history, defaultKeymap, historyKeymap } from '@codemirror/commands';
+import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
+import { closeBrackets, autocompletion, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
+import { foldGutter, indentOnInput, syntaxHighlighting, defaultHighlightStyle, bracketMatching, foldKeymap } from '@codemirror/language';
+import { lintKeymap } from '@codemirror/lint';
+```
+
+문제점이 보인다! 파일에서는 `@codemirror/state`, `@codemirror/commands`등을 `import`하는데, `package.json`의 의존성에는 명시되어 있지 않다.
+원래는 `codemirror`를 설치함으로써 이 의존성들을 직접 명시하지 않아도 접근할 수 있는데, PnP의 strict mode 때문에 명시하지 않은 의존성에 접근하려 해서 에러가 발생하는 것 같다.
+
+문제의 원인을 찾았으니 이제는 해결법을 찾아야 한다.
+
+처음에는 stack overflow, github issue에서 비슷한 에러를 어떻게 해결했는지 찾아다녔는다.
+여기서 얻은 해결법은 PnP모드를 사용하지 않고 node_modules를 사용하는 방법이였다.
+
+`.yarnrc.yml` 파일을 프로젝트의 root에 생성한 후, 아래 내용을 넣어주면 된다.
+
+```yml
+nodeLinker: node-modules
+```
+
+그러면 PnP 모드를 사용하지 않고 `node_modules`를 사용하게 된다. 하지만, 이러면 yarn berry를 사용하는 이유가 없다고 생각해서 다른 방법을 찾아 해맸다.
+
+결국 원하던 내용은 공식 문서에서 찾을 수 있었다. (귀찮더라도 공식 문서를 제일 먼저 읽어보자...)
+
+### Pnp loose mode
+공식 문서의 loose mode 설명 부분의 첫 문단인데, 지금 문제와 정확히 일치한다.
+
+> Because the hoisting heuristics aren't standardized and predictable, 
+> PnP operating under strict mode will prevent packages from requiring dependencies that are not explicitly listed; 
+> even if other dependencies also depend on it. This may cause issues with some packages.
+
+Loose mode를 사용하면, PnP linker가 node_modules를 사용했을 때 호이스팅 될 패키지들의 리스트를 생성한 후 이 리스트를 기억한다.
+Yarn에서는 이 리스트를 'fallback pool'이라 부른다고 한다.
+
+이제 런타임에 만약 패키지가 명시하지 않은 의존성을 요구한 경우, fallback pool에 그 의존성이 있으면 접근할 수 있게 된다.
+
+PnP strict 모드와 node_modules 링커의 절충안으로 생각할 수 있을 것 같다.
+
+사용방법은 아까와 같이 `.yarnrc.yml`파일을 생성한 후, 아래 내용을 넣어주면 된다.
+
+```yml
+pnpMode: loose
+```
+
+이 방법으로 문제를 해결할 수 있었다.
+
+## 마치며
+문제가 생기면 에러를 냅다 구글에 갈겨버리는 습관이 있는데, 이제는 먼저 공식 문서부터 봐야겠다는 생각이 들었다.
+공식 문서는 너무 장문이라 읽기 싫어지는 건 참아보자...
+
+그리고 Yarn이 굉장히 좋다고 느껴지긴 한데, 쓰기 귀찮은 것 같다.
+
+<br/>
+
+참조:
+* [Yarn Berry 적용 1일 차이 느낀 점](https://velog.io/@johnwi/wil-01-Yarn-Berry#plugnplay-%EB%84%88%EB%AC%B4-%EC%A2%8B%EC%95%84%EB%B3%B4%EC%9D%B4%EB%8A%94%EB%8D%B0-%EC%93%B8-%EC%88%98%EA%B0%80)
+* [How to use Yarn 3 with React Native](https://levelup.gitconnected.com/how-to-use-yarn-3-with-react-native-and-how-to-migrate-c5f108108533)
+* [Plug’n’Play | Yarn - Package Manager](https://yarnpkg.com/features/pnp#pnp-loose-mode)
