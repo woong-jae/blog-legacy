@@ -1,0 +1,117 @@
+---
+title: "[React Router] useParams 테스트하기"
+date: "2022-07-17 22:48"
+emoji: "🌡"
+category: "react"
+---
+
+> React router v6와 testing library를 기준으로 작성됐습니다.
+
+`useParams`는 현재 url에서 `<Route path>`와 일치하는 key/value 쌍을 반환해주는 훅이다.
+공식 문서의 예제는 아래와 같다.
+
+```jsx
+import * as React from 'react';
+import { Routes, Route, useParams } from 'react-router-dom';
+
+function ProfilePage() {
+  // Get the userId param from the URL.
+  let { userId } = useParams();
+  // ...
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="users">
+        <Route path=":userId" element={<ProfilePage />} />
+        <Route path="me" element={...} />
+      </Route>
+    </Routes>
+  );
+}
+```
+
+만약 현재 url이 "/users/1234"이면 `ProfilePage`의 `userId`로 `1234`를 받을 수 있다.
+
+`useParams`는 사용자마다 개인화된 내용을 보여주기 아주 좋은 기능이지만, 이 기능을 사용하는 컴포넌트를 테스팅 할 때는 어떻게 해야할까?
+
+## MemoryRouter
+`MemoryRouter`는 위치를 **내부적으로 저장**하는 라우터다.
+
+`BroswerRouter`와는 다르게, 브라우저의 history stack과 같은 외부적인 요소와 연결되지 않는다.
+그렇기 때문에 `MemoryRouter`는 history stack을 직접 제어해야하는 테스팅같은 상황에 사용하기 최적화 된 라우터다.
+
+대부분의 React router의 테스트도 `MemoryRouter`로 작성됐다고 하니, 우리도 테스팅을 위해 사용해보자.
+
+사용법은 간단하다. `BroswerRouter`를 `MemoryRouter`로 치환하고, prop으로 `initialEntries={[route]}`를 주면 된다.
+
+만약 위의 예시의 `<ProfilePage />`를 테스트한다고 하면 아래와 같이 작성할 수 있을 것이다.
+```tsx
+test("renders correctly", () => {
+  render(
+    <MemoryRouter initialEntries={["/users/1234"]}>
+      <Routes>
+        <Route path="/users/:userId" element={<ProfilePage />} />
+      </Routes>
+    </MemoryRouter>
+  );
+
+  // ...
+})
+```
+
+React router에 의존하는 컴포넌트가 많은 경우 위의 코드를 일일히 작성하는 것은 엄청 불편하다.
+
+우리의 손목 건강을 지켜줄 유틸리티 함수를 아래와 같이 작성할 수 있다.
+
+```tsx
+// renderWithRouterMatch.tsx
+import { render } from "@testing-library/react";
+import { Route, MemoryRouter, Routes } from "react-router-dom";
+
+export function renderWithRouterMatch(
+  ui: JSX.Element,
+  { path = "/", route = "/" } = {}
+) {
+  return {
+    ...render(
+      <MemoryRouter initialEntries={[route]}>
+        <Routes>
+          <Route path={path} element={ui} />
+        </Routes>
+      </MemoryRouter>
+    ),
+  };
+}
+```
+
+이제 테스트 코드를 훨씬 손쉽게 작성할 수 있다.
+
+```tsx
+test("renders correctly", () => {
+  renderWithRouterMatch(
+    <ProfilePage />,
+    {
+      path: "/users/:userId",
+      route: "/users/1234"
+    }
+  );
+
+  //...
+})
+```
+
+## 마치며
+이틀 전에 테스트 코드란 것을 태어나서 처음 작성해봤다.
+서버 모킹에 정신이 팔려서인지... 테스트하려던 컴포넌트가 react router와 의존성이 있는 것을 깜빡하고 하루종일 삽질을 했다.
+그래도 뒤늦게 `useParams` 때문인 것을 확인하고 레퍼런스와 공식 문서로 빠르게 해결할 수 있었다.
+
+서버 모킹도 조만간 정리해서 올려야겠다.
+
+<br/>
+
+참조:
+* [Mocking React Router’s match object in component unit tests](https://medium.com/@aarling/mocking-a-react-router-match-object-in-your-component-tests-fa95904dcc55)
+* [React Router - MemoryRouter](https://reactrouter.com/docs/en/v6/routers/memory-router)  
+* [Testing Library - React Router](https://testing-library.com/docs/example-react-router)
