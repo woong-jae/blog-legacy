@@ -6,6 +6,7 @@ category: "projects"
 ---
 
 ## 기존 구조
+
 `/src/api/index.js` 파일에서 모든 API들을 관리했다. 개별 API들을 컴포넌트에서 끌어다 쓰다보니, 로직이 API를 사용하는 컴포넌트들로 산개됐다. 이런 상황에서 API에 뭔가 변경이 생겼을 때 문제가 발생했다. 변경된 API를 사용하는 컴포넌트를 찾아야하고, 그 컴포넌트에서 로직을 변경해야했다. 뭔가 맞지 않다... 변경이 어려우면 코드를 리팩터링 해야한다는 신호라고 최근 책(Refactoring 2rd edition)에서 읽었다.
 
 그럼 변경하기 쉬운 코드는 뭘까? 검색을 해보다가 [Uncle Bob's clean architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)를 만났다. 관심사의 분리로 소프트웨어를 여러 레이어로 나누는 설계 방식이다. 프레임워크, UI, DB 등으로부터 독립적인 시스템을 만들 수 있다는 소개를 보자마자 "이거다"라는 생각이 들었다.
@@ -19,18 +20,24 @@ category: "projects"
 내가 작성한 코드는 이 규칙을 완전히 무시하고 있었다. 컴포넌트에 로직이 합쳐졌다. UI에 UseCase와 Presenter가 합쳐진 것이다. 서로 강한 의존성을 가지고, 하나가 변경되면 나머지 모두가 영향을 받는다.
 
 ## 리팩터링
+
 나는 클린 아키텍쳐와 여러 레퍼런스를 기준으로 리팩터링을 시작했다.
+
 > **Reference**
-> * [react-with-clean-architecture](https://github.com/falsy/react-with-clean-architecture)  
-> * [타입스크립트 프로젝트를 위한 궁극적인 클린 아키텍처 템플릿](https://velog.io/@lky5697/the-ultimate-clean-architecture-template-for-typescript-projects?utm_source=substack&utm_medium=email#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EB%94%94%EB%A0%89%ED%86%A0%EB%A6%AC-%EB%B0%8F-%EB%A3%A8%ED%8A%B8-%EC%83%9D%EC%84%B1)
+>
+> - [react-with-clean-architecture](https://github.com/falsy/react-with-clean-architecture)
+> - [타입스크립트 프로젝트를 위한 궁극적인 클린 아키텍처 템플릿](https://velog.io/@lky5697/the-ultimate-clean-architecture-template-for-typescript-projects?utm_source=substack&utm_medium=email#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EB%94%94%EB%A0%89%ED%86%A0%EB%A6%AC-%EB%B0%8F-%EB%A3%A8%ED%8A%B8-%EC%83%9D%EC%84%B1)
 
 아래와 같은 역할을 하는 디렉토리를 생성했다.
+
 - `core`: Entities, usecases와 같은 도메인들을 포함한다.
 - `data`: Repositories, presenters와 같은 어뎁터들을 포함한다.
 - `di`: 코어에 데이터를 주입한다.
 
 이 디렉토리 구조에 유저 아이디와 토큰에 관련된 `Auth`를 분리해보겠다.
+
 1. `src/api/index.js`에서 use case로 분리하기
+
 먼저 auth와 관련된 `api`로는 `login`이라는 API가 있었다. 이 API는 `login`이라는 use case로 빼냈고, use case에서 제공할 데이터는 `IAuthEntity`로 정의했다.
 
 그 다음으로는 auth와 관련된 데이터를 사용하는 컴포넌트들을 살펴봤다. 추가적으로 `logout`, `getToken` 유즈 케이스를 발견했다.
@@ -40,96 +47,103 @@ category: "projects"
 ```ts
 // core/entities/interfaces/iAuth.ts
 export interface IAuthEntity {
-	id: string;
-	token: string;
+  id: string;
+  token: string;
 }
 
 // core/useCases/interfaces/iAuth.ts
 export default interface IAuthUseCase {
-	login(code: string): Promise<IAuthEntity>;
-	logout(): void;
-	getToken(): string | null;
+  login(code: string): Promise<IAuthEntity>;
+  logout(): void;
+  getToken(): string | null;
 }
 ```
 
 2. Use case 구현하기
-위에서 정의한 인터페이스를 `core/useCases/Auth.ts`에 구현했다. 구현하면서 auth 정보를 받을 repository가 필요해졌다. 필요한 repository는 인터페이스를 `core/useCases/repository-interfaces`에 정의해 사용했다.
+
+위에서 정의한 인터페이스를 `core/useCases/Auth.ts`에 구현했다. 구현하면서 auth 정보를 받을 repository가 필요해졌다. 필요한 repository의 인터페이스를 `core/useCases/repository-interfaces`에 정의해 사용했다.
 
 ```ts
 // core/useCases/Auth.ts
 export default class AuthUseCase implements IAuthUseCase {
-	constructor(private readonly authRepo: IAuthRepository) {}
+  constructor(private readonly authRepo: IAuthRepository) {}
 
-	getToken(): string | null {
-		return this.authRepo.getToken();
-	}
+  getToken(): string | null {
+    return this.authRepo.getToken();
+  }
 
-	async login(code: string): Promise<IAuthDTO> {
-		return await this.authRepo.login(code);
-	}
+  async login(code: string): Promise<IAuthDTO> {
+    return await this.authRepo.login(code);
+  }
 
-	logout() {
-		this.authRepo.logout();
-	}
+  logout() {
+    this.authRepo.logout();
+  }
 }
 // core/useCases/repository-interfaces
 export default interface IAuthRepository {
-	login(code: string): Promise<IAuthDTO>;
-	logout(): void;
-	getToken(): string | null;
+  login(code: string): Promise<IAuthDTO>;
+  logout(): void;
+  getToken(): string | null;
 }
 ```
 
 Repository interface를 사용하는 이유는 **의존성 규칙을 지키기 위해**서다. 유즈 케이스가 레포지토리를 직접참조하면 의존성 규칙을 위반하게 된다. 유즈케이스가 인터페이스를 참조, 구체적인 `AuthRepository`가 이 인터페이스를 구현하면 의존성을 역전시킬 수 있어 의존성 규칙을 지킬 수 있다.
 
 3. Repository 구현하기
+
 `IAuthRepository`의 세부사항을 `data/repositories/Auth.ts`에 구현했다.
+
 ```ts
 export default class AuthRepository implements IAuthRepository {
-	constructor(private readonly storage: iStorage) {}
-	
-	async login(code: string): Promise<IAutoDTO> {
-		const authDTO = await HTTP.get(`/user/login?code=${code}`).then(
-			({ data }) => new AuthDTO(data)
-		);
-		this.storage.set(authDTO);
-	
-		return authDTO;
-	}
-	
-	logout() {
-		this.storage.remove();
-	}
-	
-	getToken(): string | null {
-		const auth = this.storage.get();
-		return auth ? auth.token : null;
-	}
+  constructor(private readonly storage: iStorage) {}
+
+  async login(code: string): Promise<IAutoDTO> {
+    const authDTO = await HTTP.get(`/user/login?code=${code}`).then(
+      ({ data }) => new AuthDTO(data)
+    );
+    this.storage.set(authDTO);
+
+    return authDTO;
+  }
+
+  logout() {
+    this.storage.remove();
+  }
+
+  getToken(): string | null {
+    const auth = this.storage.get();
+    return auth ? auth.token : null;
+  }
 }
 ```
 
 4. Presenter 구현하기
+
 위에 했던 과정과 비슷하게 Presenter를 구현했다. UI는 presenter로 auth에 접근하게 된다.
+
 ```ts
 export default class AuthPresenter implements IAuthPresenter {
-	constructor(private readonly useCase: IAuthUseCase) {}
+  constructor(private readonly useCase: IAuthUseCase) {}
 
-	async login(code: string): Promise<IAuthEntity> {
-		return await this.useCase.login(code);
-	}
-	
-	logout(): void {
-		this.useCase.logout();
-	}
-	
-	getToken(): string | null {
-		return this.useCase.getToken();
-	}
+  async login(code: string): Promise<IAuthEntity> {
+    return await this.useCase.login(code);
+  }
+
+  logout(): void {
+    this.useCase.logout();
+  }
+
+  getToken(): string | null {
+    return this.useCase.getToken();
+  }
 }
 ```
 
 5. 의존성 주입하기
+
 이제 마지막 단계다. `di/Auth.ts`에서 Presenter에 필요한 모든 의존성을 주입한다. React 컴포넌트는 이제 이 presenter의 인스턴스를 사용한다.
+
 ```ts
 // ...
 const authRepo = new AuthRepository(new TypeStorage<IAuthDTO>("auth", localStorage));
@@ -139,10 +153,10 @@ const Auth = new AuthPresenter(authUseCase);
 export default Auth;
 ```
 
-이렇게 UI로부터 auth를 분리해냄으로써 컴포넌트는 UI에만 신경쓸 수 있고, 도메인은 도메인에만 신경쓸 수 있게 됐다. 
+이렇게 UI로부터 auth를 분리해냄으로써 컴포넌트는 UI에만 신경쓸 수 있고, 도메인은 도메인에만 신경쓸 수 있게 됐다.
 확실히 코드 가독성이 좋아졌다는게 느껴졌다. 이제 컴포넌트에서는 거의 UI에 관한 코드만 남게 됐다.
 
-다음 프로젝트에서는 처음부터 이런 구조로 코드를 작성해보고 싶다. 위에 적은건 auth 하나 뿐이지만, 실제 코드에서는 4~5개 더 빼냈다. 
+다음 프로젝트에서는 처음부터 이런 구조로 코드를 작성해보고 싶다. 위에 적은건 auth 하나 뿐이지만, 실제 코드에서는 4~5개 더 빼냈다.
 아는게 많아야 몸이 덜 고생하는 것 같다. 처음 적용해봐서 뭐가 맞는지 틀린지 모르겠지만 일단은 좋다!
 
 (뭔가 이상하거나 틀린 점이 보인다면 알려주시면 감사하겠습니다 🙌)
