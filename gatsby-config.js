@@ -27,7 +27,7 @@ module.exports = {
       }, 
       {
         name: "Projects",
-        slug: "pj",
+        slug: "projects",
         color: "#B8DFD8"
       },
       {
