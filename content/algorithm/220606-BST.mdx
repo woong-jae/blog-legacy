@@ -6,6 +6,7 @@ category: "algorithm"
 ---
 
 ## 이진탐색트리
+
 이진탐색트리(이하 BST)는 연결 리스트를 개선한 자료구조라고 볼 수 있다.
 BST는 연결 리스트가 자료의 입력, 삭제를 $O(1)$의 시간복잡도, 이진탐색이 자료 탐색을 $O(\log n)$의 시간복잡도로 하는 장점을 모두 취한한다.
 
@@ -19,71 +20,75 @@ BST는 연결 리스트가 자료의 입력, 삭제를 $O(1)$의 시간복잡도
 - 어떤 노드의 서브트리도 BST다.
 
 ### 구현
+
 BST의 핵심 연산은 검색(find), 삽입(insert), 삭제(delete) 세 가지다.
 BST를 구현할 때 사용할 `Node`는 아래와 같다.
 
 ```js
 class Node {
-    constructor(value) {
-        this.value = value;
-        this.left = null;
-        this.right = null;
-    }
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+  }
 }
 ```
 
 #### 검색
+
 BST에서 `x` 값을 가진 노드를 검색하고자 할 때, 트리에 해당 노드가 존재하면 해당 노드를 반환하고, 존재하지 않으면 `null`을 반환한다.
 먼저 검색하고자 하는 값을 루트와 비교하고 일치하면 루트 노드를 반환한다.
 불일치하면 검색하고자 하는 값이 루트의 값보다 크면 오른쪽, 작으면 왼쪽 서브트리에서 재귀적으로 검색한다.
 
 ```js
-class BinaryTree() {
-    constructor() {
-        this.root = null;
-    }
-    find(value) {
-        const helper = (root, value) => {
-            if(!root) return null;
-            if(root.value === value) return root;
-            const next = value < root.value ? "left" : "right";
-            return helper(root[next], value);
-        }
-        return helper(this.root, value);
-    }
+class BinarySearchTree {
+  constructor() {
+    this.root = null;
+  }
+  find(value) {
+    const helper = (root, value) => {
+      if (!root) return null;
+      if (root.value === value) return root;
+      const next = value < root.value ? "left" : "right";
+      return helper(root[next], value);
+    };
+    return helper(this.root, value);
+  }
 }
 ```
 
 검색하는 과정은 트리의 높이에 선형적인 시간복잡도, $O(h)$를 가진다.
 
 #### 삽입
+
 `x` 값을 넣고 싶을 때, 삽입하기 전에 먼저 `x`에 대해 검색을 수행한다.
 검색한 후 일치하는 노드가 없으면 마지막 노드에서 `x`와 노드의 값을 비교해서 왼쪽이나 오른쪽에 새로운 노드를 삽입하면 된다.
 
 새로운 노드의 삽입은 무조건 리프 노드에서 한다. 트리의 중간에 새 데이터를 삽입하면 서브트리의 속성이 깨질 수 있기 때문이다.
 
 ```js
-class BinaryTree() {
-    // ...
-    insert(value) {
-        if(!this.root) {
-            this.root = new Node(value);
-            return;
-        }
-        const helper = (root, value) => {
-            if(value === root.value) return;
-            const next = value < root.value ? "left" : "right";
-            if(root[next]) helper(root[next], value);
-            else root[next] = new Node(value);
-        }
-        helper(this.root, value);
+class BinarySearchTree {
+  // ...
+  insert(value) {
+    if (!this.root) {
+      this.root = new Node(value);
+      return;
     }
+    const helper = (root, value) => {
+      if (value === root.value) return;
+      const next = value < root.value ? "left" : "right";
+      if (root[next]) helper(root[next], value);
+      else root[next] = new Node(value);
+    };
+    helper(this.root, value);
+  }
 }
 ```
 
 무조건 리프 노드에 삽입하기 때문에 트리의 높이에 선형적인 시간복잡도, $O(h)$를 가진다.
 
 #### 삭제
+
 삭제 연산은 탐색과 삽입보다 복잡하다. 삭제 결과로 BST의 속성이 깨질 수 있기 때문이다.
 가능한 세 가지 경우의 수를 한 번 살펴보자.
 
@@ -104,47 +109,50 @@ class BinaryTree() {
 오른쪽 서브트리에서 가장 작은 값을 올리면 오른쪽 서브트리의 모든 노드들이 현 노드의 값보다 크기 때문에 속성을 만족하게 된다.
 
 ```js
-class BinaryTree() {
-    // ...
-    delete(value) { // 왼쪽 서브트리의 가장 큰 값을 찾는 버전
-        let cur = this.root, prev = null, path = "";
-        while(cur) {
-            if(cur.value === value) break;
-            const next = value < cur.value ? "left" : "right";
-            path = next;
-            prev = cur;
-            cur = cur[next];
-        }
-        if(!cur) return;
-        
-        if(!cur.left && !cur.right) {
-            // 루트인 경우
-            if(!prev) this.root = null;
-            else prev[path] = null;
-        }
-        else if(!cur.left || !cur.right) {
-            const next = cur.left ? "left" : "right";
-            // 루트인 경우
-            if(!prev) this.root = this.root[next];
-            else prev[path] = cur[next];
-        }
-        else {
-            let largest = cur.left, largestParent = cur;
-            while(largest.right) {
-                largestParent = largest;
-                largest = largest.right;
-            }
-            cur.value = largest.value;
-            if(cur === largestParent) cur.left = null;
-            else largestParent.right = largest.left;
-        }
+class BinarySearchTree {
+  // ...
+  delete(value) { // 왼쪽 서브트리의 가장 큰 값을 찾는 버전
+    let cur = this.root,
+      prev = null,
+      path = "";
+    while (cur) {
+      if (cur.value === value) break;
+      const next = value < cur.value ? "left" : "right";
+      path = next;
+      prev = cur;
+      cur = cur[next];
     }
+    if (cur === null) return;
+
+    if (!cur.left && !cur.right) { // 자식이 없는 경우
+      if (!prev) this.root = null;
+      // 루트인 경우
+      else prev[path] = null;
+    } else if (cur.left && cur.right) { // 자식이 둘인 경우
+      let largest = cur.left,
+        largestParent = cur;
+      while (largest.right) {
+        largestParent = largest;
+        largest = largest.right;
+      }
+      cur.value = largest.value;
+
+      if (cur === largestParent) cur.left = largest.left;
+      else largestParent.right = largest.left;
+    } else { // 자식이 하나인 경우
+      const next = cur.left ? "left" : "right";
+      if (!prev) this.root = cur[next];
+      // 루트인 경우
+      else prev[path] = cur[next];
+    }
+  }
 }
 ```
 
 삭제도 삭제 대상을 찾고, 대상과 바꿀 노드를 찾는데 트리의 높이에 선형적인 시간복잡도, $O(h)$를 가진다.
 
 ### BST의 한계
+
 위에서 봤듯이 탐색, 삽입, 삭제 모두 트리의 높이에 의해 수행시간이 결정된다.
 따라서 BST가 왼쪽이나 오른쪽으로 편향(skewed)되는 경우 노드 수는 적은데 노드의 수 `n`에 대해 $O(n)$의 시간복잡도를 가질 수도 있다.
 이럴 경우 연결 리스트와 다를바 없게 된다.
@@ -152,6 +160,7 @@ class BinaryTree() {
 이 문제를 개선하기 위해 트리 전체의 균형을 맞추는 BST인 **AVL 트리**와 **red-black 트리**가 있다.
 
 ## AVL 트리
+
 AVL 트리는 자가균형 이진탐색트리다.
 AVL 트리에서 **두 자식 서브트리의 높이는 항상 최대 1만큼 차이**난다.
 
@@ -159,9 +168,10 @@ AVL 트리에서 **두 자식 서브트리의 높이는 항상 최대 1만큼 �
 
 AVL 트리는 BST의 모든 성질을 이어받고, **높이 균형 성질(height-balanced property)**을 만족해야한다.
 
-높이 균형 성질은 트리의 임의의 노드 `v`에 대해 `v`의 자식 서브트리의 높이 차이가 최대 1인 성질이다. 
+높이 균형 성질은 트리의 임의의 노드 `v`에 대해 `v`의 자식 서브트리의 높이 차이가 최대 1인 성질이다.
 
 ### 동작
+
 BST처럼 삽입/삭제하면 높이 균형 성질을 만족하지 못하기 때문에 노드를 **삽입/삭제할 때마다 회전**을 통해 트리를 재구성해 높이 균형 성질을 유지한다.
 
 균형의 상태를 balance factor(BF)로 나타낼 수 있다.
@@ -173,43 +183,72 @@ $$
 모든 노드의 BF가 `-1, 0, 1`인 경우는 균형인 상태이고, 아닌 경우 불균형이 발생한 것이고 회전이 필요하다.
 
 삽입 삭제시 노드들의 배열에 따라 4가지 불균형이 발생할 수 있고 각 상황마다 회전의 방향을 다르게 해줘서 트리의 균형을 맞춘다.
+
 #### 회전
+
 회전에는 세 노드 `x, y, z`가 필요하다. 이때 `z`는 불군형한 노드고 `y`는 `z`의 자식 중 가장 큰 높이를 갖는 노드, `x`는 `y`의 자식 중 가장 큰 높이를 갖는 노드다.
 쉽게 말해 `x`의 부모는 `y`, `y`의 부모는 `z`인 관계다.
 
 우회전을 하는 경우에는 `y`의 오른쪽 자식 노드를 `z`로 변경하고, `z`의 왼쪽 자식 노드를 `y`의 오른쪽 서브트리로 변경한다.
 
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FwxXjj%2Fbtro6alLimV%2Fo7oeM9EtG3PDAfNd7Nnlqk%2Fimg.png" width="400px" />
+<img
+  src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FwxXjj%2Fbtro6alLimV%2Fo7oeM9EtG3PDAfNd7Nnlqk%2Fimg.png"
+  width="400px"
+/>
 
 좌회전은 반대로 `y`의 왼쪽 자식 노드를 `z`로 변경하고, `z`의 오른쪽 자식 노드를 `y`의 왼쪽 서브트리로 변경하며 된다.
 
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbvi2dr%2FbtrpaIoxOIj%2FvbPMbWybCbhmgCqkwLYFg0%2Fimg.png" width="400px" />
+<img
+  src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbvi2dr%2FbtrpaIoxOIj%2FvbPMbWybCbhmgCqkwLYFg0%2Fimg.png"
+  width="400px"
+/>
 
 이 회전을 바탕으로 각 불균형 상태를 해결해보자.
+
 #### LL
+
 `z`의 **왼쪽 자식노드가 `y`, `y`의 왼쪽 자식 노드가 `x`**인 경우 우회전을 통해 균형을 맞춘다.
 
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbaSn1R%2FbtrpiIt2dht%2FY3kiKmhWBmyWhPzXlWinzK%2Fimg.png" width="400px" />
+<img
+  src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbaSn1R%2FbtrpiIt2dht%2FY3kiKmhWBmyWhPzXlWinzK%2Fimg.png"
+  width="400px"
+/>
 
 #### RR
+
 `z`의 **오른쪽 자식노드가 `y`, `y`의 오른쪽 자식 노드가 `x`**인 경우 좌회전을 통해 균형을 맞춘다.
 
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbaSn1R%2FbtrpiIt2dht%2FY3kiKmhWBmyWhPzXlWinzK%2Fimg.png" width="400px" />
+<img
+  src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbaSn1R%2FbtrpiIt2dht%2FY3kiKmhWBmyWhPzXlWinzK%2Fimg.png"
+  width="400px"
+/>
 
 #### LR
+
 `z`의 **왼쪽 자식노드가 `y`, `y`의 오른쪽 자식 노드가 `x`**인 경우 `y`에서 좌회전, `z`에서 우회전 두 번의 회전을 통해 균형을 맞춘다.
 
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FN49KJ%2FbtrpiuWMW3t%2FiyKeW0PbnWYQRuyciwGQd1%2Fimg.png" width="400px" />
+<img
+  src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FN49KJ%2FbtrpiuWMW3t%2FiyKeW0PbnWYQRuyciwGQd1%2Fimg.png"
+  width="400px"
+/>
 
 #### RL
+
 `z`의 **오른쪽 자식노드가 `y`, `y`의 왼쪽 자식 노드가 `x`**인 경우 `y`에서 우회전, `z`에서 좌회전 두 번의 회전을 통해 균형을 맞춘다.
 
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbT4BgF%2FbtrpaH4eyAO%2FUk8nJOYUCgNoIeKfoUAhN1%2Fimg.png" width="400px" />
+<img
+  src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbT4BgF%2FbtrpaH4eyAO%2FUk8nJOYUCgNoIeKfoUAhN1%2Fimg.png"
+  width="400px"
+/>
 
 ## Red-black Tree
+
 레드-블랙 트리도 자가균형 이진탐색트리다.
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Red-black_tree_example.svg/1000px-Red-black_tree_example.svg.png" width="400px" />
+<img
+  src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Red-black_tree_example.svg/1000px-Red-black_tree_example.svg.png"
+  width="400px"
+/>
 
 레드-블랙 트리는 다음 성질들을 만족한다.
 
@@ -221,6 +260,7 @@ $$
 이 조건 덕분에 레드-블랙 트리의 높이는 $\log n$이 될 수 있다.
 
 ### 삽입
+
 레드-블랙 트리에서 삽입되는 새로운 노드는 항상 빨간색이다. 그렇기 떄문에 '빨강 노드의 자식은 검정'이라는 성질이 위배될 수 있다.
 
 이때 레드-블랙 트리는 두 가지 전략을 활용해 문제를 해결한다.
@@ -230,16 +270,23 @@ $$
 - 삼촌노드가 **검은색이라면 'restructuring'**을 수행하고
 - 삼촌노드가 **빨간색이라면 'recoloring'**을 수행한다.
 
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbYG3yV%2FbtrpoxGRp6g%2FfBAd1VvrqdWy6QRRSKTX3k%2Fimg.png" width="400px" />
+<img
+  src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbYG3yV%2FbtrpoxGRp6g%2FfBAd1VvrqdWy6QRRSKTX3k%2Fimg.png"
+  width="400px"
+/>
 
 #### Restructuring
+
 Restructuring은 다음 과정을 거친다.
 
 1. 새로운 노드, 부모 노드, 조상 노드를 오름차순으로 정렬한다.
 2. 셋 중 **중간 값을 부모**로 만들고 나머지 둘을 자식으로 만든다.
 3. 새로 부모가 된 노드를 검은색으로 만들고 나머지 자식들을 빨간색으로 만든다.
 
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FMASjd%2Fbtrpq6WhqWJ%2F6Vg1qcMarQEqQDk1oKGi51%2Fimg.png" width="400px" />
+<img
+  src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FMASjd%2Fbtrpq6WhqWJ%2F6Vg1qcMarQEqQDk1oKGi51%2Fimg.png"
+  width="400px"
+/>
 
 Restructuring은 다른 서브트리에 영향을 끼치지 않기 때문에 한 번의 연산으로 끝난다.
 왜냐하면 문제를 해결한 후 검은색 노드의 개수에 변화가 없기 때문이다.
@@ -247,13 +294,17 @@ Restructuring은 다른 서브트리에 영향을 끼치지 않기 때문에 한
 Restructuring 연산 자체는 상수 시간에 끝나지만 어떤 노드를 삽입한 뒤 일어나기 때문에 총 수행시간은 $O(\log n)$이다.
 
 #### Recoloring
+
 Recoloring은 아래와 같은 과정을 거친다.
 
 1. 새로운 노드의 **부모와 삼촌을 검은색으로 바꾸고 조상을 빨간색**으로 바꾼다.
-    1. 조상이 루트 노드라면 검은색으로 바꾼다.
-    2. 조상을 빨간색으로 바꿨을 때 또다시 double red가 발생하면 또다시 restructuring 이나 recoloring을 수행해 문제가 없을 때까지 반복한다.
+   1. 조상이 루트 노드라면 검은색으로 바꾼다.
+   2. 조상을 빨간색으로 바꿨을 때 또다시 double red가 발생하면 또다시 restructuring 이나 recoloring을 수행해 문제가 없을 때까지 반복한다.
 
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fnkkuw%2Fbtrpjvpzukc%2FZprBjMgiPVQzBJxPgaZiU1%2Fimg.png" width="400px" />
+<img
+  src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fnkkuw%2Fbtrpjvpzukc%2FZprBjMgiPVQzBJxPgaZiU1%2Fimg.png"
+  width="400px"
+/>
 
 Recoloring은 조상을 빨간색으로 바꾸기 때문에 double red가 트리의 상위로 전파될 수 있다.
 Recoloring도 연산 자체는 상수 시간에 끝나지만 전파될 수 있기 때문에 최악의 경우 $O(\log n)$의 시간복잡도를 가지게 된다.
@@ -261,13 +312,14 @@ Recoloring도 연산 자체는 상수 시간에 끝나지만 전파될 수 있�
 따라서 삽입하는 경우 refactoring을 하든, recoloring을 하든 $O(\log n)$의 시간복잡도를 가지게 된다.
 
 ### 장점
+
 레드-블랙 트리는 최악의 경우에 AVL트리보다 연산을 더 적게한다.
 AVL 트리는 레드-블랙 트리보다 더 엄격하게 균형잡혀있기 때문에, 삽입/삭제 시 더 많은 회전연산을 하게 된다.
 따라서 보통 자가균형 이지탐색트리가 필요한 경우 보통 레드-블랙 트리를 사용한다.
 
 또한 언어 자체에서 연관배열을 지원하는 경우 대부분 레드-블랙 트리로 구현된다.
 
-<br/>
+<br />
 
 참조:  
 <https://ratsgo.github.io/data%20structure&algorithm/2017/10/22/bst/>  
@@ -275,4 +327,4 @@ AVL 트리는 레드-블랙 트리보다 더 엄격하게 균형잡혀있기 때
 <https://ko.wikipedia.org/wiki/AVL_%ED%8A%B8%EB%A6%AC>  
 <https://yoongrammer.tistory.com/72>  
 <https://code-lab1.tistory.com>
-<https://zeddios.tistory.com/237>  
+<https://zeddios.tistory.com/237>
