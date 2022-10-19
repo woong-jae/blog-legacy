@@ -5,16 +5,18 @@ modified: "2022-04-08"
 emoji: "💀"
 category: "javascript"
 ---
+
 ## 발단
+
 새로운 프로젝트가 '웹 페이지'보다는 '어플리케이션'에 가까웠으면 했기에 SPA로 개발되면 좋을 것 같다고 생각했다.
-이전에 React를 사용해봤었기 때문에 또 React를 사용하면 수월하게 개발할 수 있었다.
-하지만, 프로젝트 크기가 작아서 React로 개발해봤자 뭔가 새로 배울게 없을 것 같았다.
+이전에 React를 사용해봤었기 때문에 또 React를 사용하면 수월하게 개발할 수 있었지만, 프로젝트 크기가 작아서 React로 개발해봤자 뭔가 새로 배울게 없을 것 같았다.
 
 그래서 "프로젝트 규모가 작으니까 vanilla javascript로 SPA를 구현해보면 재밌지 않을까?"라고 생각했고, 생각을 행동으로 옮겼다.
 
 그리고 고통은 시작됐다.
 
 ### 필요한 것들
+
 모방은 창조의 어머니다. 제일 처음으로 제일 인기있는 SPA 프레임워크인 React와 Vue의 공통적인 특징을 톺아보았다.
 
 - **컴포넌트**
@@ -34,33 +36,33 @@ f(state) = view
 - **Virtual DOM**
 
 Virtual DOM을 통해 실제 DOM 변화를 최소화한다.
-Virtual DOM은 뷰에 변화가 있다면, 그 변화가 실제 DOM에 적용되기 전에 Virtual DOM에 적용시키고 최종 결과만 실제 DOM에 전달한다. 
+Virtual DOM은 뷰에 변화가 있다면, 그 변화가 실제 DOM에 적용되기 전에 Virtual DOM에 적용시키고 최종 결과만 실제 DOM에 전달한다.
 만약 20개의 변화가 있다면 Virtual DOM은 변화된 부분만 가려내어 실제 DOM에 전달하고 실제 DOM은 그 변화를 1회로 인식하여 단 한 번의 렌더링 과정만 거치게 된다.
 
 React와 Vue 둘 다 UI를 상태를 가지는 개별 컴포넌트로 분리해 개발하고 virtual DOM으로 최적화한다.
 일단 최적화는 나중에 적용하기로 하고 제일 핵심인 컴포넌트를 먼저 개발하게 됐다.
 
 ## 전체적인 구조 잡기
+
 프로젝트의 구조를 잡기 위해 일단 제일 친숙한 React의 가장 기본적인 구조를 봤다.
 
 React 앱의 최상단인 `index.js`에서 `ReactDOM.render`로 root에 `App.js`를 렌더해준다.
 이때 root는 html body의 유일한 요소다. 즉, 이 유일한 요소 안에 `App.js`를 그려넣는 것이다.
 
 ```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from "./components/App"
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./components/App";
 
-ReactDOM.render(
-  <App></App>,
-  document.getElementById('root')
-);
+ReactDOM.render(<App></App>, document.getElementById("root"));
 ```
 
 이를 참고해서 나도 HTML의 body에 `id=root`인 `div` 요소 하나만을 두고, 컴포넌트를 달아주기 위해 `index.js`를 만들어줬다.
 
 ## 컴포넌트 만들기
+
 ### 웹 컴포넌트를 사용해볼까?
+
 자바스크립트를 공부하면서 '웹 컴포넌트'를 접했었다. 웹 컴포넌트에 대한 자세한 내용은 [여기](https://woong-jae.com/javascript/220222-web-component)서 확인하자.
 
 "브라우저 내장 기능이 제공하는 웹 컴포넌트를 사용하면 되지 않을까?"라고 생각해서 바로 실천으로 옮겼다.
@@ -75,6 +77,7 @@ ReactDOM.render(
 "이건 프레임워크를 대체하는 것이 아니라 컴포넌트 라이브러리를 만들 때 사용하는 것"이라는 결론을 내리고 다른 방법을 찾았다.
 
 ### Vanilla Javascript 컴포넌트
+
 남은 방법은 직접 만드는 것 뿐이다. 다시 한 번 React를 살펴보자.
 
 React는 클래스형 컴포넌트와 함수형 컴포넌트가 있는데, 나는 클래스형 컴포넌트를 참고했다.
@@ -85,6 +88,7 @@ React는 클래스형 컴포넌트와 함수형 컴포넌트가 있는데, 나�
 React 공식문서의 [React.Component](https://ko.reactjs.org/docs/react-component.html) 부분을 보자. 특히 **컴포넌트의 생명주기**에 집중해보자.
 
 #### 생성
+
 React의 컴포넌트는 생성될 때 메서드들이 아래 순서대로 호출된다.
 
 1. `constructor`: state를 초기화 하거나 메서드를 바인딩 할 때 사용된다.
@@ -95,9 +99,9 @@ React의 컴포넌트는 생성될 때 메서드들이 아래 순서대로 호�
 
 ```js
 class Component {
-    constructor() {}
-    render() {}
-    mounted() {}
+  constructor() {}
+  render() {}
+  mounted() {}
 }
 ```
 
@@ -109,24 +113,30 @@ class Component {
 
 그리고 React 컴포넌트의 생성 때 생명주기와 비슷하게 `constructor` 호출 후 안에서 `render`, `mounted`가 순서대로 호출되게 했다.
 하지만 이러면 `constructor`에서 `state`를 초기화 하거나 메서드를 바인딩하기 어려워진다.
-따라서 원래 `constructor`의 역할을 떼어내서 `setup`이라는 메서드를 새로 만들어주자.
+`setup`이라는 메서드를 새로 만들어 여기서 `state`를 초기화할 수 있도록 했다.
+
+`mounted`에서 리스너를 등록하거나 자식 컴포넌트를 렌더링하는 등의 작업을 해야한다.
 
 ```js
 class Component {
-    constructor(target) {
-        this.target = target;
-        this.setup();
-        this.render();
-        this.mounted();
-    }
-    setup() {}
-    render() { this.target.innerHTML = ``; }
-    mounted() {}
+  constructor(target) {
+    this.target = target;
+    this.setup();
+    this.render();
+    this.mounted();
+  }
+  setup() {}
+  render() {
+    this.target.innerHTML = ``;
+  }
+  mounted() {}
 }
 ```
 
 #### 변경
+
 컴포넌트의 상태가 변했을 때는 메서드들이 아래 순서대로 호출된다.
+
 1. `setState`: state를 변경한다.
 2. `render`
 3. `componentDidUpdated`
@@ -135,17 +145,19 @@ class Component {
 
 ```js
 class Component {
-    constructor(target) {
-        this.target = target;
-        this.setup();
-        this.render();
-        this.mounted();
-    }
-    setup() {}
-    render() { this.target.innerHTML = ``; }
-    mounted() {}
-    setState() {}
-    updated() {}
+  constructor(target) {
+    this.target = target;
+    this.setup();
+    this.render();
+    this.mounted();
+  }
+  setup() {}
+  render() {
+    this.target.innerHTML = ``;
+  }
+  mounted() {}
+  setState() {}
+  updated() {}
 }
 ```
 
@@ -156,70 +168,142 @@ class Component {
 
 ```js
 class Component {
-    constructor(target) {
-        this.target = target;
-        this.prop = prop;
-        this.setup();
-        this.render();
-        this.mounted();
-    }
-    setup() {}
-    template() { return ``; }
-    render() { this.target.innerHTML = this.template(); }
-    mounted() {}
-    setState(newState) {
-        this.state = { ...this.state, ...newState };
-        this.render();
-        this.updated();
-    }
-    updated() {}
+  constructor(target, props = {}) {
+    this.target = target;
+    this.props = props;
+    this.setup();
+    this.render();
+    this.mounted();
+  }
+  setup() {}
+  template() {
+    return ``;
+  }
+  render() {
+    this.target.innerHTML = this.template();
+  }
+  mounted() {}
+  setState(newState) {
+    this.state = { ...this.state, ...newState };
+    this.render();
+    this.mounted();
+    this.updated();
+  }
+  updated() {}
 }
 ```
 
-이 정도면 어느 정도 내가 원하던 컴포넌트를 구현한 것 같다.
+#### 문제점
 
-## 프로젝트에 적용
-프로젝트에 적용된 모습은 아래와 같다.
-
-```bash
-.
-├─ index.html
-└─ src
-    ├─ index.js
-    ├─ App.js
-    └─ core
-        └─ Component.js
-```
-
-- index.html
-```html
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>title</title>
-</head>
-<body>
-    <div id="root"></div>
-    <script type="module" src="./index.js"></script>
-</body>
-</html>
-```
-
-- index.js
 ```js
-import App from "./App.js";
+class Input extends Component {
+  template() {
+    return `
+      <div>
+        <input class="input" value="${this.state.typed}" />
+        <div>Typed: ${this.state.typed}<div/>
+        <div>Updated: ${this.state.updated}<div/>
+      </div>
+    `;
+  }
+  setup() {
+    this.state = { typed: "", updated: false };
+  }
+  mounted() {
+    document.querySelector(".input").addEventListener("change", (event) => {
+      this.setState({ typed: event.target.value });
+    });
+  }
+  updated() {
+    this.setState({ updated: true });
+  }
+}
 
-new App(document.getElementById("root")); 
+new Input(document.getElementById("app"));
 ```
 
-<br/>
+`mounted`와 `updated`에서 동시에 `setState`를 하는 경우 "setState -> render -> mounted -> updated -> setState ..."의 무한반복이 시작된다.
+이를 방지하기 위해 `setState`에서 `newState`의 값이 기존 값과 같다면 리렌더링하지 않도록 했다.
 
-참조:  
-[Vanilla Javascript로 웹 컴포넌트 만들기](https://junilhwang.github.io/TIL/Javascript/Design/Vanilla-JS-Component/#_1-%E1%84%8F%E1%85%A5%E1%86%B7%E1%84%91%E1%85%A9%E1%84%82%E1%85%A5%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%AA-%E1%84%89%E1%85%A1%E1%86%BC%E1%84%90%E1%85%A2%E1%84%80%E1%85%AA%E1%86%AB%E1%84%85%E1%85%B5)  
-<https://library.gabia.com/contents/8284/>  
-<https://ko.reactjs.org/>  
-<https://kr.vuejs.org/>  
+```js
+setState(newState) {
+  let needRerender = false;
+  Object.keys(newState).forEach((key) => {
+    if (this.state[key] === newState[key]) return;
+    needRerender = true;
+  });
 
+  if (!needRerender) return;
+  this.state = { ...this.state, ...newState };
+  this.render();
+  this.mounted();
+  this.updated();
+}
+```
+
+### 사용예시
+
+```js
+class InputMirror extends Component {
+  setup() {
+    this.state = { typed: "" };
+    this.handleChange = (value) => {
+      this.setState({ typed: value });
+    };
+  }
+  template() {
+    return `
+      <div>
+        <div class="input-container"></div>
+        <div class="mirror-container"></div>
+      </div>
+    `;
+  }
+  mounted() {
+    new Input(document.querySelector(".input-container"), {
+      typed: this.state.typed,
+      handleChange: this.handleChange,
+    });
+    new Mirror(document.querySelector(".mirror-container"), {
+      typed: this.state.typed,
+    });
+  }
+}
+
+class Input extends Component {
+  template() {
+    return `
+      <div>
+        <input class="input" value="${this.props.typed}" />
+      </div>
+    `;
+  }
+  mounted() {
+    document.querySelector(".input").addEventListener("change", (event) => {
+      this.props.handleChange(event.target.value);
+    });
+  }
+}
+
+class Mirror extends Component {
+  template() {
+    return `<p>Typed: ${this.props.typed}</p>`;
+  }
+}
+
+const app = document.getElementById("app");
+new InputMirror(app);
+```
+
+## 마치며
+
+정말 간단하게 만든 컴포넌트기 때문에 어플리케이션이 커지면 다양한 문제가 발생할 수 있을 것 같다.
+특히 리렌더링 과정이 엄청나게 비효율적이다.
+하지만, 만들 어플리케이션이 간단하기 때문에 지금은 이 정도로 충분하다고 생각된다.
+
+## 참조
+
+- [Vanilla Javascript로 웹 컴포넌트 만들기](https://junilhwang.github.io/TIL/Javascript/Design/Vanilla-JS-Component/#_1-%E1%84%8F%E1%85%A5%E1%86%B7%E1%84%91%E1%85%A9%E1%84%82%E1%85%A5%E1%86%AB%E1%84%90%E1%85%B3%E1%84%8B%E1%85%AA-%E1%84%89%E1%85%A1%E1%86%BC%E1%84%90%E1%85%A2%E1%84%80%E1%85%AA%E1%86%AB%E1%84%85%E1%85%B5)
+- <https://library.gabia.com/contents/8284/>
+- <https://ko.reactjs.org/>
+- <https://kr.vuejs.org/>
