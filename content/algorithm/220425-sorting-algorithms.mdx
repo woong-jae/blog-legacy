@@ -5,7 +5,9 @@ modified: "2022-05-04"
 emoji: "🍦"
 category: "algorithm"
 ---
+
 ## Bubble Sort(거품 정렬)
+
 거품 정렬은 **인접한 원소끼리 비교하고, 원소가 잘못된 순서라면 자리를 교환**해 정렬하는 알고리즘이다.
 
 비교를 1회전 진행하면 순서가 가장 뒤인 원소가 맨 뒤로 이동하기 때문에 다음 회전부터는 뒤로 이동시킨 원소를 제외시킨다.
@@ -14,24 +16,26 @@ category: "algorithm"
 <img src="https://camo.githubusercontent.com/34e1e2a85f90e3d7c005ada9e1c7a5f57a7eb9a4d519fb369b276a0dd7f5aec9/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f632f63382f427562626c652d736f72742d6578616d706c652d33303070782e676966" />
 
 ### 구현
+
 ```js
-function bubbleSort(arr) { // ascending order
-    for(let iter = 0; iter < arr.length - 1; iter++) {
-        for(let index = 0; index < arr.length - 1 - iter; index++) {
-            if(arr[index] > arr[index + 1]) {
-                [arr[index], arr[index + 1]] = [arr[index + 1], arr[index]];
-            }
-        }
+function bubbleSort(arr) {
+  // ascending order
+  for (let iter = 0; iter < arr.length - 1; iter++) {
+    for (let index = 0; index < arr.length - 1 - iter; index++) {
+      if (arr[index] > arr[index + 1]) {
+        [arr[index], arr[index + 1]] = [arr[index + 1], arr[index]];
+      }
     }
-    return arr;
+  }
+  return arr;
 }
 ```
 
 ### 성능
 
-|Name|Best|Average|Worst|Stable|In-place|
-|---|---|---|---|---|---|
-|Bubble Sort|$O(N^2)$|$O(N^2)$|$O(N^2)$|Yes|Yes|
+| Name        | Best     | Average  | Worst    | Stable | In-place |
+| ----------- | -------- | -------- | -------- | ------ | -------- |
+| Bubble Sort | $O(N^2)$ | $O(N^2)$ | $O(N^2)$ | Yes    | Yes      |
 
 Best case 성능을 개선하기 위해서는 이번 회전에서 교환이 발생했는지 안했는지 검사한 후,
 교환이 한 번도 발생하지 않았다면 바로 정렬을 끝내면 된다. 이렇게 되면 best case는 $O(N)$이 된다.
@@ -41,12 +45,14 @@ Best case 성능을 개선하기 위해서는 이번 회전에서 교환이 발�
 > **Stable?** 정렬했을 때 중복된 값들의 순서가 변하지 않음을 의미한다.
 
 ### 장단점
+
 거품 정렬은 구현이 매우 간단하다는 장점 외에는 좋은 점이 하나도 없다.
 
 알고리즘을 최적화하지 않는다면 best, average, worst case가 모두 $O(N^2)$의 시간복잡도를 갖는 비효울적인 알고리즘이다.
 또한 원소가 자기 자리를 찾아가기 위해 굉장히 많은 교환 연산이 필요하다.
 
 ## Selection Sort(선택 정렬)
+
 선택 정렬은 **해당 순서에 넣을 원소를 찾아 넣어 정렬**하는 알고리즘이다.
 
 맨 처음부터 시작해서 배열의 가장 앞 순서에 와야할 원소를 찾아 맨 앞과 교체하고, 그 다음부터 다시 시작해서 정렬이 완료될 때까지 반복한다.
@@ -54,28 +60,31 @@ Best case 성능을 개선하기 위해서는 이번 회전에서 교환이 발�
 <img src="https://camo.githubusercontent.com/fe834a61b6e60d9e46d124f8c5b90e73f7b44db1442371932aa069257654493a/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f392f39342f53656c656374696f6e2d536f72742d416e696d6174696f6e2e676966" />
 
 ### 구현
+
 ```js
-function selectionSort(arr) { // ascending order
-    for(let target = 0; target < arr.length - 1; target++) {
-        let minIndex = target;
-        for(let index = target + 1; index < arr.length; index++) {
-            if(arr[minIndex] > arr[index]) minIndex = index;
-        }
-        [arr[target], arr[minIndex]] = [arr[minIndex], arr[target]];
+function selectionSort(arr) {
+  // ascending order
+  for (let target = 0; target < arr.length - 1; target++) {
+    let minIndex = target;
+    for (let index = target + 1; index < arr.length; index++) {
+      if (arr[minIndex] > arr[index]) minIndex = index;
     }
-    return arr;
+    [arr[target], arr[minIndex]] = [arr[minIndex], arr[target]];
+  }
+  return arr;
 }
 ```
 
 ### 성능
 
-|Name|Best|Average|Worst|Stable|In-place|
-|---|---|---|---|---|---|
-|Selection Sort|$O(N^2)$|$O(N^2)$|$O(N^2)$|No|Yes|
+| Name           | Best     | Average  | Worst    | Stable | In-place |
+| -------------- | -------- | -------- | -------- | ------ | -------- |
+| Selection Sort | $O(N^2)$ | $O(N^2)$ | $O(N^2)$ | No     | Yes      |
 
 매 반복마다 주어진 배열 전체를 비교하기 때문에 best, average, worst case 모두 $O(N^2)$의 시간복잡도를 가진다.
 
 ### 장단점
+
 버블 정렬과 마찬가지로 구현이 매우 단순하다.
 
 선택 정렬도 버블 정렬과 같이 $O(N^2)$의 시간복잡도를 가지지만,
@@ -89,6 +98,7 @@ function selectionSort(arr) { // ascending order
 첫 번째 반복에서 `1`이 앞으로 옮겨져 `[1, 3, 2, 4, 4]`가 된다. 앞의 `4`가 뒤의 `4`보다 뒤로가면서 중복된 값의 순서가 변경됐다.
 
 ## Insertion Sort(삽입 정렬)
+
 삽입 정렬은 모든 요소를 앞에서부터 차례대로 이미 정렬된 부분과 비교해서 자신의 위치를 찾아 삽입하는 알고리즘이다.
 
 두 번째 요소부터 시작해서 그 앞의 원소들과 비교해 삽입할 위치를 지정해 삽입하고, 이것을 반복한다.
@@ -96,35 +106,40 @@ function selectionSort(arr) { // ascending order
 <img src="https://camo.githubusercontent.com/ac772dfad98df54c1658e98dcfeb11f76aa7e7f027558554067c9eeef219d852/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f302f30662f496e73657274696f6e2d736f72742d6578616d706c652d33303070782e676966" />
 
 ### 구현
+
 ```js
-function insertionSort(arr) { // ascending order
-    for(let start = 1; start < arr.length; start++) {
-        const elem = arr[start];
-        let index = start - 1;
-        while (target >= 0 && arr[target] > elem) {
-            arr[target + 1] = arr[target];
-            target--;
-        }
-        arr[target + 1] = elem;
+function insertionSort(arr) {
+  // ascending order
+  for (let start = 1; start < arr.length; start++) {
+    const elem = arr[start];
+    let index = start - 1;
+    while (target >= 0 && arr[target] > elem) {
+      arr[target + 1] = arr[target];
+      target--;
     }
-    return arr;
+    arr[target + 1] = elem;
+  }
+  return arr;
 }
 ```
 
 ### 성능
-|Name|Best|Average|Worst|Stable|In-place|
-|---|---|---|---|---|---|
-|Insertion Sort|$O(N)$|$O(N^2)$|$O(N^2)$|Yes|Yes|
+
+| Name           | Best   | Average  | Worst    | Stable | In-place |
+| -------------- | ------ | -------- | -------- | ------ | -------- |
+| Insertion Sort | $O(N)$ | $O(N^2)$ | $O(N^2)$ | Yes    | Yes      |
 
 배열이 이미 정렬되어있는 경우 요소의 이동없이 한 번의 비교만 이루어지기 때문에 $O(N)$의 시간복잡도를 가진다.
 
 ### 장단점
+
 구현이 간단하고 선택정렬과 버블정렬에 비해 빠르다는 장점을 가진다.
 **또한, 다른 정렬 알고리즘들과 다르게 정렬 중 데이터를 추가해도 상관없다.**
 
 하지만, 배열의 크기가 커지면 마찬가지로 비효율적이다.
 
 ## Quick Sort(퀵 정렬)
+
 퀵 정렬은 분할 정복을 통해 정렬을 수행한다.
 
 1. 배열에서 요소 하나를 고른다(=**pivot**).
@@ -134,50 +149,56 @@ function insertionSort(arr) { // ascending order
 <img src="https://camo.githubusercontent.com/9d156a36ab19a3ae2dfbabc70daaaa074fddfaac233f6d0bfce45b8d07ad5289/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f362f36612f536f7274696e675f717569636b736f72745f616e696d2e676966" />
 
 ### 구현
-```js
-function quickSort(arr) { // ascending order
-    function sort(arr, left, right) {
-        if(left >= right) return;
-        const pivot = partition(arr, left, right);
-        sort(arr, left, pivot - 1);
-        sort(arr, pivot + 1, right);
-    }
-    
-    function partition(arr, left, right) {
-        // right is pivot
-        const pivot = right, pivotVal = arr[right];
-        while(left < right) {
-            while(pivotVal > arr[left]) left++;
-            while(left < right && pivotVal <= arr[right]) right--;
-            [arr[left], arr[right]] = [arr[right], arr[left]];
-        }
-        [arr[right], arr[pivot]] = [arr[pivot], arr[right]];
-        return right;
-    }
 
-    sort(arr, 0, arr.length - 1);
-    return arr;
+```js
+function quickSort(arr) {
+  // ascending order
+  function sort(arr, left, right) {
+    if (left >= right) return;
+    const pivot = partition(arr, left, right);
+    sort(arr, left, pivot - 1);
+    sort(arr, pivot + 1, right);
+  }
+
+  function partition(arr, left, right) {
+    // right is pivot
+    const pivot = right,
+      pivotVal = arr[right];
+    while (left < right) {
+      while (pivotVal > arr[left]) left++;
+      while (left < right && pivotVal <= arr[right]) right--;
+      [arr[left], arr[right]] = [arr[right], arr[left]];
+    }
+    [arr[right], arr[pivot]] = [arr[pivot], arr[right]];
+    return right;
+  }
+
+  sort(arr, 0, arr.length - 1);
+  return arr;
 }
 ```
 
 ## 성능
-|Name|Best|Average|Worst|Stable|In-place|
-|---|---|---|---|---|---|
-|Quick Sort|$O(NlogN)$|$O(NlogN)$|$O(N^2)$|No|Yes|
 
-퀵 정렬은 대개 매우 좋은 성능을 보여주지만, 
+| Name       | Best       | Average    | Worst    | Stable | In-place |
+| ---------- | ---------- | ---------- | -------- | ------ | -------- |
+| Quick Sort | $O(NlogN)$ | $O(NlogN)$ | $O(N^2)$ | No     | Yes      |
+
+퀵 정렬은 대개 매우 좋은 성능을 보여주지만,
 배열의 최대값/최소값을 pivot으로 선택하여 분할이 되지 않은 경우 $O(N^2)$의 시간복잡도를 가진다.
 
 이를 피하기 위해 배열의 끝값과 중간값을 바꿔주면 확률적으로나마 시간복잡도를 개선할 수는 있지만,
 worst case를 $O(NlogN)$으로 보장하지는 않는다.
 
 ## 장단점
+
 다른 $NlogN$ 정렬 알고리즘과 비교했을때 **가장 속도가 빠르다**는 장점을 가진다.
 또한 정렬을 위한 추가 메모리 공간을 필요로 하지 않는다(in-place).
 
 단점으로는 **unstable**하다는 점과 **정렬된 배열에 대해서는 불균형 분할 때문에 오히려 시간이 더 걸린다**는 것이다.
 
 ## Merge Sort(병합 정렬)
+
 병합 정렬도 분할 정복을 통해 정렬을 수행한다.
 
 1. 배열을 같은 크기의 2개의 배열로 분할한다.
@@ -187,41 +208,46 @@ worst case를 $O(NlogN)$으로 보장하지는 않는다.
 <img src="https://camo.githubusercontent.com/1d3f6508e07151f337fddc8e0e25b3f53fb1abd4cb3cebca16d8333544fc3d99/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f632f63632f4d657267652d736f72742d6578616d706c652d33303070782e676966" />
 
 ### 구현
+
 ```js
 function mergeSort(arr) {
-    function sort(arr) {
-        if(arr.length <= 1) return arr;
-        const middleIndex = Math.floor(arr.length / 2);
+  function sort(arr) {
+    if (arr.length <= 1) return arr;
+    const middleIndex = Math.floor(arr.length / 2);
 
-        const leftSortedArr = sort(arr.slice(0, middleIndex));
-        const rightSortedArr = sort(arr.slice(middleIndex));
-        
-        return merge(leftSortedArr, rightSortedArr);
+    const leftSortedArr = sort(arr.slice(0, middleIndex));
+    const rightSortedArr = sort(arr.slice(middleIndex));
+
+    return merge(leftSortedArr, rightSortedArr);
+  }
+
+  function merge(leftArr, rightArr) {
+    const mergedArr = [];
+    let left = 0,
+      right = 0;
+    while (left < leftArr.length && right < rightArr.length) {
+      let minElem = leftArr[left] <= rightArr[right] ? leftArr[left++] : rightArr[right++];
+      mergedArr.push(minElem);
     }
+    return mergedArr.concat(leftArr.slice(left), rightArr.slice(right));
+  }
 
-    function merge(leftArr, rightArr) {
-        const mergedArr = [];
-        let left = 0, right = 0;
-        while(left < leftArr.length && right < rightArr.length) {
-            let minElem = leftArr[left] <= rightArr[right] ? leftArr[left++] : rightArr[right++];
-            mergedArr.push(minElem);
-        }
-        return mergedArr.concat(leftArr.slice(left), rightArr.slice(right));
-    }
-
-    return sort(arr);
+  return sort(arr);
 }
 ```
+
 ### 성능
-|Name|Best|Average|Worst|Stable|In-place|
-|---|---|---|---|---|---|
-|Merge Sort|$O(NlogN)$|$O(NlogN)$|$O(OlogN)$|Yes|No|
+
+| Name       | Best       | Average    | Worst      | Stable | In-place |
+| ---------- | ---------- | ---------- | ---------- | ------ | -------- |
+| Merge Sort | $O(NlogN)$ | $O(NlogN)$ | $O(OlogN)$ | Yes    | No       |
 
 병합 과정에서 배열의 길이만큼 메모리가 필요하기 때문에 in-place 정렬이 아니다.
 
 > 만약 배열을 연결 리스트로 구현하면 in-place 정렬로 구현할 수 있다. 링크 인덱스만 변경돼서 데이터의 이동은 무시할 수 있을 정도로 작아지기 때문이다.
 
 ### 장단점
+
 퀵 정렬과는 다르게 **데이터의 분포가 정렬 시간에 영향을 덜 끼치고, 안정적(stable)**이다.
 
 병합 과정이 순차적인 비교로 진행되게 때문에 연결 리스트의 정렬에 매우 효율적이다.
@@ -229,6 +255,7 @@ function mergeSort(arr) {
 단점으로는 배열의 크기가 클 경우 원소들의 이동횟수가 많아 느리다.
 
 ## Heap Sort(힙 정렬)
+
 힙 정렬은 '힙 자료구조'를 사용해 정렬을 수행한다.
 
 힙에 대한 자세한 내용은 [여기](https://woong-jae.com/algorithm/220119-priority-queue)를 참고하자.
@@ -240,12 +267,14 @@ function mergeSort(arr) {
 <img src="https://camo.githubusercontent.com/c8ee4c2d4b28615947bfde32ff810c8b81a151b91da1e44f917b426e3991315b/68747470733a2f2f75706c6f61642e77696b696d656469612e6f72672f77696b6970656469612f636f6d6d6f6e732f342f34642f48656170736f72742d6578616d706c652e676966" />
 
 ### 구현
+
 ```js
-function heapSort(arr) { // ascending order
-    const minHeap = new MinHeap();
-    arr.forEach(elem => minHeap.push(elem));
-    arr.forEach((_, i) => arr[i] = minHeap.pop());
-    return arr;
+function heapSort(arr) {
+  // ascending order
+  const minHeap = new MinHeap();
+  arr.forEach((elem) => minHeap.push(elem));
+  arr.forEach((_, i) => (arr[i] = minHeap.pop()));
+  return arr;
 }
 ```
 
@@ -256,45 +285,49 @@ function heapSort(arr) { // ascending order
 
 ```js
 function heapify(arr, size, here) {
-    let next = here;
-    let left = next * 2 + 1, right = next * 2 + 2;
-    
-    if(left < size && arr[left] > arr[next]) next = left;
-    if(right < size && arr[right] > arr[next]) next = right;
+  let next = here;
+  let left = next * 2 + 1,
+    right = next * 2 + 2;
 
-    if(here !== next) {
-        [arr[here], arr[next]] = [arr[next], arr[here]];
-        heapify(arr, size, next);
-    }
+  if (left < size && arr[left] > arr[next]) next = left;
+  if (right < size && arr[right] > arr[next]) next = right;
+
+  if (here !== next) {
+    [arr[here], arr[next]] = [arr[next], arr[here]];
+    heapify(arr, size, next);
+  }
 }
 
 function heapSortInplace(arr) {
-    // 주어진 배열 힙 구조로 만들기
-    let mid = Math.floor(arr.length / 2 - 1); // 완전 이진 트리의 성질에 의해 중간 노드부터 자식이 있다.
-    while(mid >= 0) heapify(arr, arr.length, mid--);
-    
-    // 루트를 빼며 정렬
-    let index = arr.length - 1;
-    while(index) {
-        [arr[index], arr[0]] = [arr[0], arr[index]];
-        heapify(arr, index--, 0);
-    }
+  // 주어진 배열 힙 구조로 만들기
+  let mid = Math.floor(arr.length / 2 - 1); // 완전 이진 트리의 성질에 의해 중간 노드부터 자식이 있다.
+  while (mid >= 0) heapify(arr, arr.length, mid--);
 
-    return arr;
+  // 루트를 빼며 정렬
+  let index = arr.length - 1;
+  while (index) {
+    [arr[index], arr[0]] = [arr[0], arr[index]];
+    heapify(arr, index--, 0);
+  }
+
+  return arr;
 }
 ```
 
 ### 성능
-|Name|Best|Average|Worst|Stable|In-place|
-|---|---|---|---|---|---|
-|Heap Sort|$O(NlogN)$|$O(NlogN)$|$O(OlogN)$|No|Yes|
+
+| Name      | Best       | Average    | Worst      | Stable | In-place |
+| --------- | ---------- | ---------- | ---------- | ------ | -------- |
+| Heap Sort | $O(NlogN)$ | $O(NlogN)$ | $O(OlogN)$ | No     | Yes      |
 
 ### 장단점
+
 **가장 큰 값 혹은 가장 작은 값을 구할 때** 유용하다. 그리고 `heapify`를 통해 구현할 경우 추가적인 메모리가 필요없다는 장점을 가진다.
 
 Unstable하다는 것이 단점이다.
 
 ## Counting Sort(계수 정렬)
+
 계수 정렬은 이름처럼 배열 안의 각 요소의 수를 세서 정렬하는 방법이다.
 
 요소들의 키 값을 세서 각 키 당 몇 개의 요소가 있는지 확인하고 이를 통해 각 키의 위치를 알 수 있다.
@@ -303,50 +336,54 @@ Unstable하다는 것이 단점이다.
 1이 2개이므로 1을 두 개 채워넣고, 그 다음 2를 1개, 4를 1개 채워넣으면 오름차순으로 정렬된 배열 `[1, 1, 2, 4]`를 만들 수 있다.
 
 알고리즘의 단계는 다음과 같다(오름차순 기준).
+
 1. 요소를 세기 위한 배열을 잡고 각 요소의 수를 센다.
 2. 요소를 센 배열을 누적합으로 바꿔준다.
 3. 원래 배열을 순회하며 요소를 센 배열을 통해 위치를 찾아 결과 배열에 넣는다.
 
 ### 구현
+
 ```js
 function countingSort(arr) {
-    const count = Array(Math.max(...arr) + 1).fill(0);
-    // 1. 세기
-    arr.forEach(element => count[element]++);
-    // 2. 누적합으로 바꿔주기
-    for(let index = 1; index < count.length - 1; index++) {
-        count[index] += count[index - 1];
-    }
-    // 3. 각 요소를 맞는 순서에 넣기
-    const sorted = Array(arr.length);
-    arr.forEach(element => {
-        sorted[count[element]++] = element;
-    });
-    
-    return sorted;
+  const maxValue = Math.max(...arr);
+  const count = Array(maxValue).fill(0);
+
+  arr.forEach((value) => count[value]++);
+  for (let i = 0; i < count.length - 1; i++) {
+    count[i + 1] += count[i];
+  }
+
+  const sorted = Array(arr.length);
+  for (let i = arr.length - 1; i >= 0; i--) {
+    sorted[--count[arr[i]]] = arr[i];
+  }
+  return sorted;
 }
 ```
 
 ### 성능
-|Name|Best|Average|Worst|Stable|In-place|
-|---|---|---|---|---|---|
-|Counting Sort|$O(N + K)$|$O(N + K)$|$O(N + K)$|Yes|No|
+
+| Name          | Best       | Average    | Worst      | Stable | In-place |
+| ------------- | ---------- | ---------- | ---------- | ------ | -------- |
+| Counting Sort | $O(N + K)$ | $O(N + K)$ | $O(N + K)$ | Yes    | No       |
 
 여기서 K는 배열의 최대값이다.
 **K가 만약 작은 수면 시간복잡도는 $O(N)$에 가까워지지만, 반대로 매우 큰 수가 되면 $O(N!)$이 될 수도 있다.**
 예를 들어 10개의 수를 정렬하는데 가장 큰 값이 100이면 $O(N^2)$, 1000이면 $O(N^3)$이 된다.
 
-이때까지 봤던 정렬 알고리즘들은 모두 비교를 통해 정렬을 했지만, 
+이때까지 봤던 정렬 알고리즘들은 모두 비교를 통해 정렬을 했지만,
 계수 정렬은 요소의 키 값으로 위치를 찾기 때문에 비교 정렬이 아니다.
 따라서 비교 정렬 알고리즘의 lower bound인 $O(NlogN)$가 적용되지 않는다.
 
 ### 장단점
+
 정렬해야하는 요소들의 키 값의 범위가 작으면 빠르게 정렬할 수 있다.
 
 하지만 범위가 크다면 성능이 크게 저하된다.
 또한 요소를 세는 배열과 정렬된 배열을 추가적으로 생성해야하기 때문에 메모리 낭비가 심하다.
 
 ## Radix Sort(기수 정렬)
+
 기수 정렬은 기수 별로 비교없이 정렬하는 방법이다. 여기서 기수는 숫자의 자릿수를 의미한다.
 
 **가장 낮은 자리수부터 높은 자리수까지 버킷(bucket)을 이용하거나 위에서 봤던 counting sort(계수 정렬)을 이용해 정렬**하면 된다.
@@ -356,7 +393,8 @@ function countingSort(arr) {
 버킷은 큐라고 생각하면 된다. 즉, 해당 자릿수의 숫자를 큐에 담은 후 낮은 수부터 순차적으로 빼주는 것이다.
 
 > 기수 정렬은 최상위 유효숫자(Most Significant Digit)나 최하위 유효숫자(Least Significant Digit)에서 시작하도록 구현할 수 있다.
-> - LSD 기수 정렬은 작은 자리수부터 정렬하기 때문에 마지막까지 정렬의 결과를 알 수 없다. 
+>
+> - LSD 기수 정렬은 작은 자리수부터 정렬하기 때문에 마지막까지 정렬의 결과를 알 수 없다.
 > - MSD 기수 정렬은 중간에 결과가 나올 수 있다. 마지막까지 비교를 하지 않아도 돼서 성능적인 이득을 취할 수 있지만 단점도 존재한다.
 >   **모든 데이터에 일관적인 과정을 거치게 할 수 없다**는 것이다. 중간과정마다 데이터를 점검하지 않으면 오류가 발생할 수 있다.
 >   이 때문에 추가적인 연산과 별도의 메모리가 필요해 성능적 이점도 사라질 수 있다.
@@ -364,47 +402,49 @@ function countingSort(arr) {
 > 일반적으로 MSD를 통한 구현이 난이도가 높기 때문에 LSD를 사용한다.
 
 ## 구현
+
 ```js
 function radixSortBucket(arr) {
-    const longestRadix = Math.log10(Math.max(...arr)) + 1;
+  const longestRadix = Math.log10(Math.max(...arr)) + 1;
 
-    const sortByRadix = (arr, radix) => {
-        const exp = 10 ** radix;
-        const buckets = Array.from(Array(10), () => []);
-        // 각 요소를 알맞는 버킷에 삽입
-        arr.forEach(element => buckets[Math.floor((element / exp) % 10)].push(element));
-        
-        // 버킷에서 순서대로 빼줌
-        let index = 0;
-        buckets.forEach(bucket => {
-            while(bucket.length) arr[index++] = bucket.shift();
-        });
-    }
+  const sortByRadix = (arr, radix) => {
+    const exp = 10 ** radix;
+    const buckets = Array.from(Array(10), () => []);
+    // 각 요소를 알맞는 버킷에 삽입
+    arr.forEach((element) => buckets[Math.floor((element / exp) % 10)].push(element));
 
-    for(let radix = 0; radix < longestRadix; radix++) {
-        sortByRadix(arr, radix);
-    }
-    return arr;
+    // 버킷에서 순서대로 빼줌
+    let index = 0;
+    buckets.forEach((bucket) => {
+      while (bucket.length) arr[index++] = bucket.shift();
+    });
+  };
+
+  for (let radix = 0; radix < longestRadix; radix++) {
+    sortByRadix(arr, radix);
+  }
+  return arr;
 }
 ```
 
 Counting sort를 사용하고 싶다면 `sortByRadix` 부분만 바꿔주면 된다.
 
 ## 성능
-|Name|Best|Average|Worst|Stable|In-place|
-|---|---|---|---|---|---|
-|Counting Sort|$O(N * K)$|$O(N * K)$|$O(N * K)$|Yes|No|
+
+| Name          | Best       | Average    | Worst      | Stable | In-place |
+| ------------- | ---------- | ---------- | ---------- | ------ | -------- |
+| Counting Sort | $O(N * K)$ | $O(N * K)$ | $O(N * K)$ | Yes    | No       |
 
 K는 가장 큰 기수를 의미한다.
 
 ## 장단점
+
 문자열과 정수와 같이 특정 자료형에 대해 정렬을 매우 빠르게 수행할 수 있다.
 자릿수가 없는 부동 소수점 실수 같은 것들은 정렬할 수가 없다.
 
 또한 **데이터 전체 크기에 기수 테이블의 크기만한 메모리가 더 필요**하다.
 
-
-<br/>
+<br />
 
 참조:  
 <https://github.com/trekhleb/javascript-algorithms>  
